@@ -24,6 +24,13 @@ async function getProducts() {
   }
 }
 
+const categoryLabels: Record<string, string> = {
+  dining: "سفرة",
+  sofas: "انتريهات",
+  tables: "ترابيزات",
+  console: "كونسول",
+}
+
 export default async function ProductsPage() {
   const products = await getProducts();
 
@@ -57,6 +64,7 @@ export default async function ProductsPage() {
                     <tr className="border-b">
                       <th className="text-left py-3 px-4 font-medium">Image</th>
                       <th className="text-left py-3 px-4 font-medium">Name</th>
+                      <th className="text-left py-3 px-4 font-medium">Category</th>
                       <th className="text-left py-3 px-4 font-medium">Price</th>
                       {/* <th className="text-left py-3 px-4 font-medium">Stock</th> */}
                       <th className="text-left py-3 px-4 font-medium">Actions</th>
@@ -73,6 +81,7 @@ export default async function ProductsPage() {
                           />
                         </td>
                         <td className="py-3 px-4 font-medium">{product.name}</td>
+                        <td className="py-3 px-4 text-sm text-gray-600 uppercase tracking-wide">{categoryLabels[product.category] || product.category}</td>
                         <td className="py-3 px-4">${product.price}</td>
                         <td className="py-3 px-4">{product.stock || 1}</td>
                         <td className="py-3 px-4">

@@ -1,20 +1,52 @@
 import Link from "next/link";
-
+import Hero from "@/components/Hero";
+import LatestProducts from "@/components/ui/LatestProducts";
+import CategoryFilter from "@/components/ui/CategoryFilter";
 
 
 
 
 // This is a Server Component. It renders on the server and sends pure HTML to the browser.
 // It's very fast because the browser doesn't have to execute much JavaScript to show this.
-export default function Home() {
+export default async function Home({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
+const params = await searchParams;
+const category = params.category || "all";
+
+    let productsData = [];
+
+try{
+
+ // جرب دي مؤقتاً للتأكد
+const apiUrl = category && category !== 'all'
+  ? `http://localhost:3000/api/products?category=${category}`
+  : `http://localhost:3000/api/products`;
+
+    // Fetching the latest products from our API route
+    const res = await fetch(apiUrl, { next: { tags: ['products-data'], revalidate: 2000 } });
+
+    console.log("API Response Status:", res.status);
+        if (res.ok) {
+                    productsData = await res.json();
+        }
+        else {
+            throw new Error("Failed to fetch products");
+        }
+
+
+    }
+    catch (error) {
+        console.error("Error fetching products:", error);
+    }
+
   return(
   //  We use 'bg-zinc-50' for light mode and 'dark:bg-black' for dark mode support */
     <div className="flex flex-col flex-1 bg-zinc-50 font-sans dark:bg-black">
       <main className="flex flex-1 w-full flex-col items-center">
         {/* Hero Section */}
-        <section className="w-full bg-zinc-900 py-32 px-6 text-center text-white">
+        <Hero />
+        {/* <section className="w-full bg-zinc-900 py-32 px-6 text-center text-white">
           <h1 className="text-5xl font-bold tracking-tight sm:text-7xl">
-            Commode 
+            Commode
           </h1>
           <p className="mt-6 text-xl text-zinc-300 max-w-2xl mx-auto">
             Exquisite designs for the modern home. Discover our curated collection of artisanal furniture.
@@ -33,6 +65,15 @@ export default function Home() {
               Our Story
             </Link>
           </div>
+        </section> */}
+
+            {/* Category Filter */}
+        <CategoryFilter />
+
+        {/* latest products section  */}
+        <section className="max-w-7xl w-full py-20 px-6">
+            <h2 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">Latest Arrivals</h2>
+            <LatestProducts products ={productsData} />
         </section>
 
         {/* Featured Products Placeholder */}

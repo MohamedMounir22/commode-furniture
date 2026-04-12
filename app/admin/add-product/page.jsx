@@ -12,12 +12,19 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 
+const categoryOptions = [
+  { value: "dining", label: "سفرة" },
+  { value: "sofas", label: "انتريهات" },
+  { value: "tables", label: "ترابيزات" },
+  { value: "console", label: "كونسول" },
+]
+
 const formSchema = z.object({
     name: z.string().min(2, { message: "اسم المنتج لازم يكون حرفين على الأقل" }),
     price: z.coerce.number().min(1, { message: "السعر لازم يكون أكبر من صفر" }),
     description: z.string().min(10, { message: "الوصف لازم يكون مفصل شوية" }),
     discount: z.coerce.number().min(0, { message: "الخصم لازم يكون 0 أو أكبر" }).max(100, { message: "الخصم مينفعش يكون أكبر من 100%" }),
-    category: z.string().optional(),
+    category: z.enum(["dining", "sofas", "tables", "console"], { errorMap: () => ({ message: "اختر فئة مناسبة للمنتج" }) }),
 })
 
 export default function AddProductPage() {
@@ -28,7 +35,7 @@ export default function AddProductPage() {
 
     const form = useForm({
         resolver: zodResolver(formSchema),
-        defaultValues: { name: "", price: 0, description: "", discount: 0, category: "furniture" },
+        defaultValues: { name: "", price: 0, description: "", discount: 0, category: "sofas" },
     })
 
     const showToast = (type, message) => {
@@ -56,7 +63,7 @@ export default function AddProductPage() {
         };
 
         try {
-            const response = await fetch("/api/test-db", {
+            const response = await fetch("/api/products", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(finalData),
@@ -146,6 +153,27 @@ export default function AddProductPage() {
                         )}
                     />
 
+                    {/* فئة المنتج */}
+                    <FormField
+                      control={form.control}
+                      name="category"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>فئة المنتج</FormLabel>
+                          <FormControl>
+                            <select {...field} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500">
+                              {categoryOptions.map((option) => (
+                                <option key={option.value} value={option.value}>
+                                  {option.label}
+                                </option>
+                              ))}
+                            </select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
                     {/* قسم رفع الصور من Cloudinary */}
                     <div className="space-y-3">
                         <FormLabel>صور المنتج (ارفع من جهازك)</FormLabel>
@@ -167,7 +195,7 @@ export default function AddProductPage() {
                         </div>
 
                         {/* الزرار السحري */}
-                        <CldUploadWidget
+                        {/* <CldUploadWidget
                             uploadPreset="commode_present"
                             options={{
                                 // 1. افتح الحجم للآخر (20 ميجا مثلاً)
@@ -199,6 +227,59 @@ export default function AddProductPage() {
                                     onClick={() => open()}
                                 >
                                     ارفع أي صورة يا بطل 🚀
+                                </button>
+                            )}
+                        </CldUploadWidget> */}
+
+                        <CldUploadWidget
+                            uploadPreset="commode_present"
+                            config={{ cloud: { cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME } }}
+                            options={{
+                                maxFiles: 5,
+                                language: "ar",
+                                cropping: true, // تفعيل قص الصور
+                                multiple: true,
+                                sources: ["local"],
+                                styles: {
+                                    palette: {
+                                        window: "#0F172A",
+                                        sourceBg: "#1E293B",
+                                        windowBorder: "#334155",
+                                        tabIcon: "#38BDF8",
+                                        inactiveTabIcon: "#94A3B8",
+                                        menuIcons: "#CBD5E1",
+                                        link: "#38BDF8",
+                                        action: "#0EA5E9",
+                                        inProgress: "#0EA5E9",
+                                        complete: "#22C55E",
+                                        error: "#F43F5E",
+                                        textDark: "#000000",
+                                        textLight: "#F8FAFC"
+                                    }
+                                }
+                            }}
+                            onError={(error) => {
+                                console.error("Cloudinary upload failed:", error);
+                                showToast("error", "❌ فشل رفع الصورة. حاول تاني.");
+                            }}
+                            onSuccess={(result) => {
+                                if (result.info && result.info.secure_url) {
+                                    setImages((prev) => [...prev, result.info.secure_url]);
+                                }
+                            }}
+                        >
+                            {({ open }) => (
+                                <button
+                                    onClick={() => {
+                                        if (open) {
+                                            open();
+                                        } else {
+                                            alert("حدثت مشكلة في فتح أداة الرفع");
+                                        }
+                                    }}
+                                    className="bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all"
+                                >
+                                    إضافة صور للمنتج 📸
                                 </button>
                             )}
                         </CldUploadWidget>

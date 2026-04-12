@@ -1,14 +1,17 @@
 import connectDB from "@/lib/db"; // تأكد إن المسار صح (db أو mongodb)
 import Product from "@/lib/models/product"; // تأكد من المسار حسب مشروعك
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 
 // --- دالة الجلب (GET) ---
 import mongoose from "mongoose"; // استيراد mongoose للتحويل اليدوي
 
 export async function GET(request) {
+const { searchParams } = new URL(request.url);
+ const category = searchParams.get("category");
+    const filter = category ? { category } : {};
   try {
     await connectDB();
-    const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
     if (id) {
@@ -31,8 +34,8 @@ export async function GET(request) {
       }
       return NextResponse.json(product, { status: 200 });
     }
-
-    const products = await Product.find({}).sort({ createdAt: -1 });
+       const query = category && category !== "all" ? { category } : {};
+    const products = await Product.find(query).sort({ createdAt: -1 });
     return NextResponse.json(products, { status: 200 });
   } catch (error) {
     console.error("Database Error:", error);
@@ -40,33 +43,8 @@ export async function GET(request) {
   }
 }
 
-// --- دالة الإضافة (POST) ---
-export async function POST(request) {
-  try {
-    await connectDB();
-    const data = await request.json();
 
-    // إضافة المنتج الجديد
-    const newProduct = await Product.create(data);
 
-    return NextResponse.json(
-      {
-        message: "🎉 مبروك يا هندسة! القطعة اتسجلت بنجاح",
-        product: newProduct,
-      },
-      { status: 201 },
-    );
-  } catch (error) {
-    console.error("Server Error:", error);
-    return NextResponse.json(
-      {
-        message: "❌ فيه حاجة غلط حصلت وأنا بسجل البيانات",
-        error: error.message,
-      },
-      { status: 500 },
-    );
-  }
-}
 
 // --- دالة التعديل (PUT) ---
 export async function PUT(request) {
@@ -83,6 +61,10 @@ export async function PUT(request) {
     const updatedProduct = await Product.findByIdAndUpdate(id, data, {
       new: true,
     });
+    if (updatedProduct) {
+      revalidateTag("products-data"); // إعادة التحقق من الكاش للمنتجات
+    }
+
 
     if (!updatedProduct) {
       return NextResponse.json({ error: "المنتج مش موجود" }, { status: 404 });
@@ -106,6 +88,11 @@ export async function PUT(request) {
     );
   }
 }
+
+
+
+
+
 
 // --- دالة الحذف (DELETE) ---
 export async function DELETE(request) {

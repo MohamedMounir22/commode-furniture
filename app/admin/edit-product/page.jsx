@@ -13,12 +13,20 @@ import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 
+const categoryOptions = [
+  { value: "dining", label: "سفرة" },
+  { value: "sofas", label: "انتريهات" },
+  { value: "tables", label: "ترابيزات" },
+  { value: "console", label: "كونسول" },
+]
+
 const formSchema = z.object({
   name: z.string().min(2, { message: "اسم المنتج لازم يكون حرفين على الأقل" }),
   price: z.coerce.number().min(1, { message: "السعر لازم يكون أكبر من صفر" }),
   description: z.string().min(10, { message: "الوصف لازم يكون مفصل شوية" }),
   stock: z.coerce.number().min(0, { message: "المخزون لازم يكون صفر أو أكبر" }),
   discount: z.coerce.number().min(0, { message: "الخصم لازم يكون 0 أو أكبر" }).max(100, { message: "الخصم مينفعش يكون أكبر من 100%" }),
+  category: z.enum(["dining", "sofas", "tables", "console"], { errorMap: () => ({ message: "اختر فئة مناسبة للمنتج" }) }),
 })
 
 export default function EditProductPage() {
@@ -37,15 +45,9 @@ export default function EditProductPage() {
       description: "",
       stock: 1,
       discount: 0,
+      category: "sofas",
     },
   })
-
-  // Load product data
-  useEffect(() => {
-    if (productId) {
-      fetchProduct()
-    }
-  }, [productId])
 
   const fetchProduct = async () => {
     try {
@@ -58,6 +60,7 @@ export default function EditProductPage() {
           description: product.description,
           stock: product.stock || 1,
           discount: product.discount || 0,
+          category: product.category || "sofas",
         })
         setImages(product.images || [])
       }
@@ -68,6 +71,11 @@ export default function EditProductPage() {
       setIsLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (!productId) return
+    fetchProduct()
+  }, [productId])
 
   const removeImage = (urlToRemove) => {
     setImages(images.filter((url) => url !== urlToRemove))
@@ -157,6 +165,27 @@ export default function EditProductPage() {
             )}
           />
 
+          {/* فئة المنتج */}
+          <FormField
+            control={form.control}
+            name="category"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>فئة المنتج</FormLabel>
+                <FormControl>
+                  <select {...field} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500">
+                    {categoryOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           {/* المخزون */}
           <FormField
             control={form.control}
@@ -202,8 +231,14 @@ export default function EditProductPage() {
             <div className="mt-2">
               <CldUploadWidget
                 uploadPreset="ml_default"
+                config={{ cloud: { cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME } }}
+                onError={(error) => {
+                  console.error("Cloudinary upload failed:", error);
+                }}
                 onSuccess={(result) => {
-                  setImages([...images, result.info.secure_url])
+                  if (result.info && result.info.secure_url) {
+                    setImages((prev) => [...prev, result.info.secure_url]);
+                  }
                 }}
               >
                 {({ open }) => (

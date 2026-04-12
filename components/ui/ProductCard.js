@@ -1,13 +1,10 @@
-"use client"; // ضروري عشان نستخدم الـ State والتفاعل
+"use client";
+import { Flame, MessageCircle, ShoppingCart, Trash2 } from "lucide-react"; // ضفنا أيقونة الرسالة
+import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
-
-import Image from "next/image"; // استيراد مكون Image من Next.js لتحسين تحميل الصور
-
-import Link from "next/link"; // استيراد مكون Link للتنقل بين الصفحات
 import Lightbox from "yet-another-react-lightbox";
-import "yet-another-react-lightbox/styles.css"; // استيراد أنماط Lightbox
-
-import { Flame, ShoppingCart, Trash2 } from "lucide-react"; // استيراد أيقونة سلة وزبالة ولهيب
+import "yet-another-react-lightbox/styles.css";
 
 export default function ProductCard({
   id,
@@ -15,57 +12,65 @@ export default function ProductCard({
   price,
   description,
   images,
-  discount = 0,
+  discount,
 }) {
-  // Convert discount to number to ensure proper comparison
-  const discountValue = Number(discount) || 0;
+  discount = Number(discount) || 0;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [imageLoading, setImageLoading] = useState(false);
+  const [isInCart, setIsInCart] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  // حساب السعر بناءا علي نسبة الخصم لو في خصم اصلا
+  const hasDiscount = discount > 0;
+  const discountedPrice = hasDiscount
+    ? price - (price * discount) / 100
+    : price;
+
   const displayImage =
     images && images.length > 0
       ? images[currentImageIndex]
       : "/double-sofa-01.png";
 
-  // تعريف الحالة: هل المنتج في السلة ولا لأ؟ (البداية false)
-  const [isInCart, setIsInCart] = useState(false);
+  const toggleCart = () => setIsInCart(!isInCart);
 
-  // state للتحكم في فتح وقفل الـ Lightbox
-  const [open, setOpen] = useState(false);
+  // دالة طلب الواتساب
+  //   const handleWhatsAppOrder = (e) => {
+  //     e.preventDefault(); // عشان ميعملش Navigate لو الزرار جوه Link
+  //     const phoneNumber = "2010XXXXXXXX"; // اكتب رقمك هنا بدون +
+  //     const message = `أهلاً "كومود"، محتاج أستفسر عن المنتج ده:\n- الاسم: ${name}\n- السعر: ${price} ج.م\n- الرابط: ${window.location.origin}/products/${id}\n\nحابب أعدل على المقاسات/الألوان، ممكن تفاصيل أكتر؟`;
+  //     const encodedMessage = encodeURIComponent(message);
+  //     window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+  //   };
 
-  // دالة بتبدل الحالة لما نضغط على الزرار
-  const toggleCart = () => {
-    setIsInCart(!isInCart);
+  const handleWhatsAppOrder = () => {
+    const phoneNumber = "201013598586"; // الرقم بالصيغة الدولية
+
+    const message = `أهلاً كومود، محتاج أطلب تعديلات على:
+المنتج: ${name}
+السعر: ${price} ج.م
+رابط الصورة: ${displayImage}`;
+
+    const encodedMessage = encodeURIComponent(message);
+
+    // استخدام بروتوكول whatsapp مباشرة لفتح التطبيق
+    const whatsappAppUrl = `whatsapp://send?phone=${phoneNumber}&text=${encodedMessage}`;
+
+    // محاولة فتح التطبيق
+    window.location.href = whatsappAppUrl;
   };
 
   const changeImage = (index) => {
     if (index !== currentImageIndex) {
       setImageLoading(true);
       setCurrentImageIndex(index);
-      // Small delay to show loading state, then hide it
       setTimeout(() => setImageLoading(false), 100);
     }
   };
 
-  // Prevent image downloading
-  const handleContextMenu = (e) => {
-    e.preventDefault();
-    return false;
-  };
+  // حماية الصور
+  const handleContextMenu = (e) => e.preventDefault();
+  const handleDragStart = (e) => e.preventDefault();
 
-  const handleDragStart = (e) => {
-    e.preventDefault();
-    return false;
-  };
-
-  const handleKeyDown = (e) => {
-    // Prevent Ctrl+S, Ctrl+U, F12, etc.
-    if ((e.ctrlKey && (e.key === "s" || e.key === "u")) || e.key === "F12") {
-      e.preventDefault();
-      return false;
-    }
-  };
-
-  // Preload all images for faster switching
   useEffect(() => {
     if (images && images.length > 0) {
       images.forEach((src) => {
@@ -73,160 +78,114 @@ export default function ProductCard({
         img.src = src;
       });
     }
-
-    // Add global keyboard event listeners
-    document.addEventListener("keydown", handleKeyDown);
-    document.addEventListener("contextmenu", handleContextMenu);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.removeEventListener("contextmenu", handleContextMenu);
-    };
   }, [images]);
 
   return (
-    <div className="relative flex flex-col text-gray-700 bg-white shadow-md bg-clip-border rounded-xl w-full hover:shadow-2xl transition-all duration-300 overflow-hidden">
-      {/* الصورة */}
+    <div className="relative flex flex-col text-slate-700 bg-white shadow-lg rounded-[1.75rem] w-full hover:-translate-y-1 hover:shadow-2xl transition duration-300 overflow-hidden border border-slate-200">
       <div
-        className="relative h-64 w-full cursor-pointer overflow-hidden group select-none"
-        onClick={() => setOpen(true)} // فتح الـ Lightbox
+        className="relative h-80 w-full overflow-hidden cursor-pointer group"
+        onClick={() => setOpen(true)}
         onContextMenu={handleContextMenu}
-        onDragStart={handleDragStart}
-        style={{
-          WebkitUserSelect: "none",
-          MozUserSelect: "none",
-          msUserSelect: "none",
-          userSelect: "none",
-          WebkitTouchCallout: "none",
-        }}
       >
         <Image
           src={displayImage}
           fill
           alt={name}
-          // ضفنا z-0 و object-cover عشان نضمن الوضوح
-          className={`object-cover z-0 group-hover:scale-105 transition-transform duration-300 product-card ${
-            imageLoading ? "opacity-50" : "opacity-100"
-          }`}
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          priority={currentImageIndex === 0} // Prioritize first image
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          sizes="(max-width: 768px) 100vw, 33vw"
+          priority={currentImageIndex === 0}
           onLoad={() => setImageLoading(false)}
           draggable={false}
-          onDragStart={(e) => e.preventDefault()}
         />
 
-        {/* Protection overlay - subtle watermark */}
-        <div className="absolute inset-0 pointer-events-none z-10">
-          <div className="absolute top-2 left-2 text-white/10 text-xs font-bold rotate-12 select-none">
-            COMMODE
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent pointer-events-none" />
+
+        {discount > 0 && (
+          <div className="absolute top-4 right-4 rounded-full bg-orange-500 px-3 py-1 text-xs text-white font-bold shadow-lg">
+            <Flame className="h-3.5 w-3.5" />
+            خصم {discount}%
           </div>
-          <div className="absolute bottom-2 right-2 text-white/10 text-xs font-bold -rotate-12 select-none">
-            FURNITURE
+        )}
+      </div>
+
+      <div className="p-5 flex flex-col gap-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
+            <h3 className="text-xl font-semibold text-slate-900 truncate">
+              {name}
+            </h3>
+            <p className="text-sm text-slate-500 mt-1">
+              تعديل مقاسات وألوان حسب طلبك
+            </p>
+          </div>
+
+          <div className="text-right">
+            {hasDiscount ? (
+              <>
+                <div className="text-slate-500 line-through text-sm">
+                  {price} ج.م
+                </div>
+                <div className="text-orange-600 font-bold text-xl">
+                  {discountedPrice} ج.م
+                </div>
+              </>
+            ) : (
+              <div className="text-slate-900 font-bold text-xl">
+                {price} ج.م
+              </div>
+            )}
           </div>
         </div>
 
-        {imageLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          </div>
-        )}
+        <p className="text-slate-600 text-sm leading-6 line-clamp-3">
+          {description ||
+            "تصميم عصري بخامات عالية الجودة، متاح تعديل المقاسات والألوان حسب طلبك."}
+        </p>
 
-        {/* Beautiful Offer Badge */}
-        {discountValue > 0 && (
-          <div className="absolute top-3 right-3 rounded-full bg-gradient-to-r from-orange-500 to-red-500 px-3 py-1 text-xs text-white font-bold flex items-center gap-1 shadow-lg border-2 border-white/20 animate-pulse hover:animate-bounce z-20">
-            <Flame className="h-3 w-3" />
-            خصم {discountValue}%
-          </div>
-        )}
-
-        {/* طبقة شفافة تظهر عند الـ hover توحي بإمكانية الضغط */}
-        <div className="absolute inset-0 bg-black/20 bg-opacity-0 group-hover:bg-opacity-100 transition-opacity flex items-center justify-center">
-          <span className="text-white opacity-0 group-hover:opacity-100 bg-opacity-50 px-3 py-1 rounded-full text-sm">
-            تيكبر الصورة
+        <div className="flex flex-wrap gap-2">
+          <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold text-slate-700">
+            خشب طبيعي
+          </span>
+          <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold text-slate-700">
+            ضمان 3 سنوات
           </span>
         </div>
 
-        {images?.length > 1 ? (
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/40 rounded-full px-3 py-1">
-            {images.slice(0, 3).map((_, idx) => (
-              <button
-                key={idx}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  changeImage(idx);
-                }}
-                className={`h-2.5 w-2.5 rounded-full transition-all duration-200 ${
-                  idx === currentImageIndex
-                    ? "bg-blue-500 scale-125"
-                    : "bg-white/75 hover:bg-white/90"
-                }`}
-              />
-            ))}
-            {images.length > 3 ? (
-              <span className="text-[10px] text-white/80 ml-1">
-                +{images.length - 3}
-              </span>
-            ) : null}
-          </div>
-        ) : null}
-      </div>
-
-      {/* محتوى الكارد */}
-      <div className="p-6 ">
-        <div className="flex flex-row items-center justify-between w-full mb-2 px-1">
-          {/* السعر - ضفنا leading-none عشان نشيل أي زيادة في الطول */}
-          <p className="font-sans text-lg antialiased font-bold text-blue-600 leading-none">
-            {price} ج.م
-          </p>
-
-          {/* الاسم - نفس الـ leading-none عشان يترصفوا صح */}
-          <p className="font-sans text-lg antialiased font-bold text-slate-800 leading-none">
-            {name}
-          </p>
-        </div>
-
-        <p className="text-end font-sans text-sm antialiased font-normal leading-normal text-gray-700 opacity-75 line-clamp-2 h-auto overflow-hidden">
-          {description}
-        </p>
-      </div>
-
-      {/* منطقة الأزرار */}
-      <div className="p-6 pt-0 flex items-center justify-center gap-3">
-        {/* التبديل بين زرار الإضافة وزرار المسح */}
-        {!isInCart ? (
-          // زرار الإضافة للسلة (يظهر لو المنتج مش في السلة)
-          <button
-            onClick={toggleCart}
-            className="p-3 rounded-full bg-blue-50 text-blue-600 border border-blue-100 hover:bg-blue-600 hover:text-white transition-all active:scale-90"
-            title="أضف إلى السلة"
-          >
-            <ShoppingCart size={20} />
-          </button>
-        ) : (
-          // زرار الحذف من السلة (يظهر لو المنتج موجود في السلة)
-          <button
-            onClick={toggleCart}
-            className="p-3 rounded-full bg-red-50 text-red-600 border border-red-100 hover:bg-red-600 hover:text-white transition-all active:scale-90 animate-in fade-in zoom-in duration-300"
-            title="إزالة من السلة"
-          >
-            <Trash2 size={20} />
-          </button>
-        )}
-
-        {/* زرار تفاصيل المنتج الثابت */}
-        <Link
-          href={`/products/${id}`} // بنبعت الـ id في العنوان
-          className="flex-1 max-w-[200px] font-sans font-bold text-center uppercase py-3.5 px-6 rounded-full bg-slate-900 text-red-500 shadow-md hover:scale-[1.03] active:scale-95 transition-all"
+        <button
+          onClick={handleWhatsAppOrder}
+          className="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-900 text-white font-bold py-3 transition duration-200 hover:bg-slate-800"
         >
-          تفاصيل المنتج
-        </Link>
+          <MessageCircle size={18} />
+          اطلب تعديلاتك
+        </button>
+
+        <div className="flex gap-3">
+          <button
+            onClick={toggleCart}
+            className={`flex-1 inline-flex items-center justify-center gap-2 rounded-2xl border py-3 text-sm font-semibold transition duration-200 ${
+              isInCart
+                ? "border-red-200 bg-red-50 text-red-600"
+                : "border-slate-200 bg-white text-slate-900 hover:bg-slate-50"
+            }`}
+          >
+            {isInCart ? <Trash2 size={18} /> : <ShoppingCart size={18} />}
+            {isInCart ? "أزل من السلة" : "أضف للسلة"}
+          </button>
+
+          <Link
+            href={`/products/${id}`}
+            prefetch={true}
+            className="flex-1 inline-flex items-center justify-center rounded-2xl bg-slate-100 text-slate-900 font-semibold py-3 text-sm transition duration-200 hover:bg-slate-200"
+          >
+            عرض كامل التفاصيل
+          </Link>
+        </div>
       </div>
-      {/* 1. ضيف المكون ده هنا قبل قفلة الـ div الأخيرة */}
+
       <Lightbox
         open={open}
         close={() => setOpen(false)}
         index={currentImageIndex}
-        // بنحول مصفوفة الروابط لشكل Lightbox بيفهمه
         slides={
           images?.map((img) => ({ src: img })) || [
             { src: "/double-sofa-01.png" },
@@ -235,4 +194,15 @@ export default function ProductCard({
       />
     </div>
   );
+}
+
+{
+  /* Hover Overlay */
+}
+{
+  /* <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <span className="text-white bg-white/20 backdrop-blur-md px-4 py-2 rounded-full text-sm font-medium border border-white/30">
+            تكبير الصورة
+          </span>
+        </div> */
 }
