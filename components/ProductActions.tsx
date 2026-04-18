@@ -1,6 +1,6 @@
 "use client"
 
-import { useLanguage } from "@/components/LanguageProvider"
+import { useLanguage } from "@/lib/context/LanguageProvider"
 import { Button } from "@/components/ui/button"
 import { Edit, Loader2, Trash2 } from "lucide-react"
 import { useRouter } from "next/navigation"

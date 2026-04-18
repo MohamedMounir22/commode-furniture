@@ -2,6 +2,7 @@
 
 import { useLanguage } from "@/lib/context/LanguageProvider";
 import nextDynamic from "next/dynamic";
+import { useState , useEffect } from "react";
 
 // الـ Lazy Loading لكارت المنتج
 const ProductCard = nextDynamic(() => import("./ProductCard"), {
@@ -11,6 +12,7 @@ const ProductCard = nextDynamic(() => import("./ProductCard"), {
 
 export default function LatestProducts({ products }: any) {
     const { t } = useLanguage();
+    const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
     if (!products || products.length === 0) {
         return <p className="text-center py-10">{t("latestProducts.loading")}</p>;
@@ -18,19 +20,45 @@ export default function LatestProducts({ products }: any) {
 
     return (
         <section className="py-8">
-            <h2 className="text-2xl font-bold mb-6 text-right px-4">{t("home.latestArrivals")}</h2>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 px-4">
+                <h2 className="text-2xl font-bold text-right">{t("home.latestArrivals")}</h2>
+                <div className="flex items-center gap-2 self-start sm:self-auto">
+                    <button
+                        type="button"
+                        onClick={() => setViewMode("grid")}
+                        className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${viewMode === "grid"
+                            ? "bg-slate-900 text-white border-slate-900"
+                            : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                            }`}
+                        aria-pressed={viewMode === "grid"}
+                    >
+                        {t("latestProducts.gridView")}
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setViewMode("list")}
+                        className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${viewMode === "list"
+                            ? "bg-slate-900 text-white border-slate-900"
+                            : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                            }`}
+                        aria-pressed={viewMode === "list"}
+                    >
+                        {t("latestProducts.listView")}
+                    </button>
+                </div>
+            </div>
 
-            {/* Grid الموبايل (صف واحد) والكمبيوتر (3 صفوف) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-4">
+            <div
+                className={`grid gap-2 px-1 ${viewMode === "grid"
+                    ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-4" // هنا خليناه 2 على الموبايل
+                    : "grid-cols-1" // هنا هيفضل كارد واحد كبير عمودي
+                    }`}
+            >
                 {products.map((item: any) => (
                     <ProductCard
                         key={item._id}
-                        id={item._id}
-                        name={item.name}
-                        price={item.price} // أو حسب مسمى الحقل عندك في الداتابيز
-                        discount={item.discount || 0}
-                        images={item.images} // أو حسب مسمى الحقل عندك في الداتابيز
-                        description={item.description}
+                        viewMode={viewMode} // مررنا الـ mode هنا
+                        {...item} // بدل ما نكتب كل الـ props نستخدم الـ spread
                     />
                 ))}
             </div>

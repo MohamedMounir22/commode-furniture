@@ -1,6 +1,6 @@
 "use client"
 
-import { useLanguage } from "@/components/LanguageProvider"
+import { useLanguage } from "@/lib/context/LanguageProvider"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"

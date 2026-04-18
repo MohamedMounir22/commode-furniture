@@ -8,6 +8,7 @@ import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 
 export default function ProductCard({
+  viewMode = "grid", // القيمة الافتراضية لو ما تم تمريرها
   id,
   name,
   price,
@@ -83,6 +84,46 @@ export default function ProductCard({
       });
     }
   }, [images]);
+
+  if (viewMode === "grid") {
+    // وضع الشبكة: عرض جميل للصور مع تأثيرات بصرية للموبايل
+    return (
+      <div className="group relative aspect-[5/5] w-full overflow-hidden rounded-2xl bg-linear-to-br from-zinc-50 to-zinc-100 shadow-lg active:shadow-xl active:scale-95 transition-all duration-200 border border-zinc-200/50">
+        <img
+          src={images[0]}
+          alt={name}
+          className="h-full w-full object-cover transition-all duration-300 active:scale-105 active:brightness-110"
+        />
+
+        {/* Product name overlay - always visible on mobile */}
+        <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
+          <h3 className="text-white font-bold text-sm truncate drop-shadow-lg">
+            {name}
+          </h3>
+          {hasDiscount && (
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-orange-400 font-semibold text-xs">
+                {discountedPrice} {currency}
+              </span>
+              <span className="text-zinc-300 line-through text-xs">
+                {price} {currency}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Discount badge */}
+        {discount > 0 && (
+          <div className="absolute top-3 right-3 rounded-full bg-orange-500 px-2 py-1 text-xs text-white font-bold shadow-lg opacity-90">
+            -{discount}%
+          </div>
+        )}
+
+        {/* Touch ripple effect */}
+        <div className="absolute inset-0 bg-white/20 opacity-0 active:opacity-100 transition-opacity duration-200 rounded-2xl" />
+      </div>
+    );
+  }
 
   return (
     <div className="relative flex flex-col text-slate-700 bg-white shadow-lg rounded-[1.75rem] w-full hover:-translate-y-1 hover:shadow-2xl transition duration-300 overflow-hidden border border-slate-200">

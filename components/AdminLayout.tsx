@@ -1,6 +1,6 @@
 "use client";
 
-import { useLanguage } from "@/components/LanguageProvider";
+import { useLanguage } from "@/lib/context/LanguageProvider";
 import { Home, Package, Plus, Settings, ShoppingCart, Users } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
