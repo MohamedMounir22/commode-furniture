@@ -33,7 +33,7 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function ProductPage({ params }) {
-  const { id } = params;
+  const { id } = await params;
   const product = await getProduct(id);
 
   if (!product) {

@@ -26,7 +26,7 @@ export default function LocalizedHome({ products }: { products: any[] }) {
                     <LatestProducts products={products} />
                 </section>
 
-                <section className="w-full max-w-7xl py-20 px-4 sm:px-6">
+                {/* <section className="w-full max-w-7xl py-20 px-4 sm:px-6">
                     <h2 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
                         {t("home.featuredPieces")}
                     </h2>
@@ -42,7 +42,7 @@ export default function LocalizedHome({ products }: { products: any[] }) {
                             </div>
                         ))}
                     </div>
-                </section>
+                </section> */}
             </main>
         </div>
     );

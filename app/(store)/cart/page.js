@@ -1,6 +1,6 @@
 "use client";
 
-import { useLanguage } from "@/components/LanguageProvider";
+import { useLanguage } from "@/lib/context/LanguageProvider";
 import { useCart } from "@/lib/context/CartContext";
 import { MessageCircle, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import Image from "next/image";

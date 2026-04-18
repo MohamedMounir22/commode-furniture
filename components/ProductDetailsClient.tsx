@@ -1,7 +1,7 @@
 "use client";
 
 import AddToCartButton from "@/components/AddToCartButton";
-import { useLanguage } from "@/components/LanguageProvider";
+import { useLanguage } from "@/lib/context/LanguageProvider";
 import { MessageCircle, ShieldCheck, Trees, Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";

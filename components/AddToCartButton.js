@@ -1,6 +1,6 @@
 "use client";
 import { useCart } from "@/lib/context/CartContext";
-import { useLanguage } from "@/components/LanguageProvider";
+import { useLanguage } from "@/lib/context/LanguageProvider";
 import { ShoppingCart } from "lucide-react";
 import { useState } from "react";
 
