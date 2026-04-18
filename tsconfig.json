@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-, "lib/models/product.js"  ],
+, "lib/models/product.js", "lib/language.js", "lib/context/LanguageProvider.js", "components/LanguageToggle.js"  ],
   "exclude": ["node_modules"]
 }

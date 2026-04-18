@@ -1,4 +1,5 @@
 "use client";
+import { useLanguage } from "@/lib/context/LanguageProvider";
 import { Flame, MessageCircle, ShoppingCart, Trash2 } from "lucide-react"; // ضفنا أيقونة الرسالة
 import Image from "next/image";
 import Link from "next/link";
@@ -14,6 +15,8 @@ export default function ProductCard({
   images,
   discount,
 }) {
+  const { t, locale } = useLanguage();
+  const currency = t("cart.currency");
   discount = Number(discount) || 0;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [imageLoading, setImageLoading] = useState(false);
@@ -44,11 +47,12 @@ export default function ProductCard({
 
   const handleWhatsAppOrder = () => {
     const phoneNumber = "201013598586"; // الرقم بالصيغة الدولية
+    const currency = t("cart.currency");
 
-    const message = `أهلاً كومود، محتاج أطلب تعديلات على:
-المنتج: ${name}
-السعر: ${price} ج.م
-رابط الصورة: ${displayImage}`;
+    const message =
+      locale === "ar"
+        ? `أهلاً كومود، محتاج أطلب تعديلات على:\nالمنتج: ${name}\nالسعر: ${price} ${currency}\nرابط الصورة: ${displayImage}`
+        : `Hello Commode, I would like to request customizations for:\nProduct: ${name}\nPrice: ${price} ${currency}\nImage link: ${displayImage}`;
 
     const encodedMessage = encodeURIComponent(message);
 
@@ -98,12 +102,12 @@ export default function ProductCard({
           draggable={false}
         />
 
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-t from-slate-950/70 via-transparent to-transparent pointer-events-none" />
 
         {discount > 0 && (
           <div className="absolute top-4 right-4 rounded-full bg-orange-500 px-3 py-1 text-xs text-white font-bold shadow-lg">
             <Flame className="h-3.5 w-3.5" />
-            خصم {discount}%
+            {t("productCard.discountLabel")} {discount}%
           </div>
         )}
       </div>
@@ -115,7 +119,7 @@ export default function ProductCard({
               {name}
             </h3>
             <p className="text-sm text-slate-500 mt-1">
-              تعديل مقاسات وألوان حسب طلبك
+              {t("productCard.descriptionFallback")}
             </p>
           </div>
 
@@ -123,31 +127,30 @@ export default function ProductCard({
             {hasDiscount ? (
               <>
                 <div className="text-slate-500 line-through text-sm">
-                  {price} ج.م
+                  {price} {currency}
                 </div>
                 <div className="text-orange-600 font-bold text-xl">
-                  {discountedPrice} ج.م
+                  {discountedPrice} {currency}
                 </div>
               </>
             ) : (
               <div className="text-slate-900 font-bold text-xl">
-                {price} ج.م
+                {price} {currency}
               </div>
             )}
           </div>
         </div>
 
         <p className="text-slate-600 text-sm leading-6 line-clamp-3">
-          {description ||
-            "تصميم عصري بخامات عالية الجودة، متاح تعديل المقاسات والألوان حسب طلبك."}
+          {description || t("productCard.descriptionFallback")}
         </p>
 
         <div className="flex flex-wrap gap-2">
           <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold text-slate-700">
-            خشب طبيعي
+            {t("productCard.tag1")}
           </span>
           <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold text-slate-700">
-            ضمان 3 سنوات
+            {t("productCard.tag2")}
           </span>
         </div>
 
@@ -156,7 +159,7 @@ export default function ProductCard({
           className="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-900 text-white font-bold py-3 transition duration-200 hover:bg-slate-800"
         >
           <MessageCircle size={18} />
-          اطلب تعديلاتك
+          {t("productCard.orderButton")}
         </button>
 
         <div className="flex gap-3">
@@ -169,7 +172,9 @@ export default function ProductCard({
             }`}
           >
             {isInCart ? <Trash2 size={18} /> : <ShoppingCart size={18} />}
-            {isInCart ? "أزل من السلة" : "أضف للسلة"}
+            {isInCart
+              ? t("productCard.removeFromCart")
+              : t("productCard.addToCart")}
           </button>
 
           <Link
@@ -177,7 +182,7 @@ export default function ProductCard({
             prefetch={true}
             className="flex-1 inline-flex items-center justify-center rounded-2xl bg-slate-100 text-slate-900 font-semibold py-3 text-sm transition duration-200 hover:bg-slate-200"
           >
-            عرض كامل التفاصيل
+            {t("productCard.details")}
           </Link>
         </div>
       </div>

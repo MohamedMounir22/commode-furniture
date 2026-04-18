@@ -1,7 +1,9 @@
 import ChatWidget from "@/components/ChatWidget";
+import HeaderNav from "@/components/HeaderNav";
+import LanguageProvider from "@/lib/context/LanguageProvider";
+import { CartProvider } from "@/lib/context/CartContext";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Link from "next/link";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -30,46 +32,13 @@ export default function RootLayout({
             className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
         >
             <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
-                <header className="sticky top-0 z-50 w-full border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-black/80 backdrop-blur-md">
-                    <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
-                        <div className="flex lg:flex-1">
-                            <Link
-                                href="/"
-                                className="-m-1.5 p-1.5 text-2xl font-bold tracking-tighter"
-                            >
-                                COMMODE
-                            </Link>
-                        </div>
-                        <div className="flex gap-x-8">
-                            <Link
-                                href="/products"
-                                className="text-sm font-semibold hover:text-zinc-500 transition"
-                            >
-                                Shop
-                            </Link>
-                            <Link
-                                href="/about"
-                                className="text-sm font-semibold hover:text-zinc-500 transition"
-                            >
-                                Our Story
-                            </Link>
-                            <Link
-                                href="/admin/dashboard"
-                                className="text-sm font-semibold hover:text-zinc-500 transition"
-                            >
-                                Admin
-                            </Link>
-                        </div>
-                        <div className="flex lg:flex-1 lg:justify-end gap-x-4">
-                            <Link href="/cart" className="text-sm font-semibold">
-                                Cart (0)
-                            </Link>
-                        </div>
-                    </nav>
-                </header>
+                <LanguageProvider>
+                    <CartProvider>
+                        <HeaderNav />
 
-                {/* The {children} is where your specific page.tsx content will appear */}
-                <main className="flex-1 flex flex-col">{children}</main>
+                        <main className="flex-1 flex flex-col">{children}</main>
+                    </CartProvider>
+                </LanguageProvider>
 
                 <footer className="border-t border-zinc-200 dark:border-zinc-800 py-12 bg-zinc-50 dark:bg-zinc-950">
                     {/* <div className="mt-4 flex items-center justify-center gap-2 group">

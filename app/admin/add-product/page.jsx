@@ -1,37 +1,132 @@
 "use client"
 
+import { useLanguage } from "@/components/LanguageProvider"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ArrowLeft, ImagePlus, Loader2, Trash2 } from "lucide-react"
-import { CldUploadWidget } from 'next-cloudinary'; // ضفنا مكتبة الرفع
+import imageCompression from 'browser-image-compression'
+import { ArrowLeft, Loader2, Trash2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 
+
+
+
+
 const categoryOptions = [
-  { value: "dining", label: "سفرة" },
-  { value: "sofas", label: "انتريهات" },
-  { value: "tables", label: "ترابيزات" },
-  { value: "console", label: "كونسول" },
+    { value: "dining" },
+    { value: "sofas" },
+    { value: "tables" },
+    { value: "console" },
 ]
 
-const formSchema = z.object({
-    name: z.string().min(2, { message: "اسم المنتج لازم يكون حرفين على الأقل" }),
-    price: z.coerce.number().min(1, { message: "السعر لازم يكون أكبر من صفر" }),
-    description: z.string().min(10, { message: "الوصف لازم يكون مفصل شوية" }),
-    discount: z.coerce.number().min(0, { message: "الخصم لازم يكون 0 أو أكبر" }).max(100, { message: "الخصم مينفعش يكون أكبر من 100%" }),
-    category: z.enum(["dining", "sofas", "tables", "console"], { errorMap: () => ({ message: "اختر فئة مناسبة للمنتج" }) }),
-})
+const getFormSchema = (t) =>
+  z.object({
+    name: z.string().min(2, { message: t("admin.form.errors.nameMin") }),
+    price: z.coerce.number().min(1, { message: t("admin.form.errors.priceMin") }),
+    description: z.string().min(10, { message: t("admin.form.errors.descriptionMin") }),
+    discount: z.coerce.number()
+      .min(0, { message: t("admin.form.errors.discountMin") })
+      .max(100, { message: t("admin.form.errors.discountMax") }),
+    category: z.enum(["dining", "sofas", "tables", "console"], {
+      errorMap: () => ({ message: t("admin.form.errors.categoryRequired") }),
+    }),
+  })
 
 export default function AddProductPage() {
     const router = useRouter()
+    const { t, locale } = useLanguage();
     const [images, setImages] = useState([]); // مصفوفة الروابط اللي هتيجي من Cloudinary
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [toast, setToast] = useState({ visible: false, type: "success", message: "" });
+
+
+    const [previewImage, setPreviewImage] = useState(null); // حالة لصورة المعاينة
+
+    const [filetoUpload, setFileToUpload] = useState(null); //الملف اللي عيروح لـ Cloudinary
+
+
+    // const handleImageUpload = async (event) => {
+    //     const files = Array.from(event.target.files);
+
+    //     files.forEach(async (file) => {
+    //         // 1. الضغط (نفس الكود اللي فات)
+    //         const options = { maxSizeMB: 1, maxWidthOrHeight: 1920, useWebWorker: true };
+    //         const compressedFile = await imageCompression(file, options);
+
+    //         // طباعة الحجم في الـ Console
+    //         console.log(`اسم الملف: ${compressedFile.name}`);
+    //         console.log(`الحجم قبل الضغط: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
+    //         console.log(`الحجم بعد الضغط: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`);
+
+    //         // 2. الرفع اليدوي لـ Cloudinary
+    //         const formData = new FormData();
+    //         formData.append("file", compressedFile);
+    //         formData.append("upload_preset", "commode_present"); // الـ Preset بتاعك
+
+    //         const response = await fetch(
+    //             `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+    //             { method: "POST", body: formData }
+    //         );
+
+    //         const data = await response.json();
+    //         if (data.secure_url) {
+    //             setImages((prev) => [...prev, data.secure_url]);
+    //         }
+    //     });
+    // };
+    const handleImageUpload = async (event) => {
+    // 1. تحويل الـ FileList لمصفوفة عادية
+    const files = Array.from(event.target.files);
+    if (files.length === 0) return;
+
+    // حالة تحميل (Loading) عشان نعرف إننا شغالين
+    console.log(`بدأنا نضغط ونرفع ${files.length} صور...`);
+
+    const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true,
+    };
+
+    // نستخدم Loop عشان نعالج الصور بالترتيب
+    for (const file of files) {
+        try {
+            // 2. ضغط الصورة الحالية
+            const compressedFile = await imageCompression(file, options);
+
+            // 3. تجهيز الـ FormData للرفع
+            const formData = new FormData();
+            formData.append("file", compressedFile);
+            formData.append("upload_preset", "commode_present");
+
+            // 4. الرفع لـ Cloudinary
+            const response = await fetch(
+                `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+                { method: "POST", body: formData }
+            );
+
+            const data = await response.json();
+
+            if (data.secure_url) {
+                // 5. إضافة رابط الصورة الجديد للمصفوفة الأصلية
+                setImages((prev) => [...prev, data.secure_url]);
+
+                // لو حابب تسجل الحجم عشان تراقبه
+                console.log(`تم رفع ${file.name} بنجاح. الحجم: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`);
+            }
+        } catch (error) {
+            console.error(`فشل في معالجة الصورة ${file.name}:`, error);
+        }
+    }
+};
+
+
+    const formSchema = getFormSchema(t);
 
     const form = useForm({
         resolver: zodResolver(formSchema),
@@ -52,7 +147,7 @@ export default function AddProductPage() {
 
     async function onSubmit(values) {
         if (images.length === 0) {
-            showToast("error", "⚠️ يا هندسة لازم ترفع صورة واحدة على الأقل للمنتج!");
+            showToast("error", t("admin.form.requireImage"));
             return;
         }
 
@@ -70,18 +165,18 @@ export default function AddProductPage() {
             });
 
             if (response.ok) {
-                showToast("success", "🎉 المنتج اتسيف بنجاح!");
+                showToast("success", t("admin.form.addSuccess"));
                 form.reset();
                 setImages([]); // نصفر الصور بعد النجاح
                 setTimeout(() => {
                     router.push("/admin/dashboard/products");
                 }, 700);
             } else {
-                showToast("error", "❌ حصلت مشكلة وأنا ببعت البيانات");
+                showToast("error", t("admin.form.failedSend"));
             }
         } catch (error) {
             console.error("Error:", error);
-            showToast("error", "⚠️ السيرفر مش بيرد");
+            showToast("error", t("admin.form.serverError"));
         } finally {
             setIsSubmitting(false);
         }
@@ -100,19 +195,19 @@ export default function AddProductPage() {
                 </div>
             )}
 
-            <div className="flex items-center justify-between mb-6">
+            <div className={`flex items-center justify-between mb-6 ${locale === "ar" ? "text-right" : "text-left"}`}>
                 <div>
-                    <h1 className="text-2xl font-bold text-right">إضافة منتج جديد لـ "كومود" 🛋️</h1>
-                    <p className="text-sm text-gray-500 mt-2 text-right">أضف منتج جديد وسيتم تحويلك إلى صفحة المنتجات بعد الحفظ.</p>
+                    <h1 className="text-2xl font-bold">{t("admin.form.addProductTitle")}</h1>
+                    <p className="text-sm text-gray-500 mt-2">{t("admin.form.addProductSubtitle")}</p>
                 </div>
                 <Button variant="outline" size="sm" onClick={() => router.back()}>
                     <ArrowLeft className="w-4 h-4 ml-2" />
-                    رجوع
+                    {t("admin.form.back")}
                 </Button>
             </div>
 
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 text-right" dir="rtl">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" dir={locale === "ar" ? "rtl" : "ltr"}>
 
                     {/* اسم المنتج */}
                     <FormField
@@ -120,8 +215,8 @@ export default function AddProductPage() {
                         name="name"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>اسم المنتج</FormLabel>
-                                <FormControl><Input placeholder="مثلاً: صالون كلاسيك" {...field} /></FormControl>
+                                <FormLabel>{t("admin.form.productName")}</FormLabel>
+                                <FormControl><Input placeholder={t("admin.form.productNamePlaceholder")} {...field} /></FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -133,7 +228,7 @@ export default function AddProductPage() {
                         name="price"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>السعر (جنية)</FormLabel>
+                                <FormLabel>{t("admin.form.price")}</FormLabel>
                                 <FormControl><Input type="number" {...field} /></FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -146,7 +241,7 @@ export default function AddProductPage() {
                         name="discount"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>نسبة الخصم (%)</FormLabel>
+                                <FormLabel>{t("admin.form.discount")}</FormLabel>
                                 <FormControl><Input type="number" placeholder="0" {...field} /></FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -155,30 +250,30 @@ export default function AddProductPage() {
 
                     {/* فئة المنتج */}
                     <FormField
-                      control={form.control}
-                      name="category"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>فئة المنتج</FormLabel>
-                          <FormControl>
-                            <select {...field} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500">
-                              {categoryOptions.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                  {option.label}
-                                </option>
-                              ))}
-                            </select>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                        control={form.control}
+                        name="category"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t("admin.form.category")}</FormLabel>
+                                <FormControl>
+                                    <select {...field} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500">
+                                        {categoryOptions.map((option) => (
+                                            <option key={option.value} value={option.value}>
+                                                {t(`categories.${option.value}`)}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
                     />
 
                     {/* قسم رفع الصور من Cloudinary */}
                     <div className="space-y-3">
-                        <FormLabel>صور المنتج (ارفع من جهازك)</FormLabel>
+                        <FormLabel>{t("admin.form.uploadImages")}</FormLabel>
 
-                        {/* عرض صور الـ Preview */}
+                        {/* عرض الصور اللي اترفعت (Preview) - خليه زي ما هو */}
                         <div className="grid grid-cols-3 gap-4 mb-4">
                             {images.map((url, index) => (
                                 <div key={index} className="relative aspect-square border rounded-lg overflow-hidden group">
@@ -194,95 +289,21 @@ export default function AddProductPage() {
                             ))}
                         </div>
 
-                        {/* الزرار السحري */}
-                        {/* <CldUploadWidget
-                            uploadPreset="commode_present"
-                            options={{
-                                // 1. افتح الحجم للآخر (20 ميجا مثلاً)
-                                maxFileSize: 20000000,
-
-                                // 2. اسمح بأي نوع ملفات (صور، جيف، أي حاجة)
-                                clientAllowedFormats: null,
-
-                                // 3. اسمح برفع كذا صورة مع بعض (لحد 10 مثلاً)
-                                multiple: true,
-                                maxFiles: 10,
-
-                                // 4. دي أهم واحدة: بتخلي السيرفر يقبل الملف "خام" من غير فحص
-                                resourceType: "auto",
-
-                                // 5. بتضيف الزراير اللي بتسهل الرفع (من الجهاز أو برابط)
-                                sources: ['local', 'url', 'camera'],
-                            }}
-                            onSuccess={(result) => {
-                                if (result.info && result.info.secure_url) {
-                                    setImages((prev) => [...prev, result.info.secure_url]);
-                                }
-                            }}
+                        {/* Input الرفع المخفي والزرار الشيك */}
+                        <input
+                            type="file"
+                            multiple
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            className="hidden"
+                            id="imageInput"
+                        />
+                        <label
+                            htmlFor="imageInput"
+                            className="cursor-pointer inline-flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all active:scale-95"
                         >
-                            {({ open }) => (
-                                <button
-                                    type="button"
-                                    className="bg-slate-900 text-white px-4 py-2 rounded-lg"
-                                    onClick={() => open()}
-                                >
-                                    ارفع أي صورة يا بطل 🚀
-                                </button>
-                            )}
-                        </CldUploadWidget> */}
-
-                        <CldUploadWidget
-                            uploadPreset="commode_present"
-                            config={{ cloud: { cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME } }}
-                            options={{
-                                maxFiles: 5,
-                                language: "ar",
-                                cropping: true, // تفعيل قص الصور
-                                multiple: true,
-                                sources: ["local"],
-                                styles: {
-                                    palette: {
-                                        window: "#0F172A",
-                                        sourceBg: "#1E293B",
-                                        windowBorder: "#334155",
-                                        tabIcon: "#38BDF8",
-                                        inactiveTabIcon: "#94A3B8",
-                                        menuIcons: "#CBD5E1",
-                                        link: "#38BDF8",
-                                        action: "#0EA5E9",
-                                        inProgress: "#0EA5E9",
-                                        complete: "#22C55E",
-                                        error: "#F43F5E",
-                                        textDark: "#000000",
-                                        textLight: "#F8FAFC"
-                                    }
-                                }
-                            }}
-                            onError={(error) => {
-                                console.error("Cloudinary upload failed:", error);
-                                showToast("error", "❌ فشل رفع الصورة. حاول تاني.");
-                            }}
-                            onSuccess={(result) => {
-                                if (result.info && result.info.secure_url) {
-                                    setImages((prev) => [...prev, result.info.secure_url]);
-                                }
-                            }}
-                        >
-                            {({ open }) => (
-                                <button
-                                    onClick={() => {
-                                        if (open) {
-                                            open();
-                                        } else {
-                                            alert("حدثت مشكلة في فتح أداة الرفع");
-                                        }
-                                    }}
-                                    className="bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all"
-                                >
-                                    إضافة صور للمنتج 📸
-                                </button>
-                            )}
-                        </CldUploadWidget>
+                            <span>{t("admin.form.uploadNewImage")} 📸</span>
+                        </label>
                     </div>
 
                     {/* الوصف */}
@@ -291,8 +312,8 @@ export default function AddProductPage() {
                         name="description"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>وصف المنتج</FormLabel>
-                                <FormControl><Textarea placeholder="اكتب تفاصيل الخشب والقماش..." {...field} /></FormControl>
+                                <FormLabel>{t("admin.form.description")}</FormLabel>
+                                <FormControl><Textarea placeholder={t("admin.form.descriptionPlaceholder")} {...field} /></FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -302,10 +323,10 @@ export default function AddProductPage() {
                         {isSubmitting ? (
                             <>
                                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                جاري حفظ المنتج...
+                                {t("admin.form.saveProduct")}...
                             </>
                         ) : (
-                            "حفظ المنتج في المخزن"
+                            t("admin.form.saveProduct")
                         )}
                     </Button>
                 </form>

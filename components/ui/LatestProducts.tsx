@@ -1,5 +1,6 @@
 "use client";
 
+import { useLanguage } from "@/lib/context/LanguageProvider";
 import nextDynamic from "next/dynamic";
 
 // الـ Lazy Loading لكارت المنتج
@@ -9,14 +10,15 @@ const ProductCard = nextDynamic(() => import("./ProductCard"), {
 });
 
 export default function LatestProducts({ products }: any) {
-    // لو مفيش منتجات لسه محملتش
+    const { t } = useLanguage();
+
     if (!products || products.length === 0) {
-        return <p className="text-center py-10">جاري تجهيز أحدث الموديلات...</p>;
+        return <p className="text-center py-10">{t("latestProducts.loading")}</p>;
     }
 
     return (
         <section className="py-8">
-            <h2 className="text-2xl font-bold mb-6 text-right px-4">أحدث المنتجات</h2>
+            <h2 className="text-2xl font-bold mb-6 text-right px-4">{t("home.latestArrivals")}</h2>
 
             {/* Grid الموبايل (صف واحد) والكمبيوتر (3 صفوف) */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-4">

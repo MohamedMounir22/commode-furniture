@@ -173,3 +173,21 @@ img {
   -o-user-drag: none;
   user-drag: none;
 }
+
+
+/* globals.css */
+
+@keyframes fadeInCustom {
+  0% {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-luxury-fade {
+  animation: fadeInCustom 0.8s ease-out forwards;
+}
