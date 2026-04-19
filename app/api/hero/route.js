@@ -1,10 +1,6 @@
 import dbConnect from "@/lib/db.js"; // تأكد من مسار ملف الاتصال بقاعدة البيانات
-import { NextResponse } from "next/server";
 import Hero from "@/lib/models/Hero.js"; // تأكد من مسار موديل الهيرو
-
-import dbConnect from "@/lib/db.js"; // تأكد من مسار ملف الاتصال بقاعدة البيانات
 import { NextResponse } from "next/server";
-import Hero from "@/lib/models/Hero.js"; // تأكد من مسار موديل الهيرو
 
 // 1. جلب كل السلايدات (GET)
 export async function GET() {
@@ -28,7 +24,9 @@ export async function POST(req) {
     return NextResponse.json({ success: true, data: slide }, { status: 201 });
   } catch (error) {
     console.error("Error creating hero slide:", error);
-    return NextResponse.json({ success: false, error: "Database not available" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: "Database not available" },
+      { status: 500 },
+    );
   }
 }
-
