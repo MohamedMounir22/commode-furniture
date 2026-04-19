@@ -1,6 +1,7 @@
 "use client";
 
 import Hero from "@/components/Hero";
+import LastDelivered from "@/components/LastDelivered";
 import CategoryFilter from "@/components/ui/CategoryFilter";
 import LatestProducts from "@/components/ui/LatestProducts";
 import { useLanguage } from "@/lib/context/LanguageProvider";
@@ -12,6 +13,8 @@ export default function LocalizedHome({ products }: { products: any[] }) {
         <div className="flex flex-col flex-1 bg-zinc-50 font-sans dark:bg-black">
             <main className="flex flex-1 w-full flex-col items-center">
                 <Hero />
+
+                <LastDelivered />
 
                 <div className="w-full flex justify-center py-10">
                     <div className="w-full max-w-7xl">
