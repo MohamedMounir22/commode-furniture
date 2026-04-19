@@ -1,3 +1,4 @@
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import ChatWidget from "@/components/ChatWidget";
 import HeaderNav from "@/components/HeaderNav";
 import LanguageProvider from "@/lib/context/LanguageProvider";
@@ -5,6 +6,7 @@ import { CartProvider } from "@/lib/context/CartContext";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -37,6 +39,7 @@ export default function RootLayout({
                         <HeaderNav />
 
                         <main className="flex-1 flex flex-col">{children}</main>
+                        <SpeedInsights />
                     </CartProvider>
                 </LanguageProvider>
 
