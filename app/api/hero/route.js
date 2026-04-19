@@ -31,5 +31,4 @@ export async function POST(req) {
     return NextResponse.json({ success: false, error: "Database not available" }, { status: 500 });
   }
 }
-  }
-}
+
