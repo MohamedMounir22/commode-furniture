@@ -181,7 +181,7 @@ export default function EditProductForm() {
               <FormItem>
                 <FormLabel>{t("admin.form.category")}</FormLabel>
                 <FormControl>
-                  <select {...field} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500">
+                  <select {...field} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500">
                     {categoryOptions.map((option) => (
                       <option key={option.value} value={option.value}>
                         {t(`categories.${option.value}`)}

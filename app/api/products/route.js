@@ -29,7 +29,11 @@ export async function GET(request) {
 // --- إضافة منتج جديد (POST) ---
 export async function POST(request) {
   try {
+
+    // للتاكد من اتصال السيرفير بالداتابيز
     await connectDB();
+
+    
     const data = await request.json();
 
     const newProduct = await Product.create(data);

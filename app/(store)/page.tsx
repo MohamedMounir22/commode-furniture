@@ -1,24 +1,24 @@
 ﻿import LocalizedHome from "@/components/LocalizedHome";
 
-export default async function Home({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
-    const params = await searchParams;
-    const category = params.category || "all";
-
+export default async function Home({ searchParams }: { searchParams?: Promise<{ category?: string }> }) {
+    const resolvedParams = await searchParams;
+    const category = resolvedParams?.category || "all";
     let productsData = [];
 
     try {
-        const apiUrl = category && category !== 'all'
-            ? `http://localhost:3000/api/products?category=${category}`
-            : `http://localhost:3000/api/products`;
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+        const apiUrl =
+            category && category !== "all"
+                ? `${baseUrl}/api/products?category=${category}`
+                : `${baseUrl}/api/products`;
 
-        const res = await fetch(apiUrl, { next: { tags: ['products-data'], revalidate: 2000 } });
+        const res = await fetch(apiUrl, { next: { tags: ["products-data"], revalidate: 2000 } });
 
-        console.log("API Response Status:", res.status);
-        if (res.ok) {
-            productsData = await res.json();
-        } else {
-            throw new Error("Failed to fetch products");
+        if (!res.ok) {
+            throw new Error(`Failed to fetch products: ${res.status}`);
         }
+
+        productsData = await res.json();
     } catch (error) {
         console.error("Error fetching products:", error);
     }

@@ -1,16 +1,25 @@
 "use client"
 
 import { useLanguage } from "@/lib/context/LanguageProvider"
+
 import { Button } from "@/components/ui/button"
+
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+
 import { Input } from "@/components/ui/input"
+
 import { Textarea } from "@/components/ui/textarea"
 import { zodResolver } from "@hookform/resolvers/zod"
 import imageCompression from 'browser-image-compression'
+
 import { ArrowLeft, Loader2, Trash2 } from "lucide-react"
+
 import { useRouter } from "next/navigation"
+
 import { useState } from "react"
+
 import { useForm } from "react-hook-form"
+
 import * as z from "zod"
 
 
@@ -24,18 +33,23 @@ const categoryOptions = [
     { value: "console" },
 ]
 
+
+
 const getFormSchema = (t) =>
-  z.object({
-    name: z.string().min(2, { message: t("admin.form.errors.nameMin") }),
-    price: z.coerce.number().min(1, { message: t("admin.form.errors.priceMin") }),
-    description: z.string().min(10, { message: t("admin.form.errors.descriptionMin") }),
-    discount: z.coerce.number()
-      .min(0, { message: t("admin.form.errors.discountMin") })
-      .max(100, { message: t("admin.form.errors.discountMax") }),
-    category: z.enum(["dining", "sofas", "tables", "console"], {
-      errorMap: () => ({ message: t("admin.form.errors.categoryRequired") }),
-    }),
-  })
+    z.object({
+        name: z.string().min(2, { message: t("admin.form.errors.nameMin") }),
+        price: z.coerce.number().min(1, { message: t("admin.form.errors.priceMin") }),
+        description: z.string().min(10, { message: t("admin.form.errors.descriptionMin") }),
+        discount: z.coerce.number()
+            .min(0, { message: t("admin.form.errors.discountMin") })
+            .max(100, { message: t("admin.form.errors.discountMax") }),
+        category: z.enum(["dining", "sofas", "tables", "console"], {
+            errorMap: () => ({ message: t("admin.form.errors.categoryRequired") }),
+        }),
+    })
+
+
+
 
 export default function AddProductPage() {
     const router = useRouter()
@@ -45,85 +59,122 @@ export default function AddProductPage() {
     const [toast, setToast] = useState({ visible: false, type: "success", message: "" });
 
 
-    const [previewImage, setPreviewImage] = useState(null); // حالة لصورة المعاينة
+    const [uploadProgress, setUploadProgress] = useState(0); // نسبة التحميل من 0 لـ 100
+    const [isUploading, setIsUploading] = useState(false); // هل فيه رفع شغال دلوقتي؟
 
-    const [filetoUpload, setFileToUpload] = useState(null); //الملف اللي عيروح لـ Cloudinary
+
+    // const [previewImage, setPreviewImage] = useState(null); // حالة لصورة المعاينة
+
+    // const [filetoUpload, setFileToUpload] = useState(null); //الملف اللي عيروح لـ Cloudinary
 
 
-    // const handleImageUpload = async (event) => {
+
+
+    //     const handleImageUpload = async (event) => {
+    //     // 1. تحويل الـ FileList لمصفوفة عادية
     //     const files = Array.from(event.target.files);
+    //     if (files.length === 0) return;
 
-    //     files.forEach(async (file) => {
-    //         // 1. الضغط (نفس الكود اللي فات)
-    //         const options = { maxSizeMB: 1, maxWidthOrHeight: 1920, useWebWorker: true };
-    //         const compressedFile = await imageCompression(file, options);
+    //     // حالة تحميل (Loading) عشان نعرف إننا شغالين
+    //     console.log(`بدأنا نضغط ونرفع ${files.length} صور...`);
 
-    //         // طباعة الحجم في الـ Console
-    //         console.log(`اسم الملف: ${compressedFile.name}`);
-    //         console.log(`الحجم قبل الضغط: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
-    //         console.log(`الحجم بعد الضغط: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`);
+    //     const options = {
+    //         maxSizeMB: 1,
+    //         maxWidthOrHeight: 1920,
+    //         useWebWorker: true,
+    //     };
 
-    //         // 2. الرفع اليدوي لـ Cloudinary
-    //         const formData = new FormData();
-    //         formData.append("file", compressedFile);
-    //         formData.append("upload_preset", "commode_present"); // الـ Preset بتاعك
+    //     // نستخدم Loop عشان نعالج الصور بالترتيب
+    //     for (const file of files) {
+    //         try {
+    //             // 2. ضغط الصورة الحالية
+    //             const compressedFile = await imageCompression(file, options);
 
-    //         const response = await fetch(
-    //             `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
-    //             { method: "POST", body: formData }
-    //         );
+    //             // 3. تجهيز الـ FormData للرفع
+    //             const formData = new FormData();
+    //             formData.append("file", compressedFile);
+    //             formData.append("upload_preset", "commode_present");
 
-    //         const data = await response.json();
-    //         if (data.secure_url) {
-    //             setImages((prev) => [...prev, data.secure_url]);
+    //             // 4. الرفع لـ Cloudinary
+    //             const response = await fetch(
+    //                 `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+    //                 { method: "POST", body: formData }
+    //             );
+
+    //             const data = await response.json();
+
+    //             if (data.secure_url) {
+    //                 // 5. إضافة رابط الصورة الجديد للمصفوفة الأصلية
+    //                 setImages((prev) => [...prev, data.secure_url]);
+
+    //                 // لو حابب تسجل الحجم عشان تراقبه
+    //                 console.log(`تم رفع ${file.name} بنجاح. الحجم: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`);
+    //             }
+    //         } catch (error) {
+    //             console.error(`فشل في معالجة الصورة ${file.name}:`, error);
     //         }
-    //     });
+    //     }
     // };
+
+
     const handleImageUpload = async (event) => {
-    // 1. تحويل الـ FileList لمصفوفة عادية
-    const files = Array.from(event.target.files);
-    if (files.length === 0) return;
+        const files = Array.from(event.target.files);
+        if (files.length === 0) return;
 
-    // حالة تحميل (Loading) عشان نعرف إننا شغالين
-    console.log(`بدأنا نضغط ونرفع ${files.length} صور...`);
+        setIsUploading(true);
+        setUploadProgress(0);
 
-    const options = {
-        maxSizeMB: 1,
-        maxWidthOrHeight: 1920,
-        useWebWorker: true,
-    };
+        // دالة داخلية لتحريك الشريط ببطء وهمي
+        const simulateProgress = (start, end, duration) => {
+            let current = start;
+            const interval = setInterval(() => {
+                current += 1;
+                if (current >= end) {
+                    clearInterval(interval);
+                } else {
+                    setUploadProgress(current);
+                }
+            }, duration / (end - start));
+            return interval;
+        };
 
-    // نستخدم Loop عشان نعالج الصور بالترتيب
-    for (const file of files) {
-        try {
-            // 2. ضغط الصورة الحالية
-            const compressedFile = await imageCompression(file, options);
+        const options = { maxSizeMB: 1, maxWidthOrHeight: 1920, useWebWorker: true };
 
-            // 3. تجهيز الـ FormData للرفع
-            const formData = new FormData();
-            formData.append("file", compressedFile);
-            formData.append("upload_preset", "commode_present");
-
-            // 4. الرفع لـ Cloudinary
-            const response = await fetch(
-                `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
-                { method: "POST", body: formData }
+        for (let i = 0; i < files.length; i++) {
+            // حرك الشريط وهمياً من بداية الصورة لحد 90% من وقت رفعها المتوقع
+            const interval = simulateProgress(
+                Math.round((i / files.length) * 100),
+                Math.round(((i + 0.9) / files.length) * 100),
+                2000 // افترض أن الصورة تأخذ ثانيتين
             );
 
-            const data = await response.json();
+            try {
+                const file = files[i];
+                const compressedFile = await imageCompression(file, options);
+                const formData = new FormData();
+                formData.append("file", compressedFile);
+                formData.append("upload_preset", "commode_present");
 
-            if (data.secure_url) {
-                // 5. إضافة رابط الصورة الجديد للمصفوفة الأصلية
-                setImages((prev) => [...prev, data.secure_url]);
+                const response = await fetch(
+                    `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+                    { method: "POST", body: formData }
+                );
 
-                // لو حابب تسجل الحجم عشان تراقبه
-                console.log(`تم رفع ${file.name} بنجاح. الحجم: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`);
+                const data = await response.json();
+                clearInterval(interval); // وقف الوهمي أول ما الرد ييجي
+
+                if (data.secure_url) {
+                    setImages((prev) => [...prev, data.secure_url]);
+                    setUploadProgress(Math.round(((i + 1) / files.length) * 100)); // قفزة للنسبة الحقيقية
+                }
+            } catch (error) {
+                clearInterval(interval);
+                console.error(`فشل الرفع:`, error);
             }
-        } catch (error) {
-            console.error(`فشل في معالجة الصورة ${file.name}:`, error);
         }
-    }
-};
+
+        setTimeout(() => { setIsUploading(false); }, 1000);
+    };
 
 
     const formSchema = getFormSchema(t);
@@ -186,7 +237,7 @@ export default function AddProductPage() {
         <div className="relative max-w-2xl mx-auto p-10 bg-white shadow-lg rounded-xl mt-10">
             {toast.visible && (
                 <div
-                    className={`fixed top-6 right-6 z-50 max-w-sm rounded-2xl px-4 py-3 text-white shadow-xl transition-opacity duration-300 ${toast.type === "success" ? "bg-emerald-600" : "bg-rose-600"
+                    className={`fixed top-6 right-6 z-50 max-w-sm rounded-2xl px-4 py-3 text-white shadow-xl transition-opacity duration-300 ${toast.type === "success" ? "bg-amber-600" : "bg-rose-600"
                         }`}
                     role="status"
                     aria-live="polite"
@@ -256,7 +307,7 @@ export default function AddProductPage() {
                             <FormItem>
                                 <FormLabel>{t("admin.form.category")}</FormLabel>
                                 <FormControl>
-                                    <select {...field} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500">
+                                    <select {...field} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500">
                                         {categoryOptions.map((option) => (
                                             <option key={option.value} value={option.value}>
                                                 {t(`categories.${option.value}`)}
@@ -290,6 +341,20 @@ export default function AddProductPage() {
                         </div>
 
                         {/* Input الرفع المخفي والزرار الشيك */}
+                        {/* Progress Bar Component */}
+                        {isUploading && (
+                            <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4 overflow-hidden">
+                                <div
+                                    className="bg-amber-600 h-2.5 rounded-full transition-all duration-300 ease-in-out"
+                                    style={{ width: `${uploadProgress}%` }}
+                                ></div>
+                                <p className="text-xs text-amber-600 mt-1 text-center font-medium">
+                                    {uploadProgress === 100 ? "تم الرفع بنجاح!" : `جاري رفع الصور... ${uploadProgress}%`}
+                                </p>
+                            </div>
+                        )}
+
+                        {/* زرار الرفع اللي كان عندك */}
                         <input
                             type="file"
                             multiple
@@ -297,12 +362,14 @@ export default function AddProductPage() {
                             onChange={handleImageUpload}
                             className="hidden"
                             id="imageInput"
+                            disabled={isUploading} // تعطيل الزرار أثناء الرفع
                         />
                         <label
                             htmlFor="imageInput"
-                            className="cursor-pointer inline-flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all active:scale-95"
+                            className={`cursor-pointer inline-flex items-center gap-2 font-bold py-3 px-6 rounded-xl shadow-lg transition-all active:scale-95 ${isUploading ? "bg-gray-400 cursor-not-allowed" : "bg-amber-600 hover:bg-amber-700 text-white"
+                                }`}
                         >
-                            <span>{t("admin.form.uploadNewImage")} 📸</span>
+                            <span>{isUploading ? "جاري المعالجة..." : `${t("admin.form.uploadNewImage")} 📸`}</span>
                         </label>
                     </div>
 
@@ -319,7 +386,7 @@ export default function AddProductPage() {
                         )}
                     />
 
-                    <Button type="submit" disabled={isSubmitting} className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                    <Button type="submit" disabled={isSubmitting} className="w-full bg-amber-600 hover:bg-amber-700 text-white">
                         {isSubmitting ? (
                             <>
                                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />

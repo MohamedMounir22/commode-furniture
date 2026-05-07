@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import ProductDetailsClient from "@/components/ProductDetailsClient";
 import connectDB from "@/lib/db";
 import Product from "@/lib/models/product";
@@ -6,6 +7,10 @@ import { Suspense, cache } from "react";
 import LoadingSkeleton from "./loading";
 
 const getProduct = cache(async (id) => {
+  if (!id || typeof id !== "string" || !mongoose.Types.ObjectId.isValid(id)) {
+    return null;
+  }
+
   await connectDB();
   const product = await Product.findById(id).lean();
   if (!product) return null;
@@ -16,7 +21,7 @@ const getProduct = cache(async (id) => {
 });
 
 export async function generateMetadata({ params }) {
-  const { id } = params;
+  const { id } = await params;
   const product = await getProduct(id);
 
   if (!product) return { title: "Product Not Found - Commode" };

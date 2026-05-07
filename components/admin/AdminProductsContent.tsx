@@ -1,9 +1,9 @@
 "use client";
 
-import { useLanguage } from "@/lib/context/LanguageProvider";
 import ProductActions from "@/components/ProductActions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLanguage } from "@/lib/context/LanguageProvider";
 import Link from "next/link";
 
 export default function AdminProductsContent({
@@ -12,6 +12,7 @@ export default function AdminProductsContent({
     products: Array<{ _id: string; name: string; price: number; category: string; images?: string[]; stock?: number }>;
 }) {
     const { t } = useLanguage();
+    const currency = t("cart.currency");
 
     return (
         <div className="space-y-6">
@@ -60,7 +61,7 @@ export default function AdminProductsContent({
                                             <td className="py-3 px-4 text-sm text-gray-600 uppercase tracking-wide">
                                                 {t(`categories.${product.category}`) || product.category}
                                             </td>
-                                            <td className="py-3 px-4">${product.price}</td>
+                                            <td className="py-3 px-4">{product.price} {currency}</td>
                                             <td className="py-3 px-4">
                                                 <ProductActions productId={product._id} />
                                             </td>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/lib/context/LanguageProvider";
-import { Home, Package, Plus, Settings, ShoppingCart, Users } from "lucide-react";
+import { Home, Package, Plus, Settings, ShoppingCart, Truck, Users } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -11,6 +11,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     const sidebarItems = [
         { name: t("admin.sidebar.dashboard"), href: "/admin/dashboard", icon: Home },
         { name: t("admin.sidebar.products"), href: "/admin/dashboard/products", icon: Package },
+        { name: "Last Delivered", href: "/admin/dashboard/last-delivered", icon: Truck },
         { name: t("admin.sidebar.orders"), href: "/admin/dashboard/orders", icon: ShoppingCart },
         { name: t("admin.sidebar.customers"), href: "/admin/dashboard/customers", icon: Users },
         { name: t("admin.sidebar.settings"), href: "/admin/dashboard/settings", icon: Settings },
@@ -37,7 +38,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                     <div className="px-6 py-3">
                         <Link
                             href="/admin/add-product"
-                            className="flex items-center w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
+                            className="flex items-center w-full px-4 py-2 text-sm font-medium text-white bg-amber-600 rounded-md hover:bg-amber-700 transition-colors"
                         >
                             <Plus className="w-4 h-4 mr-2" />
                             {t("admin.sidebar.addProduct")}
@@ -51,7 +52,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                 {/* Header */}
                 <header className="bg-white shadow-sm border-b">
                     <div className="px-6 py-4">
-                         <h2 className="text-xl font-semibold text-gray-800">{t("admin.header.title")}</h2>
+                        <h2 className="text-xl font-semibold text-gray-800">{t("admin.header.title")}</h2>
                     </div>
                 </header>
 

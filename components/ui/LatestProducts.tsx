@@ -1,14 +1,8 @@
 "use client";
 
 import { useLanguage } from "@/lib/context/LanguageProvider";
-import nextDynamic from "next/dynamic";
-import { useState , useEffect } from "react";
-
-// الـ Lazy Loading لكارت المنتج
-const ProductCard = nextDynamic(() => import("./ProductCard"), {
-    loading: () => <div className="h-80 bg-gray-100 animate-pulse rounded-2xl" />, // Skeleton مريح للعين
-    ssr: false,
-});
+import { useState, useEffect } from "react";
+import ProductCard from "./ProductCard";
 
 export default function LatestProducts({ products }: any) {
     const { t } = useLanguage();

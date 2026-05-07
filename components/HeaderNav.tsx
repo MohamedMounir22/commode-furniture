@@ -21,9 +21,9 @@ export default function HeaderNav() {
                     <Link href="/products" className="text-sm font-semibold hover:text-zinc-500 transition">
                         {t("nav.shop")}
                     </Link>
-                    <Link href="/about" className="text-sm font-semibold hover:text-zinc-500 transition">
+                    {/* <Link href="/about" className="text-sm font-semibold hover:text-zinc-500 transition">
                         {t("nav.about")}
-                    </Link>
+                    </Link> */}
                     <Link href="/admin/dashboard" className="text-sm font-semibold hover:text-zinc-500 transition">
                         {t("nav.admin")}
                     </Link>

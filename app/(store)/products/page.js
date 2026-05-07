@@ -4,15 +4,16 @@ export default async function ProductsPage() {
     let productsData = [];
 
     try {
-        const res = await fetch("http://localhost:3000/api/products", {
-            next: { tags: ['products-data'], revalidate: 2000 }
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+        const res = await fetch(`${baseUrl}/api/products`, {
+            next: { tags: ["products-data"], revalidate: 2000 },
         });
 
-        if (res.ok) {
-            productsData = await res.json();
-        } else {
-            throw new Error("Failed to fetch products");
+        if (!res.ok) {
+            throw new Error(`Failed to fetch products: ${res.status}`);
         }
+
+        productsData = await res.json();
     } catch (error) {
         console.error("Error fetching products:", error);
     }

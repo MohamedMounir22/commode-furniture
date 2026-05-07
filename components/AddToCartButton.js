@@ -20,7 +20,7 @@ export default function AddToCartButton({ product }) {
       onClick={handleAdd}
       className={`w-full border-2 py-5 rounded-2xl font-bold transition-all flex items-center justify-center gap-3 ${
         added
-          ? "bg-emerald-50 border-emerald-500 text-emerald-600"
+          ? "bg-amber-50 border-amber-500 text-amber-600"
           : "border-slate-200 text-slate-900 hover:bg-slate-50"
       }`}
     >

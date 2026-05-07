@@ -1,8 +1,8 @@
-import { SpeedInsights } from "@vercel/speed-insights/next"
 import ChatWidget from "@/components/ChatWidget";
 import HeaderNav from "@/components/HeaderNav";
-import LanguageProvider from "@/lib/context/LanguageProvider";
 import { CartProvider } from "@/lib/context/CartContext";
+import LanguageProvider from "@/lib/context/LanguageProvider";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -32,6 +32,7 @@ export default function RootLayout({
         <html
             lang="en"
             className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+            suppressHydrationWarning
         >
             <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
                 <LanguageProvider>

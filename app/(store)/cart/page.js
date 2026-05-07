@@ -119,7 +119,7 @@ export default function CartPage() {
           href={generateWhatsAppMessage()}
           target="_blank"
           rel="noopener noreferrer"
-          className="w-full bg-emerald-500 text-white py-5 rounded-2xl font-bold hover:bg-emerald-600 transition-all flex items-center justify-center gap-3 text-lg"
+          className="w-full bg-amber-500 text-white py-5 rounded-2xl font-bold hover:bg-amber-600 transition-all flex items-center justify-center gap-3 text-lg"
         >
           <MessageCircle size={24} />
           {t("cart.checkout")}

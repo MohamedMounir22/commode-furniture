@@ -1,4 +1,5 @@
 "use client";
+import { useCart } from "@/lib/context/CartContext";
 import { useLanguage } from "@/lib/context/LanguageProvider";
 import { Flame, MessageCircle, ShoppingCart, Trash2 } from "lucide-react"; // ضفنا أيقونة الرسالة
 import Image from "next/image";
@@ -9,7 +10,7 @@ import "yet-another-react-lightbox/styles.css";
 
 export default function ProductCard({
   viewMode = "grid", // القيمة الافتراضية لو ما تم تمريرها
-  id,
+  _id: id, // Mapping MongoDB's _id to id
   name,
   price,
   description,
@@ -17,12 +18,14 @@ export default function ProductCard({
   discount,
 }) {
   const { t, locale } = useLanguage();
+  const { cart, addToCart, removeFromCart } = useCart();
   const currency = t("cart.currency");
   discount = Number(discount) || 0;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [imageLoading, setImageLoading] = useState(false);
-  const [isInCart, setIsInCart] = useState(false);
   const [open, setOpen] = useState(false);
+
+  const isInCart = cart.some((item) => item._id === id);
 
   // حساب السعر بناءا علي نسبة الخصم لو في خصم اصلا
   const hasDiscount = discount > 0;
@@ -30,12 +33,24 @@ export default function ProductCard({
     ? price - (price * discount) / 100
     : price;
 
+  const handleCartAction = () => {
+    const payload = {
+      _id: id,
+      name,
+      price: discountedPrice,
+      image: images?.[0] || "/double-sofa-01.png",
+    };
+
+    if (isInCart) {
+      removeFromCart(id);
+    } else {
+      addToCart(payload);
+    }
+  };
   const displayImage =
     images && images.length > 0
       ? images[currentImageIndex]
       : "/double-sofa-01.png";
-
-  const toggleCart = () => setIsInCart(!isInCart);
 
   // دالة طلب الواتساب
   //   const handleWhatsAppOrder = (e) => {
@@ -57,11 +72,9 @@ export default function ProductCard({
 
     const encodedMessage = encodeURIComponent(message);
 
-    // استخدام بروتوكول whatsapp مباشرة لفتح التطبيق
-    const whatsappAppUrl = `whatsapp://send?phone=${phoneNumber}&text=${encodedMessage}`;
-
-    // محاولة فتح التطبيق
-    window.location.href = whatsappAppUrl;
+    // Use universal link for better cross-platform support (Desktop/Mobile)
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   };
 
   const changeImage = (index) => {
@@ -89,9 +102,11 @@ export default function ProductCard({
     // وضع الشبكة: عرض جميل للصور مع تأثيرات بصرية للموبايل
     return (
       <div className="group relative aspect-[5/5] w-full overflow-hidden rounded-2xl bg-linear-to-br from-zinc-50 to-zinc-100 shadow-lg active:shadow-xl active:scale-95 transition-all duration-200 border border-zinc-200/50">
-        <img
-          src={images[0]}
+        <Image
+          src={images && images.length > 0 ? images[0] : "/double-sofa-01.png"}
           alt={name}
+          fill
+          sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
           className="h-full w-full object-cover transition-all duration-300 active:scale-105 active:brightness-110"
         />
 
@@ -102,7 +117,7 @@ export default function ProductCard({
           </h3>
           {hasDiscount && (
             <div className="flex items-center gap-2 mt-1">
-              <span className="text-orange-400 font-semibold text-xs">
+              <span className="text-amber-400 font-semibold text-xs">
                 {discountedPrice} {currency}
               </span>
               <span className="text-zinc-300 line-through text-xs">
@@ -114,7 +129,7 @@ export default function ProductCard({
 
         {/* Discount badge */}
         {discount > 0 && (
-          <div className="absolute top-3 right-3 rounded-full bg-orange-500 px-2 py-1 text-xs text-white font-bold shadow-lg opacity-90">
+          <div className="absolute top-3 right-3 rounded-full bg-amber-500 px-2 py-1 text-xs text-white font-bold shadow-lg opacity-90">
             -{discount}%
           </div>
         )}
@@ -137,7 +152,7 @@ export default function ProductCard({
           fill
           alt={name}
           className="object-cover transition-transform duration-500 group-hover:scale-105"
-          sizes="(max-width: 768px) 100vw, 33vw"
+          sizes="(max-width: 1024px) 100vw, 1280px"
           priority={currentImageIndex === 0}
           onLoad={() => setImageLoading(false)}
           draggable={false}
@@ -146,7 +161,7 @@ export default function ProductCard({
         <div className="absolute inset-0 bg-linear-to-t from-slate-950/70 via-transparent to-transparent pointer-events-none" />
 
         {discount > 0 && (
-          <div className="absolute top-4 right-4 rounded-full bg-orange-500 px-3 py-1 text-xs text-white font-bold shadow-lg">
+          <div className="absolute top-4 right-4 rounded-full bg-amber-500 px-3 py-1 text-xs text-white font-bold shadow-lg">
             <Flame className="h-3.5 w-3.5" />
             {t("productCard.discountLabel")} {discount}%
           </div>
@@ -170,7 +185,7 @@ export default function ProductCard({
                 <div className="text-slate-500 line-through text-sm">
                   {price} {currency}
                 </div>
-                <div className="text-orange-600 font-bold text-xl">
+                <div className="text-amber-600 font-bold text-xl">
                   {discountedPrice} {currency}
                 </div>
               </>
@@ -205,7 +220,7 @@ export default function ProductCard({
 
         <div className="flex gap-3">
           <button
-            onClick={toggleCart}
+            onClick={handleCartAction}
             className={`flex-1 inline-flex items-center justify-center gap-2 rounded-2xl border py-3 text-sm font-semibold transition duration-200 ${
               isInCart
                 ? "border-red-200 bg-red-50 text-red-600"

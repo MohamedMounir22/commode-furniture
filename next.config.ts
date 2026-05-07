@@ -1,15 +1,13 @@
-import { types } from "util";
+import type { NextConfig } from "next";
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+/** @type {NextConfig} */
+const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
-
-
       {
-        protocol: 'https',
-        hostname: 'res.cloudinary.com',
-        pathname: '**',
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "**",
       },
       {
         protocol: "https",
@@ -17,8 +15,6 @@ const nextConfig = {
       },
     ],
   },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
 };
-module.exports = nextConfig
+
+export default nextConfig;

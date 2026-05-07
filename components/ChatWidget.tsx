@@ -67,84 +67,84 @@
 
 
 "use client";
-import { useState } from "react";
-import { MessageCircle, Phone, X, MessageSquare, ChevronDown, Send } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/lib/context/LanguageProvider";
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronDown, MessageCircle, MessageSquare, Phone, Send, X } from "lucide-react";
+import { useState } from "react";
 
 export default function LuxuryChat() {
-  const [isOpen, setIsOpen] = useState(false);
-  const { t } = useLanguage();
+    const [isOpen, setIsOpen] = useState(false);
+    const { t } = useLanguage();
 
-  return (
-    <div className="fixed bottom-6 right-6 z-50">
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="mb-4 w-80 bg-[#0f172a] text-white rounded-2xl shadow-2xl overflow-hidden border border-slate-700"
-          >
-            {/* Header - زي "Hi Mohamed" اللي في الصورة */}
-            <div className="p-6 pb-10 bg-linear-to-br from-slate-800 to-slate-900 relative">
-              <button
-                onClick={() => setIsOpen(false)}
-                className="absolute top-4 right-4 text-slate-400 hover:text-white"
-              >
-                <X size={20} />
-              </button>
-              <h2 className="text-2xl font-bold flex items-center gap-2">
-                {t("chat.greeting")}
-              </h2>
-              <p className="text-slate-400 text-sm mt-2">{t("chat.helpText")}</p>
-            </div>
+    return (
+        <div className="fixed bottom-6 right-6 z-50">
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 20, scale: 0.95 }}
+                        className="mb-4 w-80 bg-[#0f172a] text-white rounded-2xl shadow-2xl overflow-hidden border border-slate-700"
+                    >
+                        {/* Header - زي "Hi Mohamed" اللي في الصورة */}
+                        <div className="p-6 pb-10 bg-linear-to-br from-slate-800 to-slate-900 relative">
+                            <button
+                                onClick={() => setIsOpen(false)}
+                                className="absolute top-4 right-4 text-slate-400 hover:text-white"
+                            >
+                                <X size={20} />
+                            </button>
+                            <h2 className="text-2xl font-bold flex items-center gap-2">
+                                {t("chat.greeting")}
+                            </h2>
+                            <p className="text-slate-400 text-sm mt-2">{t("chat.helpText")}</p>
+                        </div>
 
-            {/* Body - الروابط والأزرار */}
-            <div className="p-4 -mt-6">
-              <div className="bg-[#1e293b] rounded-xl p-2 shadow-inner border border-slate-700">
-                {/* خيار الواتساب */}
-                <a href="https://wa.me/your-number" target="_blank" className="flex items-center justify-between p-4 hover:bg-slate-700/50 rounded-lg transition-all group">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-green-500/10 p-2 rounded-lg text-green-500">
-                      <MessageSquare size={20} />
-                    </div>
-                    <span className="font-medium">{t("chat.whatsapp")}</span>
-                  </div>
-                  <Send size={16} className="text-slate-500 group-hover:translate-x-1 transition-transform" />
-                </a>
+                        {/* Body - الروابط والأزرار */}
+                        <div className="p-4 -mt-6">
+                            <div className="bg-[#1e293b] rounded-xl p-2 shadow-inner border border-slate-700">
+                                {/* خيار الواتساب */}
+                                <a href="https://wa.me/your-number" target="_blank" className="flex items-center justify-between p-4 hover:bg-slate-700/50 rounded-lg transition-all group">
+                                    <div className="flex items-center gap-3">
+                                        <div className="bg-amber-500/10 p-2 rounded-lg text-amber-500">
+                                            <MessageSquare size={20} />
+                                        </div>
+                                        <span className="font-medium">{t("chat.whatsapp")}</span>
+                                    </div>
+                                    <Send size={16} className="text-slate-500 group-hover:translate-x-1 transition-transform" />
+                                </a>
 
-                <div className="h-px bg-slate-700 my-1 mx-4" />
+                                <div className="h-px bg-slate-700 my-1 mx-4" />
 
-                {/* خيار الاتصال */}
-                <a href="tel:+201..." className="flex items-center justify-between p-4 hover:bg-slate-700/50 rounded-lg transition-all group">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-blue-500/10 p-2 rounded-lg text-blue-500">
-                      <Phone size={20} />
-                    </div>
-                    <span className="font-medium">{t("chat.call")}</span>
-                  </div>
-                  <Send size={16} className="text-slate-500 group-hover:translate-x-1 transition-transform" />
-                </a>
-              </div>
-            </div>
+                                {/* خيار الاتصال */}
+                                <a href="tel:+201..." className="flex items-center justify-between p-4 hover:bg-slate-700/50 rounded-lg transition-all group">
+                                    <div className="flex items-center gap-3">
+                                        <div className="bg-amber-500/10 p-2 rounded-lg text-amber-500">
+                                            <Phone size={20} />
+                                        </div>
+                                        <span className="font-medium">{t("chat.call")}</span>
+                                    </div>
+                                    <Send size={16} className="text-slate-500 group-hover:translate-x-1 transition-transform" />
+                                </a>
+                            </div>
+                        </div>
 
-            {/* Footer - الحالة */}
-            <div className="p-4 bg-slate-900/50 border-t border-slate-800 flex items-center justify-center gap-2 text-xs text-slate-500">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              {t("chat.connected")}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                        {/* Footer - الحالة */}
+                        <div className="p-4 bg-slate-900/50 border-t border-slate-800 flex items-center justify-center gap-2 text-xs text-slate-500">
+                            <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
+                            {t("chat.connected")}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
-      {/* الزرار الرئيسي العائم */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="bg-slate-900 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-all flex items-center justify-center border border-slate-700"
-      >
-        {isOpen ? <ChevronDown size={28} /> : <MessageCircle size={28} />}
-      </button>
-    </div>
-  );
+            {/* الزرار الرئيسي العائم */}
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="bg-slate-900 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-all flex items-center justify-center border border-slate-700"
+            >
+                {isOpen ? <ChevronDown size={28} /> : <MessageCircle size={28} />}
+            </button>
+        </div>
+    );
 }
