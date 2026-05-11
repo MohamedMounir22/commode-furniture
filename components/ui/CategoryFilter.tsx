@@ -26,8 +26,8 @@ export default function CategoryFilter() {
     };
 
     return (
-        <div className="w-full py-6">
-            <div className="flex flex-wrap justify-center gap-3 pb-4">
+        <div className="w-full ">
+            <div className="flex flex-wrap justify-center gap-3 ">
                 {categories.map((cat) => (
                     <button
                         key={cat.slug}

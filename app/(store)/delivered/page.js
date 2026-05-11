@@ -10,7 +10,6 @@ export default function DeliveredPage() {
   const { t, locale } = useLanguage();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState("grid");
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -66,82 +65,27 @@ export default function DeliveredPage() {
             <p className="text-lg text-zinc-500 dark:text-zinc-400 max-w-2xl leading-relaxed">
               {t("deliveredPage.subtitle")}
             </p>
-
-            <div className="flex items-center gap-2 self-start sm:self-auto">
-              <button
-                type="button"
-                onClick={() => setViewMode("grid")}
-                className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
-                  viewMode === "grid"
-                    ? "bg-slate-900 text-white border-slate-900"
-                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
-                }`}
-                aria-pressed={viewMode === "grid"}
-              >
-                {t("latestProducts.gridView")}
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode("list")}
-                className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
-                  viewMode === "list"
-                    ? "bg-slate-900 text-white border-slate-900"
-                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
-                }`}
-                aria-pressed={viewMode === "list"}
-              >
-                {t("latestProducts.listView")}
-              </button>
-            </div>
           </div>
         </div>
 
-        {/* Gallery Grid */}
-        <div
-          className={`grid gap-4 md:gap-8 ${
-            viewMode === "grid"
-              ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-              : "grid-cols-1"
-          }`}
-        >
+        {/* Delivered List */}
+        <div className="flex flex-col gap-4 md:gap-8">
           {items.map((item, index) => (
             <div
               key={item._id}
-              className={`group bg-white dark:bg-zinc-900 overflow-hidden border border-zinc-100 dark:border-zinc-800 shadow-sm transition-all duration-500 animate-in fade-in slide-in-from-bottom-4 ${
-                viewMode === "grid"
-                  ? "relative aspect-square rounded-2xl"
-                  : "rounded-[2rem] hover:shadow-xl flex flex-col md:flex-row"
-              }`}
+              className="group bg-white dark:bg-zinc-900 overflow-hidden border border-zinc-100 dark:border-zinc-800 shadow-sm transition-all duration-500 animate-in fade-in slide-in-from-bottom-4 rounded-[2rem] hover:shadow-xl flex flex-col md:flex-row"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               {/* Image */}
-              <div
-                className={`relative overflow-hidden ${
-                  viewMode === "grid"
-                    ? "absolute inset-0"
-                    : "h-80 w-full md:w-2/5 md:h-auto"
-                }`}
-              >
+              <div className="relative overflow-hidden h-80 w-full md:w-2/5 md:h-auto">
                 <Image
                   src={item.image}
                   alt={locale === "ar" ? item.nameAr : item.nameEn}
                   fill
-                  sizes={
-                    viewMode === "grid"
-                      ? "(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                      : "(max-width: 1024px) 100vw, 1280px"
-                  }
-                  className={`object-cover transition-transform duration-700 group-hover:scale-105 ${
-                    viewMode === "grid"
-                      ? "brightness-90 group-hover:brightness-100"
-                      : ""
-                  }`}
+                  sizes="(max-width: 1024px) 100vw, 1280px"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <div
-                  className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent ${
-                    viewMode === "list" ? "opacity-40" : ""
-                  }`}
-                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-40" />
 
                 {/* Location Badge */}
                 <div
@@ -154,54 +98,40 @@ export default function DeliveredPage() {
                     {locale === "ar" ? item.locationAr : item.locationEn}
                   </span>
                 </div>
-
-                {viewMode === "grid" && (
-                  <div className="absolute top-4 left-4 right-4 z-10">
-                    <h3 className="text-white font-bold text-sm md:text-base drop-shadow-md line-clamp-2">
-                      {locale === "ar" ? item.nameAr : item.nameEn}
-                    </h3>
-                    <p className="text-zinc-300 text-[10px] mt-0.5">
-                      {locale === "ar" ? item.dateAr : item.dateEn}
-                    </p>
-                  </div>
-                )}
               </div>
 
-              {/* Info - Only visible in list mode */}
-              {viewMode === "list" && (
-                <div className="p-6 flex-1 flex flex-col justify-center">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-50 line-clamp-1">
-                      {locale === "ar" ? item.nameAr : item.nameEn}
-                    </h3>
-                    <span className="text-xs font-medium text-zinc-400 whitespace-nowrap">
-                      {locale === "ar" ? item.dateAr : item.dateEn}
+              <div className="p-6 flex-1 flex flex-col justify-center">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-50 line-clamp-1">
+                    {locale === "ar" ? item.nameAr : item.nameEn}
+                  </h3>
+                  <span className="text-xs font-medium text-zinc-400 whitespace-nowrap">
+                    {locale === "ar" ? item.dateAr : item.dateEn}
+                  </span>
+                </div>
+
+                <div className="h-px bg-zinc-100 dark:bg-zinc-800 mb-4" />
+
+                <div className="flex items-center justify-between">
+                  <div
+                    className={`flex items-center gap-2 ${
+                      locale === "ar" ? "flex-row-reverse" : ""
+                    }`}
+                  >
+                    <div className="bg-amber-50 dark:bg-amber-900/20 p-1.5 rounded-md">
+                      <CheckCircle2
+                        size={14}
+                        className="text-amber-600 dark:text-amber-400"
+                      />
+                    </div>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-amber-700 dark:text-amber-400">
+                      {locale === "ar"
+                        ? "تم التسليم بنجاح"
+                        : "Successfully Delivered"}
                     </span>
                   </div>
-
-                  <div className="h-px bg-zinc-100 dark:bg-zinc-800 mb-4" />
-
-                  <div className="flex items-center justify-between">
-                    <div
-                      className={`flex items-center gap-2 ${
-                        locale === "ar" ? "flex-row-reverse" : ""
-                      }`}
-                    >
-                      <div className="bg-amber-50 dark:bg-amber-900/20 p-1.5 rounded-md">
-                        <CheckCircle2
-                          size={14}
-                          className="text-amber-600 dark:text-amber-400"
-                        />
-                      </div>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-amber-700 dark:text-amber-400">
-                        {locale === "ar"
-                          ? "تم التسليم بنجاح"
-                          : "Successfully Delivered"}
-                      </span>
-                    </div>
-                  </div>
                 </div>
-              )}
+              </div>
             </div>
           ))}
         </div>

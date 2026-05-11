@@ -27,9 +27,9 @@ export async function generateMetadata({ params }) {
   if (!product) return { title: "Product Not Found - Commode" };
 
   return {
-    title: `${product.name} - Commode Furniture`,
+    title: `${product.nameAr || product.name || 'Product'} - Commode Furniture`,
     description:
-      product.description ||
+      product.descriptionAr || product.description ||
       "Modern custom furniture with premium materials and elegant design.",
     openGraph: {
       images: product.images?.[0] ? [product.images[0]] : [],

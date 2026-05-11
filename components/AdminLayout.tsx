@@ -10,6 +10,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
     const sidebarItems = [
         { name: t("admin.sidebar.dashboard"), href: "/admin/dashboard", icon: Home },
+        { name: "Hero Slides", href: "/admin/dashboard/hero", icon: Package },
         { name: t("admin.sidebar.products"), href: "/admin/dashboard/products", icon: Package },
         { name: "Last Delivered", href: "/admin/dashboard/last-delivered", icon: Truck },
         { name: t("admin.sidebar.orders"), href: "/admin/dashboard/orders", icon: ShoppingCart },

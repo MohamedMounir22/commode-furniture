@@ -11,14 +11,20 @@ export default function ProductDetailsClient({
 }: {
     product: {
         _id: string;
-        name: string;
+        nameAr?: string;
+        nameEn?: string;
+        name?: string;
         price: number;
+        descriptionAr?: string;
+        descriptionEn?: string;
         description?: string;
         images?: string[];
         discount?: number;
     };
 }) {
     const { t, locale } = useLanguage();
+    const productName = (locale === "ar" ? product.nameAr || product.name : product.nameEn || product.name) || "Product";
+    const productDescription = locale === "ar" ? product.descriptionAr || product.description : product.descriptionEn || product.description;
     const discount = Number(product.discount) || 0;
     const hasDiscount = discount > 0;
     const discountedPrice = hasDiscount
@@ -27,7 +33,7 @@ export default function ProductDetailsClient({
 
     const phoneNumber = "201013598586";
     const whatsappMessage = `${t("productDetail.specialRequest")}
-${t("productDetail.productLabel")}: ${product.name}
+${t("productDetail.productLabel")}: ${productName}
 ${t("productDetail.priceLabel")}: ${product.price} ${t("cart.currency")}
 ${t("productDetail.customizationRequest")}`;
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(whatsappMessage)}`;
@@ -47,7 +53,7 @@ ${t("productDetail.customizationRequest")}`;
                         <div className="relative w-full aspect-square md:aspect-4/3 overflow-hidden rounded-[2rem] shadow-xl bg-[#f9f9f9] border border-slate-100">
                             <Image
                                 src={product.images?.[0] || "/double-sofa-01.png"}
-                                alt={product.name}
+                                alt={productName || "Product"}
                                 fill
                                 priority
                                 sizes="(max-width: 1024px) 100vw, 60vw"
@@ -60,14 +66,14 @@ ${t("productDetail.customizationRequest")}`;
                             )}
                         </div>
 
-                        {product.images?.length > 1 && (
+                        {product.images && product.images.length > 1 && (
                             <div className="flex gap-4 mt-6 overflow-x-auto pb-2">
                                 {product.images.map((img, idx) => (
                                     <div
                                         key={idx}
                                         className="relative w-24 h-24 shrink-0 rounded-xl overflow-hidden border-2 border-slate-100 hover:border-[#D4AF37] transition-colors cursor-pointer"
                                     >
-                                        <Image src={img} alt={`${product.name} ${idx}`} fill className="object-cover" />
+                                        <Image src={img} alt={`${productName} ${idx}`} fill className="object-cover" />
                                     </div>
                                 ))}
                             </div>
@@ -77,7 +83,7 @@ ${t("productDetail.customizationRequest")}`;
                     <div className="w-full lg:w-2/5 space-y-8">
                         <div className="border-b pb-6">
                             <h1 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4 leading-tight">
-                                {product.name}
+                                {productName}
                             </h1>
                             <div className="flex items-center gap-4">
                                 <p className="text-3xl text-[#D4AF37] font-black">
@@ -93,7 +99,7 @@ ${t("productDetail.customizationRequest")}`;
 
                         <div className="prose prose-slate bg-slate-50 p-6 rounded-3xl border border-slate-100">
                             <p className="text-slate-600 leading-relaxed text-lg italic">
-                                {product.description || t("productCard.descriptionFallback")}
+                                {productDescription || t("productCard.descriptionFallback")}
                             </p>
                             <div className="grid grid-cols-2 gap-4 mt-6">
                                 <div className="flex items-center gap-2 text-sm font-bold text-slate-700">
@@ -121,7 +127,7 @@ ${t("productDetail.customizationRequest")}`;
                             <AddToCartButton
                                 product={{
                                     _id: product._id,
-                                    name: product.name,
+                                    name: productName,
                                     price: discountedPrice,
                                     image: product.images?.[0],
                                 }}

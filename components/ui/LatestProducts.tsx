@@ -1,7 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/lib/context/LanguageProvider";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ProductCard from "./ProductCard";
 
 export default function LatestProducts({ products }: any) {
@@ -15,8 +15,8 @@ export default function LatestProducts({ products }: any) {
     return (
         <section className="py-8">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 px-4">
-                <h2 className="text-2xl font-bold text-right">{t("home.latestArrivals")}</h2>
-                <div className="flex items-center gap-2 self-start sm:self-auto">
+
+                <div className="flex items-center gap-2 justify-center w-full sm:w-auto sm:justify-start">
                     <button
                         type="button"
                         onClick={() => setViewMode("grid")}

@@ -2,8 +2,14 @@
 import { useLanguage } from "@/lib/context/LanguageProvider";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Autoplay, EffectFade, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+
+// import hero images from public folder as fallback
+import amod from "../public/hero/hero-3amod-table.jpg";
+import moving from "../public/hero/hero-moving-table.jpg";
+import be2zaz from "../public/hero/hero-table-be2zaz.jpg";
 
 // استيراد استايلات Swiper
 import "swiper/css";
@@ -11,32 +17,75 @@ import "swiper/css/effect-fade";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-const slides = [
-  {
-    id: 1,
-    title: "Artisanal Elegance for Modern Living",
-    desc: "Discover our latest collection of handcrafted furniture pieces designed to elevate your home.",
-    img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=2070",
-  },
-  {
-    id: 2,
-    title: "Modern Golden Accents",
-    desc: "Add a touch of luxury to your space with our exclusive gold-finished artisanal collection.",
-    img: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=2158",
-  },
-  {
-    id: 3,
-    title: "Timeless Craftsmanship",
-    desc: "Premium materials and precise execution come together in every unique piece we create.",
-    img: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=2070",
-  },
-];
-
 const Hero = () => {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
+  const defaultSlides = [
+    {
+      id: 1,
+      title: "Artisanal Elegance for Modern Living",
+      description:
+        "Discover our latest collection of handcrafted furniture pieces designed to elevate your home.",
+
+      // image from public folder as fallback
+      image: amod,
+      buttonText: t("hero.button"),
+      buttonLink: "/products",
+    },
+    {
+      id: 2,
+      title: "Modern Golden Accents",
+      description:
+        "Add a touch of luxury to your space with our exclusive gold-finished artisanal collection.",
+      image: moving,
+      buttonText: t("hero.button"),
+      buttonLink: "/products",
+    },
+    {
+      id: 3,
+      title: "Timeless Craftsmanship",
+      description:
+        "Premium materials and precise execution come together in every unique piece we create.",
+      image: be2zaz,
+      buttonText: t("hero.button"),
+      buttonLink: "/products",
+    },
+  ];
+  const [slides, setSlides] = useState(defaultSlides);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSlides = async () => {
+      try {
+        const response = await fetch("/api/hero");
+        const data = await response.json();
+        if (data.success && data.data.length > 0) {
+          setSlides(data.data);
+        } else {
+          // Fallback to default slides if no data
+          setSlides(defaultSlides);
+        }
+      } catch (error) {
+        console.error("Error fetching hero slides:", error);
+        // Fallback to default slides
+        setSlides(defaultSlides);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSlides();
+  }, [locale]);
 
   return (
-    <section className="w-full h-[85vh] relative">
+    <section className="w-full h-[50vh] md:h-[85vh] relative">
+      {/* {loading && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/20">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
+            <p className="mt-4 text-white">Loading...</p>
+          </div>
+        </div>
+      )} */}
       <Swiper
         modules={[Navigation, Pagination, Autoplay, EffectFade]}
         effect={"fade"}
@@ -48,18 +97,21 @@ const Hero = () => {
         className="h-full w-full group"
       >
         {slides.map((slide) => (
-          <SwiperSlide key={slide.id} className="relative w-full h-full">
-            {/* الصورة الخلفية */}
+          <SwiperSlide
+            key={slide._id || slide.id}
+            className="relative w-full h-full"
+          >
             <div className="absolute inset-0">
               <Image
-                src={slide.img}
+                src={slide.image}
                 alt={slide.title}
                 fill
-                className="object-cover"
+                // className="object-cover object-center min-h-full min-w-full"
                 priority
+                sizes="100vw"
               />
               {/* Gradient Overlay for Readability */}
-              <div className="absolute inset-0 bg-black/40" />
+              <div className="absolute inset-0 bg-foreground/40" />
             </div>
 
             {/* Content Container */}
@@ -69,13 +121,13 @@ const Hero = () => {
                   {slide.title}
                 </h1>
                 <p className="text-lg md:text-2xl text-slate-200 mb-10 leading-relaxed font-light">
-                  {slide.desc}
+                  {slide.description}
                 </p>
                 <Link
-                  href="/products"
+                  href={slide.buttonLink || "/products"}
                   className="inline-block bg-white text-black hover:bg-zinc-200 px-12 py-5 rounded-full text-lg font-bold transition-all transform hover:scale-105 active:scale-95 shadow-2xl"
                 >
-                  {t("hero.button")}
+                  {slide.buttonText || t("hero.button")}
                 </Link>
               </div>
             </div>
@@ -86,7 +138,7 @@ const Hero = () => {
       <style jsx global>{`
         .swiper-button-next,
         .swiper-button-prev {
-          color: white !important;
+          color: #fff !important;
           opacity: 0;
           transition: opacity 0.3s ease;
         }
@@ -95,12 +147,28 @@ const Hero = () => {
           opacity: 0.7;
         }
         .swiper-pagination-bullet {
-          background: white !important;
+          background: #fff !important;
           opacity: 0.5;
         }
         .swiper-pagination-bullet-active {
-          background: white !important;
-          opacity: 1;
+          background: linear-gradient(90deg, #fff 0%, #cbd5e1 100%) !important;
+          opacity: 1 !important;
+          width: 36px !important;
+          border-radius: 12px !important;
+          box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+          animation: hero-active-pill 2.5s infinite ease-in-out;
+        }
+
+        @keyframes hero-active-pill {
+          0%,
+          100% {
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            filter: brightness(1);
+          }
+          50% {
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.6);
+            filter: brightness(1.2);
+          }
         }
       `}</style>
     </section>

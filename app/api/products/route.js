@@ -1,13 +1,8 @@
-
-
-
-
-
 // GET: لجلب كل المنتجات أو الفلترة
 import connectDB from "@/lib/db";
 import Product from "@/lib/models/product";
-import { NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
+import { NextResponse } from "next/server";
 
 // --- جلب كل المنتجات أو الفلترة بالقسم ---
 export async function GET(request) {
@@ -29,11 +24,9 @@ export async function GET(request) {
 // --- إضافة منتج جديد (POST) ---
 export async function POST(request) {
   try {
-
     // للتاكد من اتصال السيرفير بالداتابيز
     await connectDB();
 
-    
     const data = await request.json();
 
     const newProduct = await Product.create(data);
@@ -43,17 +36,19 @@ export async function POST(request) {
     }
 
     return NextResponse.json(
-      { message: "🎉 مبروك يا هندسة! القطعة اتسجلت بنجاح", product: newProduct },
-      { status: 201 }
+      {
+        message: "🎉 مبروك يا هندسة! القطعة اتسجلت بنجاح",
+        product: newProduct,
+      },
+      { status: 201 },
     );
   } catch (error) {
     return NextResponse.json(
-      { message: "❌ فيه حاجة غلط حصلت وأنا بسجل البيانات", error: error.message },
-      { status: 500 }
+      {
+        message: "❌ فيه حاجة غلط حصلت وأنا بسجل البيانات",
+        error: error.message,
+      },
+      { status: 500 },
     );
   }
 }
-
-
-
-

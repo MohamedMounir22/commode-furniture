@@ -24,15 +24,21 @@ export default function HeaderNav() {
                     {/* <Link href="/about" className="text-sm font-semibold hover:text-zinc-500 transition">
                         {t("nav.about")}
                     </Link> */}
-                    <Link href="/admin/dashboard" className="text-sm font-semibold hover:text-zinc-500 transition">
+                    {/* <Link href="/admin/dashboard" className="text-sm font-semibold hover:text-zinc-500 transition">
                         {t("nav.admin")}
-                    </Link>
+                    </Link> */}
                 </div>
 
                 <div className="flex items-center gap-4">
                     <LanguageToggle />
                     <CartCounter />
                 </div>
+
+                {/* dashboard */}
+                    <Link href="/admin/dashboard" className="text-sm font-semibold hover:text-zinc-500 transition">
+                        {t("nav.admin")}
+                    </Link>
+
             </nav>
         </header>
     );

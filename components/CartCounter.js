@@ -15,7 +15,7 @@ export default function CartCounter() {
     >
       <ShoppingBag size={18} />
       <span>
-        {t("nav.cart")} ({cartCount})
+        {t("nav.cart")} {cartCount}
       </span>
     </Link>
   );

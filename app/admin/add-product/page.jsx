@@ -37,15 +37,19 @@ const categoryOptions = [
 
 const getFormSchema = (t) =>
     z.object({
-        name: z.string().min(2, { message: t("admin.form.errors.nameMin") }),
+        nameAr: z.string().min(2, { message: t("admin.form.errors.nameMin") }),
+        nameEn: z.string().min(2, { message: t("admin.form.errors.nameMin") }),
         price: z.coerce.number().min(1, { message: t("admin.form.errors.priceMin") }),
-        description: z.string().min(10, { message: t("admin.form.errors.descriptionMin") }),
+        descriptionAr: z.string().min(10, { message: t("admin.form.errors.descriptionMin") }),
+        descriptionEn: z.string().min(10, { message: t("admin.form.errors.descriptionMin") }),
         discount: z.coerce.number()
             .min(0, { message: t("admin.form.errors.discountMin") })
             .max(100, { message: t("admin.form.errors.discountMax") }),
         category: z.enum(["dining", "sofas", "tables", "console"], {
             errorMap: () => ({ message: t("admin.form.errors.categoryRequired") }),
         }),
+        stock: z.coerce.number().min(0, { message: t("admin.form.errors.stockMin") }),
+        bestSeller: z.boolean().default(false),
     })
 
 
@@ -181,7 +185,7 @@ export default function AddProductPage() {
 
     const form = useForm({
         resolver: zodResolver(formSchema),
-        defaultValues: { name: "", price: 0, description: "", discount: 0, category: "sofas" },
+        defaultValues: { nameAr: "", nameEn: "", price: 0, descriptionAr: "", descriptionEn: "", stock: 1, discount: 0, category: "sofas", bestSeller: false },
     })
 
     const showToast = (type, message) => {
@@ -260,14 +264,27 @@ export default function AddProductPage() {
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" dir={locale === "ar" ? "rtl" : "ltr"}>
 
-                    {/* اسم المنتج */}
+                    {/* اسم المنتج - عربي */}
                     <FormField
                         control={form.control}
-                        name="name"
+                        name="nameAr"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>{t("admin.form.productName")}</FormLabel>
-                                <FormControl><Input placeholder={t("admin.form.productNamePlaceholder")} {...field} /></FormControl>
+                                <FormLabel>{t("admin.form.productNameAr")}</FormLabel>
+                                <FormControl><Input placeholder="أدخل اسم المنتج بالعربية" {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    {/* اسم المنتج - English */}
+                    <FormField
+                        control={form.control}
+                        name="nameEn"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t("admin.form.productNameEn")}</FormLabel>
+                                <FormControl><Input placeholder="Enter product name in English" {...field} /></FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -280,6 +297,19 @@ export default function AddProductPage() {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>{t("admin.form.price")}</FormLabel>
+                                <FormControl><Input type="number" {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    {/* المخزون */}
+                    <FormField
+                        control={form.control}
+                        name="stock"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t("admin.form.stock")}</FormLabel>
                                 <FormControl><Input type="number" {...field} /></FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -316,6 +346,30 @@ export default function AddProductPage() {
                                     </select>
                                 </FormControl>
                                 <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    {/* أفضل بائع */}
+                    <FormField
+                        control={form.control}
+                        name="bestSeller"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4">
+                                <FormControl>
+                                    <input
+                                        type="checkbox"
+                                        checked={!!field.value}
+                                        onChange={(e) => field.onChange(e.target.checked)}
+                                        onBlur={field.onBlur}
+                                        ref={field.ref}
+                                        className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
+                                    />
+                                </FormControl>
+                                <div className="space-y-1 leading-none">
+                                    <FormLabel>{t("admin.form.bestSeller")}</FormLabel>
+                                    <p className="text-sm text-gray-500">{t("admin.form.bestSellerDescription")}</p>
+                                </div>
                             </FormItem>
                         )}
                     />
@@ -373,14 +427,27 @@ export default function AddProductPage() {
                         </label>
                     </div>
 
-                    {/* الوصف */}
+                    {/* الوصف - عربي */}
                     <FormField
                         control={form.control}
-                        name="description"
+                        name="descriptionAr"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>{t("admin.form.description")}</FormLabel>
-                                <FormControl><Textarea placeholder={t("admin.form.descriptionPlaceholder")} {...field} /></FormControl>
+                                <FormLabel>{t("admin.form.descriptionAr")}</FormLabel>
+                                <FormControl><Textarea placeholder="أدخل وصف المنتج بالعربية" {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    {/* الوصف - English */}
+                    <FormField
+                        control={form.control}
+                        name="descriptionEn"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t("admin.form.descriptionEn")}</FormLabel>
+                                <FormControl><Textarea placeholder="Enter product description in English" {...field} /></FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}

@@ -9,7 +9,7 @@ import Link from "next/link";
 export default function AdminProductsContent({
     products,
 }: {
-    products: Array<{ _id: string; name: string; price: number; category: string; images?: string[]; stock?: number }>;
+    products: Array<{ _id: string; nameAr: string; nameEn: string; price: number; category: string; images?: string[]; stock?: number }>;
 }) {
     const { t } = useLanguage();
     const currency = t("cart.currency");
@@ -57,7 +57,9 @@ export default function AdminProductsContent({
                                                     className="w-12 h-12 object-cover rounded"
                                                 />
                                             </td>
-                                            <td className="py-3 px-4 font-medium">{product.name}</td>
+                                            <td className="py-3 px-4 font-medium">
+                                                {t("nav.switchLanguage") === "English" ? product.nameAr : product.nameEn}
+                                            </td>
                                             <td className="py-3 px-4 text-sm text-gray-600 uppercase tracking-wide">
                                                 {t(`categories.${product.category}`) || product.category}
                                             </td>

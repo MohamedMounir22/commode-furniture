@@ -9,7 +9,7 @@ import mongoose from "mongoose";
 export async function GET(request, { params }) {
   try {
     await connectDB();
-    const { id } = params; // Next.js بياخد الـ id من اسم المجلد [id]
+    const { id } = await params; // Next.js بياخد الـ id من اسم المجلد [id]
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: "تنسيق الـ ID غير صحيح" }, { status: 400 });
