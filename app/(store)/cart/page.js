@@ -55,7 +55,7 @@ export default function CartPage() {
   return (
     <div
       className="w-full mx-auto p-3 sm:p-6 py-6 sm:py-12"
-      dir={locale === "ar" ? "rtl" : "ltr"}
+         dir={locale === "ar" ? "rtl" : "ltr"}
     >
       <div className="mb-8 sm:mb-12">
         <h1 className="text-2xl text-center sm:text-4xl font-black bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent mb-2">
