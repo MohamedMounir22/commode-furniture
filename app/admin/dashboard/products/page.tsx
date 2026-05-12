@@ -1,31 +1,29 @@
 import AdminLayout from "@/components/AdminLayout";
 import AdminProductsContent from "@/components/admin/AdminProductsContent";
-import connectDB from "@/lib/db"; // تأكد من المسار الصحيح لملف الاتصال اللي بعته
-import mongoose from "mongoose";
+import connectDB from "@/lib/db";
+import Product from "@/lib/models/product";
 
-// 1. تعريف الـ Schema محلياً أو استيراد الموديل إذا كان جاهزاً
-// يفضل دائماً استيراد الموديل، لكن هنا وضعت تعريفاً سريعاً لضمان عمل الكود
-const ProductSchema = new mongoose.Schema({
-    nameAr: String,
-    nameEn: String,
-    category: String,
-    price: Number,
-    images: [String],
-    stock: Number,
-});
+interface DbProduct {
+    _id: string | { toString(): string };
+    images?: string[];
+    nameAr?: string;
+    nameEn?: string;
+    name?: string;
+    category?: string;
+    description?: string;
+    price?: number;
+    stock?: number;
+    discount?: number;
+    createdAt?: string | Date;
+}
 
-const Product = mongoose.models.Product || mongoose.model("Product", ProductSchema);
+export const dynamic = "force-dynamic";
 
-export const dynamic = 'force-dynamic';
-
-async function getProducts() {
+async function getProducts(): Promise<DbProduct[]> {
     try {
-        // الاتصال بمخزن أسامة (الداتابيز) مباشرة
         await connectDB();
-
-        // جلب البيانات بدون الحاجة لـ Fetch أو سيرفر محلي
         const products = await Product.find({}).lean();
-        return products;
+        return products as DbProduct[];
     } catch (error) {
         console.error("خطأ في جلب البيانات من الداتابيز:", error);
         return [];
@@ -35,15 +33,14 @@ async function getProducts() {
 export default async function ProductsPage() {
     const products = await getProducts();
 
-    const serializedProducts = products.map((product: any) => ({
-        ...product,
-        // تحويل الـ _id لنص ليتوافق مع Next.js Client Components
-        _id: product._id?.toString() || String(product._id),
-        images: product.images || [],
-        nameAr: product.nameAr || product.name || "",
-        nameEn: product.nameEn || product.name || "",
+    const serializedProducts = products.map((product) => ({
+        _id: product._id?.toString?.() ?? String(product._id),
+        images: product.images ?? [],
+        nameAr: product.nameAr ?? product.name ?? "",
+        nameEn: product.nameEn ?? product.name ?? "",
+        name: product.name ?? "",
+        category: product.category ?? "",
         price: product.price ?? 0,
-        category: product.category || "",
         stock: product.stock ?? 0,
     }));
 
