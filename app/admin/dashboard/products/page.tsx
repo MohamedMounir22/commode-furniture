@@ -46,7 +46,7 @@ export default async function ProductsPage() {
 
     return (
         <AdminLayout>
-            <AdminProductsContent products={serializedProducts} />
+            <AdminProductsContent products={serializedProducts as any} />
         </AdminLayout>
     );
 }
