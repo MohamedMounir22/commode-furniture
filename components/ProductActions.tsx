@@ -6,7 +6,7 @@ import { Edit, Loader2, Trash2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
-export default function ProductActions({ productId }) {
+export default function ProductActions({ productId }: { productId: string }) {
     const router = useRouter()
     const [isDeleting, setIsDeleting] = useState(false)
     const { t } = useLanguage()

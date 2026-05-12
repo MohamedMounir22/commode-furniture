@@ -9,9 +9,9 @@ import Link from "next/link";
 export default function AdminProductsContent({
     products,
 }: {
-    products: Array<{ _id: string; nameAr: string; nameEn: string; price: number; category: string; images?: string[]; stock?: number }>;
+    products: Array<{ _id: string; nameAr?: string; nameEn?: string; name?: string; price: number; category: string; images?: string[]; stock?: number }>;
 }) {
-    const { t } = useLanguage();
+    const { t, locale } = useLanguage();
     const currency = t("cart.currency");
 
     return (
@@ -53,12 +53,14 @@ export default function AdminProductsContent({
                                             <td className="py-3 px-4">
                                                 <img
                                                     src={product.images?.[0] || "/placeholder.png"}
-                                                    alt={product.name}
+                                                    alt={product.nameAr || product.nameEn || product.name || "Product"}
                                                     className="w-12 h-12 object-cover rounded"
                                                 />
                                             </td>
                                             <td className="py-3 px-4 font-medium">
-                                                {t("nav.switchLanguage") === "English" ? product.nameAr : product.nameEn}
+                                                {locale === "ar"
+                                                    ? product.nameAr || product.name || product.nameEn
+                                                    : product.nameEn || product.name || product.nameAr}
                                             </td>
                                             <td className="py-3 px-4 text-sm text-gray-600 uppercase tracking-wide">
                                                 {t(`categories.${product.category}`) || product.category}

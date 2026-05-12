@@ -1,24 +1,27 @@
 ﻿import LocalizedHome from "@/components/LocalizedHome";
+import connectDB from "@/lib/db";
+import Product from "@/lib/models/product";
+
+async function getProducts(category: string) {
+    await connectDB();
+
+    const query = category && category !== "all" ? { category } : {};
+    const products = await Product.find(query).sort({ createdAt: -1 }).lean();
+
+    return products.map((product: any) => ({
+        ...product,
+        _id: product._id?.toString(),
+        images: product.images || [],
+    }));
+}
 
 export default async function Home({ searchParams }: { searchParams?: Promise<{ category?: string }> }) {
     const resolvedParams = await searchParams;
     const category = resolvedParams?.category || "all";
+
     let productsData = [];
-
     try {
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-        const apiUrl =
-            category && category !== "all"
-                ? `${baseUrl}/api/products?category=${category}`
-                : `${baseUrl}/api/products`;
-
-        const res = await fetch(apiUrl, { next: { tags: ["products-data"], revalidate: 2000 } });
-
-        if (!res.ok) {
-            throw new Error(`Failed to fetch products: ${res.status}`);
-        }
-
-        productsData = await res.json();
+        productsData = await getProducts(category);
     } catch (error) {
         console.error("Error fetching products:", error);
     }

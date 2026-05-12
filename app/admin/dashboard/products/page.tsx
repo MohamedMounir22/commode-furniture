@@ -1,33 +1,33 @@
 import AdminLayout from "@/components/AdminLayout";
 import AdminProductsContent from "@/components/admin/AdminProductsContent";
+import connectDB from "@/lib/db"; // تأكد من المسار الصحيح لملف الاتصال اللي بعته
+import mongoose from "mongoose";
+
+// 1. تعريف الـ Schema محلياً أو استيراد الموديل إذا كان جاهزاً
+// يفضل دائماً استيراد الموديل، لكن هنا وضعت تعريفاً سريعاً لضمان عمل الكود
+const ProductSchema = new mongoose.Schema({
+    nameAr: String,
+    nameEn: String,
+    category: String,
+    price: Number,
+    images: [String],
+    stock: Number,
+});
+
+const Product = mongoose.models.Product || mongoose.model("Product", ProductSchema);
 
 export const dynamic = 'force-dynamic';
 
-interface Product {
-    _id: string;
-    name: string;
-    category: string;
-    description: string;
-    price: number;
-    images: string[];
-    stock: number;
-    discount: number;
-    createdAt: string;
-}
-
-async function getProducts(): Promise<Product[]> {
+async function getProducts() {
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/test-db?t=${Date.now()}`, {
-            cache: 'no-store'
-        });
+        // الاتصال بمخزن أسامة (الداتابيز) مباشرة
+        await connectDB();
 
-        if (!res.ok) {
-            throw new Error("Failed to fetch products");
-        }
-
-        return res.json();
+        // جلب البيانات بدون الحاجة لـ Fetch أو سيرفر محلي
+        const products = await Product.find({}).lean();
+        return products;
     } catch (error) {
-        console.error("Error:", error);
+        console.error("خطأ في جلب البيانات من الداتابيز:", error);
         return [];
     }
 }
@@ -35,9 +35,10 @@ async function getProducts(): Promise<Product[]> {
 export default async function ProductsPage() {
     const products = await getProducts();
 
-    const serializedProducts = products.map((product) => ({
+    const serializedProducts = products.map((product: any) => ({
         ...product,
-        _id: product._id?.toString?.() ?? String(product._id),
+        // تحويل الـ _id لنص ليتوافق مع Next.js Client Components
+        _id: product._id?.toString() || String(product._id),
         images: product.images || [],
     }));
 
