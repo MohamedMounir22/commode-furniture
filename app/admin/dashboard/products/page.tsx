@@ -40,6 +40,11 @@ export default async function ProductsPage() {
         // تحويل الـ _id لنص ليتوافق مع Next.js Client Components
         _id: product._id?.toString() || String(product._id),
         images: product.images || [],
+        nameAr: product.nameAr || product.name || "",
+        nameEn: product.nameEn || product.name || "",
+        price: product.price ?? 0,
+        category: product.category || "",
+        stock: product.stock ?? 0,
     }));
 
     return (
