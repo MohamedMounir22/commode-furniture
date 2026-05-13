@@ -3,6 +3,7 @@
 import ProductActions from "@/components/ProductActions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Image from "next/image";
 import { useLanguage } from "@/lib/context/LanguageProvider";
 import Link from "next/link";
 
@@ -47,10 +48,12 @@ export default function AdminProductsContent({ products }) {
                                     {products.map((product) => (
                                         <tr key={product._id} className="border-b hover:bg-gray-50">
                                             <td className="py-3 px-4">
-                                                <img
+                                                <Image
+                                                    width={48}
+                                                    height={48}
                                                     src={product.images?.[0] || "/placeholder.png"}
                                                     alt={product.nameAr || product.nameEn || product.name || "Product"}
-                                                    className="w-12 h-12 object-cover rounded"
+                                                    className="object-cover rounded"
                                                 />
                                             </td>
                                             <td className="py-3 px-4 font-medium">

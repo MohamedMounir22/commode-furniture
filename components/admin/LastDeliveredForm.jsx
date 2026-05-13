@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import {
     Form,
     FormControl,
@@ -319,10 +320,11 @@ export default function LastDeliveredForm({ initialData = null, onSubmit }) {
 
         {previewImage && (
           <div className="relative w-full h-64 rounded-lg overflow-hidden bg-gray-50 border">
-            <img
+            <Image
+              fill
               src={previewImage}
               alt="Preview"
-              className="w-full h-full object-cover"
+              className="object-cover"
             />
             {isUploading && (
               <div className="absolute inset-0 bg-white/60 flex items-center justify-center">

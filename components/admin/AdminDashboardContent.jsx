@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Image from "next/image";
 import { useLanguage } from "@/lib/context/LanguageProvider";
 
 export default function AdminDashboardContent({
@@ -78,10 +79,12 @@ export default function AdminDashboardContent({
                             <div className="space-y-2">
                                 {products.slice(0, 5).map((product) => (
                                     <div key={product._id} className="flex items-center space-x-2 rtl:space-x-reverse">
-                                        <img
+                                        <Image
+                                            width={32}
+                                            height={32}
                                             src={product.images?.[0] || "/placeholder.png"}
                                             alt={product.name}
-                                            className="w-8 h-8 object-cover rounded"
+                                            className="object-cover rounded"
                                         />
                                         <div>
                                             <p className="text-sm font-medium">{product.name}</p>

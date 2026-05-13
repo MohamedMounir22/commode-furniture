@@ -2,6 +2,7 @@
 
 import LastDeliveredForm from "@/components/admin/LastDeliveredForm";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import { useLanguage } from "@/lib/context/LanguageProvider";
 import { ArrowLeft, Edit2, Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -126,10 +127,12 @@ export default function LastDeliveredPage() {
                                     className="border-b hover:bg-gray-50 transition-colors"
                                 >
                                     <td className="px-6 py-4">
-                                        <img
+                                        <Image
+                                            width={48}
+                                            height={48}
                                             src={item.image}
                                             alt={item.nameEn}
-                                            className="w-12 h-12 rounded object-cover"
+                                            className="rounded object-cover"
                                         />
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-900">

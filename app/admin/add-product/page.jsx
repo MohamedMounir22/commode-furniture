@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic'
 import { useLanguage } from "@/lib/context/LanguageProvider"
 
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 
@@ -383,7 +384,7 @@ export default function AddProductPage() {
                         <div className="grid grid-cols-3 gap-4 mb-4">
                             {images.map((url, index) => (
                                 <div key={index} className="relative aspect-square border rounded-lg overflow-hidden group">
-                                    <img src={url} alt="product" className="object-cover w-full h-full" />
+                                    <Image fill src={url} alt="product" className="object-cover" />
                                     <button
                                         type="button"
                                         onClick={() => removeImage(url)}

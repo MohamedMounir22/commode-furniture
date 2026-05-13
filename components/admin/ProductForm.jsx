@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import {
     Form,
     FormControl,
@@ -183,7 +184,7 @@ export default function ProductForm({ initialData = null, onSubmit }) {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {form.watch("images")?.map((img, idx) => (
                 <div key={idx} className="relative aspect-square rounded-lg overflow-hidden border">
-                  <img src={img} className="w-full h-full object-cover" alt="Product" />
+                  <Image fill src={img} className="object-cover" alt="Product" />
                   <button
                     type="button"
                     onClick={() => removeImage(idx)}
