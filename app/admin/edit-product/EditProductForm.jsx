@@ -122,7 +122,6 @@ export default function EditProductForm() {
       if (response.ok) {
         alert(t("admin.form.editSuccess"))
         router.push("/admin/dashboard/products")
-        console.log("Sent data for updatenet :", finalData)
       } else {
         alert(t("admin.form.failedSend"))
       }

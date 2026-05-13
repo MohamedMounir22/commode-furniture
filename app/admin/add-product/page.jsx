@@ -82,7 +82,6 @@ export default function AddProductPage() {
     //     if (files.length === 0) return;
 
     //     // حالة تحميل (Loading) عشان نعرف إننا شغالين
-    //     console.log(`بدأنا نضغط ونرفع ${files.length} صور...`);
 
     //     const options = {
     //         maxSizeMB: 1,
@@ -114,7 +113,6 @@ export default function AddProductPage() {
     //                 setImages((prev) => [...prev, data.secure_url]);
 
     //                 // لو حابب تسجل الحجم عشان تراقبه
-    //                 console.log(`تم رفع ${file.name} بنجاح. الحجم: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`);
     //             }
     //         } catch (error) {
     //             console.error(`فشل في معالجة الصورة ${file.name}:`, error);
@@ -211,7 +209,6 @@ export default function AddProductPage() {
         setIsSubmitting(true);
         try {
             const payload = { ...values, images: images };
-            console.log("Sending payload:", payload);
 
             const response = await fetch("/api/products", {
                 method: "POST",
@@ -219,9 +216,7 @@ export default function AddProductPage() {
                 body: JSON.stringify(payload),
             });
 
-            console.log("API response status:", response.status);
             const responseData = await response.json();
-            console.log("API response data:", responseData);
 
             if (response.ok) {
                 showToast("success", t("admin.form.addSuccess"));

@@ -26,7 +26,6 @@ export async function GET(request) {
       const product = await Product.findById(id);
 
       if (!product) {
-        console.log("❌ المنتج مش موجود في الداتابيز بالـ ID ده:", id);
         return NextResponse.json(
           { error: "عفواً، الكرسي ده مش موجود" },
           { status: 404 },

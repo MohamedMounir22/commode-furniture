@@ -171,12 +171,10 @@ export default function LastDeliveredForm({ initialData = null, onSubmit }) {
 
   const handleSubmit = async (data) => {
     // If we reach here, Zod has already validated the data
-    console.log("Form submission data is valid:", data);
 
     setIsSubmitting(true);
     try {
       const payload = initialData ? { ...data, _id: initialData._id } : data;
-      console.log("Sending payload:", payload);
 
       const response = await fetch("/api/last-delivered", {
         method: initialData ? "PUT" : "POST",
@@ -184,9 +182,7 @@ export default function LastDeliveredForm({ initialData = null, onSubmit }) {
         body: JSON.stringify(payload),
       });
 
-      console.log("API response status:", response.status);
       const responseData = await response.json();
-      console.log("API response data:", responseData);
 
       if (response.ok) {
         showToast(
