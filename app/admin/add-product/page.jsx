@@ -1,5 +1,7 @@
 "use client"
 
+export const dynamic = 'force-dynamic'
+
 import { useLanguage } from "@/lib/context/LanguageProvider"
 
 import { Button } from "@/components/ui/button"
@@ -207,17 +209,19 @@ export default function AddProductPage() {
         }
 
         setIsSubmitting(true);
-        const finalData = {
-            ...values,
-            images: images, // نبعت الروابط اللي اترفعت فعلاً
-        };
-
         try {
+            const payload = { ...values, images: images };
+            console.log("Sending payload:", payload);
+
             const response = await fetch("/api/products", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(finalData),
+                body: JSON.stringify(payload),
             });
+
+            console.log("API response status:", response.status);
+            const responseData = await response.json();
+            console.log("API response data:", responseData);
 
             if (response.ok) {
                 showToast("success", t("admin.form.addSuccess"));
@@ -225,13 +229,15 @@ export default function AddProductPage() {
                 setImages([]); // نصفر الصور بعد النجاح
                 setTimeout(() => {
                     router.push("/admin/dashboard/products");
-                }, 700);
+                }, 1500);
             } else {
-                showToast("error", t("admin.form.failedSend"));
+                const errorMsg = responseData.error || responseData.message || "Failed to save item";
+                console.error("API error:", errorMsg);
+                showToast("error", errorMsg);
             }
         } catch (error) {
-            console.error("Error:", error);
-            showToast("error", t("admin.form.serverError"));
+            console.error("Submit error:", error);
+            showToast("error", error.message || "Error saving item");
         } finally {
             setIsSubmitting(false);
         }

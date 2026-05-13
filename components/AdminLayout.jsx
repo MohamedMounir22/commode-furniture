@@ -3,14 +3,12 @@
 import { useLanguage } from "@/lib/context/LanguageProvider";
 import { Home, Package, Plus, Settings, ShoppingCart, Truck, Users } from "lucide-react";
 import Link from "next/link";
-import type { ReactNode } from "react";
 
-export default function AdminLayout({ children }: { children: ReactNode }) {
+export default function AdminLayout({ children }) {
     const { t } = useLanguage();
 
     const sidebarItems = [
         { name: t("admin.sidebar.dashboard"), href: "/admin/dashboard", icon: Home },
-        { name: "Hero Slides", href: "/admin/dashboard/hero", icon: Package },
         { name: t("admin.sidebar.products"), href: "/admin/dashboard/products", icon: Package },
         { name: "Last Delivered", href: "/admin/dashboard/last-delivered", icon: Truck },
         { name: t("admin.sidebar.orders"), href: "/admin/dashboard/orders", icon: ShoppingCart },

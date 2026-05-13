@@ -17,7 +17,7 @@ export default function CategoryFilter() {
     const { t } = useLanguage();
     const currentCategory = searchParams.get("category") || "all";
 
-    const handleFilter = (slug: string) => {
+    const handleFilter = (slug) => {
         if (slug === "all") {
             router.push("/", { scroll: false });
         } else {

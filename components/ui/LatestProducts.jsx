@@ -4,9 +4,9 @@ import { useLanguage } from "@/lib/context/LanguageProvider";
 import { useState } from "react";
 import ProductCard from "./ProductCard";
 
-export default function LatestProducts({ products }: any) {
+export default function LatestProducts({ products }) {
     const { t } = useLanguage();
-    const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+    const [viewMode, setViewMode] = useState("grid");
 
     if (!products || products.length === 0) {
         return <p className="text-center py-10">{t("latestProducts.loading")}</p>;
@@ -48,7 +48,7 @@ export default function LatestProducts({ products }: any) {
                     : "grid-cols-1" // هنا هيفضل كارد واحد كبير عمودي
                     }`}
             >
-                {products.map((item: any) => (
+                {products.map((item) => (
                     <ProductCard
                         key={item._id}
                         viewMode={viewMode} // مررنا الـ mode هنا

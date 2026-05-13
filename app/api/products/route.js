@@ -12,9 +12,15 @@ export async function GET(request) {
     const category = searchParams.get("category");
 
     const query = category && category !== "all" ? { category } : {};
-    const products = await Product.find(query).sort({ createdAt: -1 });
+    const products = await Product.find(query).sort({ createdAt: -1 }).lean();
 
-    return NextResponse.json(products, { status: 200 });
+    // Convert _id to string for JSON serialization
+    const serializedProducts = products.map((product) => ({
+      ...product,
+      _id: product._id.toString(),
+    }));
+
+    return NextResponse.json(serializedProducts, { status: 200 });
   } catch (error) {
     console.error("Database Error:", error);
     return NextResponse.json({ error: "مشكلة في السيرفر" }, { status: 500 });

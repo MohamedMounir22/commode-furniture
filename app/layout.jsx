@@ -3,26 +3,20 @@ import HeaderNav from "@/components/HeaderNav";
 import { CartProvider } from "@/lib/context/CartContext";
 import LanguageProvider from "@/lib/context/LanguageProvider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import type { Metadata } from "next";
 import "./globals.css";
 
-
-
-
-export const metadata: Metadata = {
+export const metadata = {
     title: "Commode Furniture | Modern Artisanal Designs",
     description: "Premium furniture for the modern home.",
 };
 
 export default function RootLayout({
     children,
-}: Readonly<{
-    children: React.ReactNode;
-}>) {
+}) {
     return (
         <html
             lang="en"
-            
+
             suppressHydrationWarning
         >
             <body className="min-h-full flex flex-col bg-background text-foreground font-sans">

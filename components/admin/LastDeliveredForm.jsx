@@ -59,67 +59,107 @@ export default function LastDeliveredForm({ initialData = null, onSubmit }) {
     },
   });
 
-const handleImageChange = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+// const handleImageChange = async (e) => {
+//     const file = e.target.files?.[0];
+//     if (!file) return;
 
-    setIsUploading(true);
-    setUploadProgress(0);
+//     setIsUploading(true);
+//     setUploadProgress(0);
 
-    // دالة المحاكاة لجعل الشريط سلساً
-    const simulateProgress = (start, end, duration) => {
-        let current = start;
-        const interval = setInterval(() => {
-            current += 1;
-            if (current >= end) clearInterval(interval);
-            else setUploadProgress(current);
-        }, duration / (end - start));
-        return interval;
+//     // دالة المحاكاة لجعل الشريط سلساً
+//     const simulateProgress = (start, end, duration) => {
+//         let current = start;
+//         const interval = setInterval(() => {
+//             current += 1;
+//             if (current >= end) clearInterval(interval);
+//             else setUploadProgress(current);
+//         }, duration / (end - start));
+//         return interval;
+//     };
+
+//     const interval = simulateProgress(0, 90, 1500);
+
+//     try {
+//         // 1. الضغط
+//         const compressedFile = await imageCompression(file, {
+//             maxSizeMB: 1,
+//             maxWidthOrHeight: 1920,
+//             useWebWorker: true,
+//         });
+
+//         // 2. تجهيز الـ FormData
+//         const formData = new FormData();
+//         formData.append("file", compressedFile);
+//         formData.append("upload_preset", "commode_furniture");
+//         formData.append("folder", "last-delivered");
+
+//         // 3. الرفع
+//         const res = await fetch(
+//             `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+//             { method: "POST", body: formData }
+//         );
+
+//         const data = await res.json();
+//         clearInterval(interval);
+
+//         if (data.secure_url) {
+//             setUploadProgress(100);
+//             form.setValue("image", data.secure_url);
+//             setPreviewImage(data.secure_url);
+//             showToast("success", "تم رفع الصورة بنجاح");
+//         } else {
+//             throw new Error(data.error?.message || "فشل الرفع");
+//         }
+//     } catch (error) {
+//         clearInterval(interval);
+//         showToast("error", error.message);
+//     } finally {
+//         setTimeout(() => {
+//             setIsUploading(false);
+//             setUploadProgress(0);
+//         }, 1000);
+//     }
+// };
+
+
+ const handleImageUpload = async (event) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        setIsUploading(true);
+        try {
+            // Compress the image before uploading
+            const options = {
+                maxSizeMB: 1,
+                maxWidthOrHeight: 1920,
+                useWebWorker: true,
+            };
+
+            const compressedFile = await imageCompression(file, options);
+
+            const formDataUpload = new FormData();
+            formDataUpload.append("file", compressedFile);
+            formDataUpload.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "commode_present");
+
+            const response = await fetch(
+                `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+                { method: "POST", body: formDataUpload }
+            );
+
+            const data = await response.json();
+            if (data.secure_url) {
+                form.setValue("image", data.secure_url);
+                setPreviewImage(data.secure_url);
+                showToast("success", "تم رفع الصورة بنجاح");
+            }
+        } catch (error) {
+            console.error("Error uploading image:", error);
+        } finally {
+            setIsUploading(false);
+        }
     };
 
-    const interval = simulateProgress(0, 90, 1500);
 
-    try {
-        // 1. الضغط
-        const compressedFile = await imageCompression(file, {
-            maxSizeMB: 1,
-            maxWidthOrHeight: 1920,
-            useWebWorker: true,
-        });
-
-        // 2. تجهيز الـ FormData
-        const formData = new FormData();
-        formData.append("file", compressedFile);
-        formData.append("upload_preset", "commode_furniture");
-        formData.append("folder", "last-delivered");
-
-        // 3. الرفع
-        const res = await fetch(
-            `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
-            { method: "POST", body: formData }
-        );
-
-        const data = await res.json();
-        clearInterval(interval);
-
-        if (data.secure_url) {
-            setUploadProgress(100);
-            form.setValue("image", data.secure_url);
-            setPreviewImage(data.secure_url);
-            showToast("success", "تم رفع الصورة بنجاح");
-        } else {
-            throw new Error(data.error?.message || "فشل الرفع");
-        }
-    } catch (error) {
-        clearInterval(interval);
-        showToast("error", error.message);
-    } finally {
-        setTimeout(() => {
-            setIsUploading(false);
-            setUploadProgress(0);
-        }, 1000);
-    }
-};
 
   const showToast = (type, message) => {
     setToast({ visible: true, type, message });
@@ -300,7 +340,7 @@ const handleImageChange = async (e) => {
           <input
             type="file"
             accept="image/*"
-            onChange={handleImageChange}
+            onChange={handleImageUpload}
             disabled={isUploading}
             className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100 cursor-pointer"
           />

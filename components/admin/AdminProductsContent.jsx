@@ -6,11 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/lib/context/LanguageProvider";
 import Link from "next/link";
 
-export default function AdminProductsContent({
-    products,
-}: {
-    products: Array<{ _id: string; nameAr?: string; nameEn?: string; name?: string; price: number; category: string; images?: string[]; stock?: number }>;
-}) {
+export default function AdminProductsContent({ products }) {
     const { t, locale } = useLanguage();
     const currency = t("cart.currency");
 

@@ -6,7 +6,7 @@ import CategoryFilter from "@/components/ui/CategoryFilter";
 import LatestProducts from "@/components/ui/LatestProducts";
 import { useLanguage } from "@/lib/context/LanguageProvider";
 
-export default function LocalizedHome({ products }: { products: any[] }) {
+export default function LocalizedHome({ products }) {
     const { t } = useLanguage();
 
     return (

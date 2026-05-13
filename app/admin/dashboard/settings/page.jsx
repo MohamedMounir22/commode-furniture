@@ -1,8 +1,8 @@
 "use client";
 
 import AdminLayout from "@/components/AdminLayout";
-import { useLanguage } from "@/lib/context/LanguageProvider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLanguage } from "@/lib/context/LanguageProvider";
 
 export default function SettingsPage() {
     const { t } = useLanguage();

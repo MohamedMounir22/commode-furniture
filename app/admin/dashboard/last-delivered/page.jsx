@@ -31,14 +31,14 @@ export default function LastDeliveredPage() {
         }
     };
 
-    const handleDelete = async (id: string) => {
+    const handleDelete = async (id) => {
         if (confirm("Are you sure you want to delete this item?")) {
             try {
                 const res = await fetch(`/api/last-delivered?id=${id}`, {
                     method: "DELETE",
                 });
                 if (res.ok) {
-                    setItems(items.filter((item: any) => item._id !== id));
+                    setItems(items.filter((item) => item._id !== id));
                 }
             } catch (error) {
                 console.error("Failed to delete item:", error);
@@ -46,7 +46,7 @@ export default function LastDeliveredPage() {
         }
     };
 
-    const handleFormSubmit = async (data: any) => {
+    const handleFormSubmit = async (data) => {
         await fetchItems();
         setShowForm(false);
         setEditingItem(null);
@@ -120,7 +120,7 @@ export default function LastDeliveredPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {items.map((item: any) => (
+                            {items.map((item) => (
                                 <tr
                                     key={item._id}
                                     className="border-b hover:bg-gray-50 transition-colors"

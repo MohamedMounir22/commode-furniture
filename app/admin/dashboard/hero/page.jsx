@@ -7,27 +7,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import imageCompression from 'browser-image-compression';
-import { useEffect, useState } from "react";
+import { Edit, Eye, EyeOff, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
-import { Plus, EyeOff, Eye, Edit, Trash2 } from "lucide-react";
-
-interface HeroSlide {
-    _id: string;
-    title: string;
-    subtitle?: string;
-    description: string;
-    image: string;
-    buttonText: string;
-    buttonLink: string;
-    isActive: boolean;
-    order: number;
-}
+import { useEffect, useState } from "react";
 
 export default function HeroManagementPage() {
-    const [slides, setSlides] = useState<HeroSlide[]>([]);
+    const [slides, setSlides] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
-    const [editingSlide, setEditingSlide] = useState<HeroSlide | null>(null);
+    const [editingSlide, setEditingSlide] = useState(null);
     const [formData, setFormData] = useState({
         title: "",
         subtitle: "",
@@ -58,7 +46,7 @@ export default function HeroManagementPage() {
         }
     };
 
-    const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageUpload = async (event) => {
         const file = event.target.files?.[0];
         if (!file) return;
 
@@ -93,7 +81,7 @@ export default function HeroManagementPage() {
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
@@ -126,7 +114,7 @@ export default function HeroManagementPage() {
         }
     };
 
-    const handleEdit = (slide: HeroSlide) => {
+    const handleEdit = (slide) => {
         setEditingSlide(slide);
         setFormData({
             title: slide.title,
@@ -141,7 +129,7 @@ export default function HeroManagementPage() {
         setShowForm(true);
     };
 
-    const handleDelete = async (id: string) => {
+    const handleDelete = async (id) => {
         if (!confirm("Are you sure you want to delete this slide?")) return;
 
         try {
@@ -154,7 +142,7 @@ export default function HeroManagementPage() {
         }
     };
 
-    const toggleActive = async (slide: HeroSlide) => {
+    const toggleActive = async (slide) => {
         try {
             const response = await fetch(`/api/hero/${slide._id}`, {
                 method: "PUT",

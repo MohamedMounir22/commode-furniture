@@ -1,7 +1,7 @@
 "use client";
 
-import { useLanguage } from "@/lib/context/LanguageProvider"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLanguage } from "@/lib/context/LanguageProvider";
 
 export default function AdminDashboardContent({
     totalProducts,
@@ -9,12 +9,6 @@ export default function AdminDashboardContent({
     totalRevenue,
     totalCustomers,
     products,
-}: {
-    totalProducts: number;
-    totalOrders: number;
-    totalRevenue: number;
-    totalCustomers: number;
-    products: Array<{ _id: string; name: string; price: number; images?: string[] }>;
 }) {
     const { t } = useLanguage();
 

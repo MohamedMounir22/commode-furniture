@@ -21,11 +21,11 @@ async function getProducts() {
 }
 
 export default async function DashboardPage() {
-    const products: any[] = await getProducts();
+    const products = await getProducts();
 
     // Calculate real stats
     const totalProducts = products.length;
-    const totalRevenue = products.reduce((sum: number, product: any) => sum + (product.price * (product.stock || 1)), 0);
+    const totalRevenue = products.reduce((sum, product) => sum + (product.price * (product.stock || 1)), 0);
     const totalOrders = 0; // Placeholder - no orders system yet
     const totalCustomers = 0; // Placeholder - no users system yet
 

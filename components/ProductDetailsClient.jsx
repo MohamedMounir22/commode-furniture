@@ -6,22 +6,7 @@ import { MessageCircle, ShieldCheck, Trees, Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function ProductDetailsClient({
-    product,
-}: {
-    product: {
-        _id: string;
-        nameAr?: string;
-        nameEn?: string;
-        name?: string;
-        price: number;
-        descriptionAr?: string;
-        descriptionEn?: string;
-        description?: string;
-        images?: string[];
-        discount?: number;
-    };
-}) {
+export default function ProductDetailsClient({ product }) {
     const { t, locale } = useLanguage();
     const productName = (locale === "ar" ? product.nameAr || product.name : product.nameEn || product.name) || "Product";
     const productDescription = locale === "ar" ? product.descriptionAr || product.description : product.descriptionEn || product.description;

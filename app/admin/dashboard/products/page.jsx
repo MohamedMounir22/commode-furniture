@@ -3,27 +3,13 @@ import AdminProductsContent from "@/components/admin/AdminProductsContent";
 import connectDB from "@/lib/db";
 import Product from "@/lib/models/product";
 
-interface DbProduct {
-    _id: string | { toString(): string };
-    images?: string[];
-    nameAr?: string;
-    nameEn?: string;
-    name?: string;
-    category?: string;
-    description?: string;
-    price?: number;
-    stock?: number;
-    discount?: number;
-    createdAt?: string | Date;
-}
-
 export const dynamic = "force-dynamic";
 
-async function getProducts(): Promise<DbProduct[]> {
+async function getProducts() {
     try {
         await connectDB();
         const products = await Product.find({}).lean();
-        return products as DbProduct[];
+        return products;
     } catch (error) {
         console.error("خطأ في جلب البيانات من الداتابيز:", error);
         return [];
@@ -46,7 +32,7 @@ export default async function ProductsPage() {
 
     return (
         <AdminLayout>
-            <AdminProductsContent products={serializedProducts as any} />
+            <AdminProductsContent products={serializedProducts} />
         </AdminLayout>
     );
 }

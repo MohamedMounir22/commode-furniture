@@ -1,12 +1,12 @@
 "use client"
 
-import { useLanguage } from "@/lib/context/LanguageProvider"
 import { Button } from "@/components/ui/button"
+import { useLanguage } from "@/lib/context/LanguageProvider"
 import { Edit, Loader2, Trash2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
-export default function ProductActions({ productId }: { productId: string }) {
+export default function ProductActions({ productId }) {
     const router = useRouter()
     const [isDeleting, setIsDeleting] = useState(false)
     const { t } = useLanguage()
