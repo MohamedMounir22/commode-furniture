@@ -35,9 +35,9 @@ export default function HeaderNav() {
                 </div>
 
                 {/* dashboard */}
-                    <Link href="/admin/dashboard" className="text-sm font-semibold hover:text-zinc-500 transition">
+                    {/* <Link href="/admin/dashboard" className="text-sm font-semibold hover:text-zinc-500 transition">
                         {t("nav.admin")}
-                    </Link>
+                    </Link> */}
 
             </nav>
         </header>
