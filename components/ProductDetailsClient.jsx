@@ -16,7 +16,7 @@ export default function ProductDetailsClient({ product }) {
         ? product.price - (product.price * discount) / 100
         : product.price;
 
-    const phoneNumber = "201013598586";
+    const phoneNumber = "201011761133";
     const whatsappMessage = `${t("productDetail.specialRequest")}
 ${t("productDetail.productLabel")}: ${productName}
 ${t("productDetail.priceLabel")}: ${product.price} ${t("cart.currency")}

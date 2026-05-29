@@ -10,7 +10,7 @@ export default function CartPage() {
   const { cart, removeFromCart, updateQuantity, cartTotal } = useCart();
   const { t, locale } = useLanguage();
 
-  const phoneNumber = "201013598586";
+  const phoneNumber = "201011761133"; // الرقم بالصيغة الدولية
   const currency = t("cart.currency");
 
   const generateWhatsAppMessage = () => {

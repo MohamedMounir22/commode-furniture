@@ -104,7 +104,7 @@ export default function LuxuryChat() {
                         <div className="p-4 -mt-6">
                             <div className="bg-[#1e293b] rounded-xl p-2 shadow-inner border border-slate-700">
                                 {/* خيار الواتساب */}
-                                <a href="https://wa.me/your-number" target="_blank" className="flex items-center justify-between p-4 hover:bg-slate-700/50 rounded-lg transition-all group">
+                                <a href="https://wa.me/201011761133" target="_blank" className="flex items-center justify-between p-4 hover:bg-slate-700/50 rounded-lg transition-all group">
                                     <div className="flex items-center gap-3">
                                         <div className="bg-amber-500/10 p-2 rounded-lg text-amber-500">
                                             <MessageSquare size={20} />
@@ -117,7 +117,7 @@ export default function LuxuryChat() {
                                 <div className="h-px bg-slate-700 my-1 mx-4" />
 
                                 {/* خيار الاتصال */}
-                                <a href="tel:+201..." className="flex items-center justify-between p-4 hover:bg-slate-700/50 rounded-lg transition-all group">
+                                <a href="tel:+201011761133" className="flex items-center justify-between p-4 hover:bg-slate-700/50 rounded-lg transition-all group">
                                     <div className="flex items-center gap-3">
                                         <div className="bg-amber-500/10 p-2 rounded-lg text-amber-500">
                                             <Phone size={20} />

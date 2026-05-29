@@ -65,7 +65,7 @@ export default function ProductCard({
   //   };
 
   const handleWhatsAppOrder = () => {
-    const phoneNumber = "201013598586"; // الرقم بالصيغة الدولية
+    const phoneNumber = "201011761133"; // الرقم بالصيغة الدولية
     const currency = t("cart.currency");
 
     const message =
