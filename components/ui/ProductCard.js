@@ -117,7 +117,7 @@ export default function ProductCard({
           />
 
           {/* Product name overlay - always visible on mobile */}
-          <div className="absolute bottom-0 left-0 right-0 p-3  from-black/80 to-transparent">
+          <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
             <div className="flex items-baseline justify-between gap-2">
               <h3 className="text-white font-bold text-sm truncate drop-shadow-lg flex-1">
                 {name}
@@ -200,7 +200,7 @@ export default function ProductCard({
 
       <div className="p-5 flex flex-col gap-4">
         <div className="flex items-center justify-between gap-3">
-          <div className="max-w-50 bg-yellow-800">
+          <div className="max-w-50 ">
             <h3 className="text-lg sm:text-xl font-semibold text-slate-900 truncate">
               {name}
             </h3>
