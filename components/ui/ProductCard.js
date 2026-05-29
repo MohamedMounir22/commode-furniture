@@ -117,7 +117,7 @@ export default function ProductCard({
           />
 
           {/* Product name overlay - always visible on mobile */}
-          <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
+          <div className="absolute bottom-0 left-0 right-0 p-3  from-black/80 to-transparent">
             <div className="flex items-baseline justify-between gap-2">
               <h3 className="text-white font-bold text-sm truncate drop-shadow-lg flex-1">
                 {name}
