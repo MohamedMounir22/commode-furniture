@@ -26,16 +26,17 @@ export default function CategoryFilter() {
     };
 
     return (
-        <div className="w-full ">
-            <div className="flex flex-wrap justify-center gap-3 ">
+        <div className="w-full">
+            <div className="flex flex-wrap justify-center gap-3">
                 {categories.map((cat) => (
                     <button
                         key={cat.slug}
                         onClick={() => handleFilter(cat.slug)}
-                        className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 whitespace-nowrap border
-              ${currentCategory === cat.slug
-                                ? "bg-zinc-900 text-white border-zinc-900 shadow-md scale-105"
-                                : "bg-white text-zinc-600 border-zinc-200 hover:border-zinc-400"
+                        // ✨ هنا التعديل: تصفية الألوان القديمة واستبدالها بالثيم الأسود الشفاف والذهبي الملكي
+                        className={`px-6 py-2 rounded-xl text-sm font-bold transition-all duration-300 whitespace-nowrap border tracking-wide shadow-lg
+                            ${currentCategory === cat.slug
+                                ? "bg-primary text-black border-transparent scale-105 shadow-[0_4px_20px_rgba(214,175,55,0.3)]"
+                                : "bg-white/[0.03] text-zinc-300 border-white/[0.08] backdrop-blur-md hover:border-primary/50 hover:text-primary"
                             }`}
                     >
                         {t(cat.key)}

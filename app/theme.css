@@ -5,34 +5,49 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* الوضع الفاتح: لمسات ذهبية بسيطة مع خلفية نظيفة */
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.12 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.12 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.12 0 0);
-  --primary: oklch(0.82 0.16 88); /* الذهبي الملكي المستخرج من اللوجو */
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  /* ثيم الفخامة: أسود مطفأ ورمادي داكن مع ذهبي ملكي */
+  --background: oklch(0.15 0.01 240); /* أسود داكن مطفأ فاخر جداً */
+  --foreground: oklch(0.98 0 0);      /* نصوص بيضاء واضحة ونظيفة */
+
+  /* الكروت والقوائم (رمادي غامق عشان يفصل عن الخلفية زي الصورة) */
+  --card: oklch(0.20 0.01 240);
+  --card-foreground: oklch(0.98 0 0);
+
+  --popover: oklch(0.18 0.01 240);
+  --popover-foreground: oklch(0.98 0 0);
+
+  /* الذهبي الملكي المستخرج من اللوجو (هيفضل يلمع في الأزرار والعناوين) */
+  --primary: oklch(0.82 0.16 88);
+  --primary-foreground: oklch(0.12 0 0); /* نص داكن جوة الزرار الذهبي لسهولة القراءة */
+
+  /* الألوان الثانوية والـ Borders الهادية المتناسقة مع الأسود */
+  --secondary: oklch(0.25 0.01 240);
+  --secondary-foreground: oklch(0.98 0 0);
+
+  --muted: oklch(0.25 0.01 240);
+  --muted-foreground: oklch(0.65 0.01 240); /* نصوص فرعية رمادية أنيقة */
+
+  --accent: oklch(0.82 0.16 88 / 20%); /* تلميح ذهبي خفيف عند التحديد */
+  --accent-foreground: oklch(0.82 0.16 88);
+
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.82 0.16 88);
+
+  /* الحدود والـ Rings لخانة الدفع والكروت */
+  --border: oklch(0.28 0.01 240); /* حدود خفيفة جداً تليق بالـ Luxury */
+  --input: oklch(0.28 0.01 240);
+  --ring: oklch(0.82 0.16 88); /* ينور ذهبي ملكي عند الضغط */
+
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
+
+  /* المكونات الجانبية */
+  --sidebar: oklch(0.18 0.01 240);
+  --sidebar-foreground: oklch(0.98 0 0);
   --sidebar-primary: oklch(0.82 0.16 88);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar-primary-foreground: oklch(0.12 0 0);
+  --sidebar-accent: oklch(0.25 0.01 240);
+  --sidebar-accent-foreground: oklch(0.98 0 0);
+  --sidebar-border: oklch(0.28 0.01 240);
+  --sidebar-ring: oklch(0.82 0.16 88);
 }
 
 @theme inline {
@@ -52,11 +67,6 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -80,6 +90,7 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* تم توحيد الألوان على الثيم الغامق الفخم في كل الأوضاع لمنع أي تضارب */
 @media (prefers-color-scheme: dark) {
   :root {
     --primary: oklch(0.82 0.16 88);
@@ -88,43 +99,12 @@
 }
 
 .dark {
-  /* خلفية فاتحة ملكية مستوحاة من اللوجو - مع الحفاظ على الخلفية الفاتحة */
-  --background: oklch(0.98 0 0); /* خلفية فاتحة جداً بدلاً من السوداء */
-  --foreground: oklch(0.12 0 0); /* نص داكن للتباين */
-
-  /* الذهبي الملكي للعناوين والأزرار الأساسية */
+  /* متوافقة تماماً مع الـ :root الغامق لمنع التشتيت */
+  --background: oklch(0.15 0.01 240);
+  --foreground: oklch(0.98 0 0);
+  --card: oklch(0.20 0.01 240);
+  --card-foreground: oklch(0.98 0 0);
   --primary: oklch(0.82 0.16 88);
   --primary-foreground: oklch(0.12 0 0);
-
-  /* الكروت والبوب أوفر بلون فاتح مع لمسات ذهبية */
-  --card: oklch(0.96 0 0); /* كروت فاتحة */
-  --card-foreground: oklch(0.12 0 0);
-
-  --popover: oklch(0.96 0 0);
-  --popover-foreground: oklch(0.12 0 0);
-
-  /* الألوان الثانوية والمكتومة مع لمسات ذهبية */
-  --secondary: oklch(0.92 0.02 85);
-  --secondary-foreground: oklch(0.12 0 0);
-
-  --muted: oklch(0.92 0.02 85);
-  --muted-foreground: oklch(0.45 0 0);
-
-  /* لمسات ذهبية خفيفة للحواف والحدود */
-  --accent: oklch(0.82 0.16 88 / 30%);
-  --accent-foreground: oklch(0.82 0.16 88);
-
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(0.85 0.05 85);
-  --input: oklch(0.90 0.02 85);
-  --ring: oklch(0.82 0.16 88);
-
-  --sidebar: oklch(0.96 0 0);
-  --sidebar-foreground: oklch(0.12 0 0);
-  --sidebar-primary: oklch(0.82 0.16 88);
-  --sidebar-primary-foreground: oklch(0.12 0 0);
-  --sidebar-accent: oklch(0.92 0.02 85);
-  --sidebar-accent-foreground: oklch(0.12 0 0);
-  --sidebar-border: oklch(0.85 0.05 85);
-  --sidebar-ring: oklch(0.82 0.16 88);
+  --border: oklch(0.28 0.01 240);
 }

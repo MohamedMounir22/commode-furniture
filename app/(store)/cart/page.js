@@ -2,7 +2,7 @@
 
 import { useCart } from "@/lib/context/CartContext";
 import { useLanguage } from "@/lib/context/LanguageProvider";
-import { MessageCircle, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
+import { MessageCircle, Minus, Plus, ShoppingBag, Trash2, CreditCard } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -55,7 +55,7 @@ export default function CartPage() {
   return (
     <div
       className="w-full mx-auto p-3 sm:p-6 py-6 sm:py-12"
-         dir={locale === "ar" ? "rtl" : "ltr"}
+      dir={locale === "ar" ? "rtl" : "ltr"}
     >
       <div className="mb-8 sm:mb-12">
         <h1 className="text-2xl text-center sm:text-4xl font-black bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent mb-2">
@@ -115,6 +115,7 @@ export default function CartPage() {
         ))}
       </div>
 
+      {/* بوكس الإجمالي وأزرار الدفع */}
       <div className="mt-8 sm:mt-12 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-5 sm:p-8 rounded-2xl sm:rounded-[2.5rem] shadow-2xl border border-slate-700">
         <div className="flex justify-center items-center gap-4 mb-6 sm:mb-8 border-b border-slate-600 pb-5 sm:pb-6">
           <span className="text-xl text-slate-300 font-semibold">
@@ -125,15 +126,27 @@ export default function CartPage() {
           </span>
         </div>
 
-        <a
-          href={generateWhatsAppMessage()}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white py-4 sm:py-5 rounded-xl sm:rounded-2xl font-bold hover:shadow-2xl  flex items-center justify-center gap-2 sm:gap-3 text-base sm:text-lg active:scale-95"
-        >
-          <MessageCircle size={20} className="sm:w-[24px] sm:h-[24px]" />
-          {t("cart.checkout")}
-        </a>
+        <div className="flex flex-col gap-3">
+          {/* 🚀 الزرار الرئيسي الجديد: التحويل لصفحة الـ Checkout والدفع الإلكتروني */}
+          <Link
+            href="/checkout"
+            className="w-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white py-4 sm:py-5 rounded-xl sm:rounded-2xl font-bold hover:shadow-2xl flex items-center justify-center gap-2 sm:gap-3 text-base sm:text-lg active:scale-95 transition-all text-center"
+          >
+            <CreditCard size={20} className="sm:w-[24px] sm:h-[24px]" />
+            {locale === "ar" ? "الانتقال للدفع الإلكتروني (فيزا / انستا باي)" : "Proceed to Checkout (Visa / InstaPay)"}
+          </Link>
+
+          {/* 💬 زرار الواتساب البديل (تم تحسين شكله ليكون خياراً ثانوياً أنيقاً) */}
+          <a
+            href={generateWhatsAppMessage()}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full border border-slate-600 hover:bg-slate-800 text-slate-200 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-medium flex items-center justify-center gap-2 text-sm sm:text-base active:scale-95 transition-all"
+          >
+            <MessageCircle size={18} />
+            {locale === "ar" ? "أو اطلب عبر الواتساب مباشرة" : "Or Order via WhatsApp"}
+          </a>
+        </div>
       </div>
     </div>
   );

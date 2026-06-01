@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
-// Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -39,13 +38,13 @@ export default function LastDelivered() {
 
   if (loading) {
     return (
-      <section className="w-full py-20 bg-muted/30 border-y border-border">
+      <section className="w-full py-20 bg-black border-y border-white/[0.05]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col items-center justify-center min-h-[300px]">
           <div className="flex flex-col items-center gap-3 text-center">
-            <h2 className="text-3xl font-extrabold text-[#D4AF37] tracking-[0.25em] uppercase animate-pulse">
+            <h2 className="text-3xl font-extrabold text-primary tracking-[0.25em] uppercase animate-pulse">
               COMMODE
             </h2>
-            <p className="text-xs font-light text-[#D4AF37]/70 tracking-[0.3em] uppercase">
+            <p className="text-xs font-light text-primary/70 tracking-[0.3em] uppercase">
               {t("deliveredPage.loading")}
             </p>
           </div>
@@ -61,41 +60,38 @@ export default function LastDelivered() {
   return (
     <section
       dir={isRtl ? "rtl" : "ltr"}
-      className="w-full py-50 bg-zinc-50/50 dark:bg-zinc-950/50 border-y border-zinc-200/50 dark:border-zinc-800/50"
+      // 🖤 تعديل ألوان السكشن: أسود فاحم صامت مدمج بالكامل مع خلفية الموقع مع حدود مخفية ناعمة
+      className="w-full py-20 bg-black border-y border-white/[0.05]"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div
           className={`flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8 ${isRtl ? "md:flex-row-reverse" : ""}`}
         >
           <div className={isRtl ? "text-right" : "text-left"}>
-            <div className="flex items-center justify-between gap-4 mb-4">
-              <h2 className="text-lg md:text-xl font-bold text-zinc-900 dark:text-zinc-50 tracking-tight whitespace-nowrap">
+            <div className="flex flex-wrap items-center gap-4 mb-4">
+              {/* العنوان الرئيسي بالأبيض الناصع */}
+              <h2 className="text-xl md:text-2xl font-black text-white tracking-tight whitespace-nowrap">
                 {t("deliveredPage.recentlyDelivered")}
               </h2>
-              <div className="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 font-bold tracking-widest uppercase">
-                <ShieldCheck size={18} />
+              {/* شارة الضمان منورة بالذهبي الملكي صريح */}
+              <div className="flex items-center gap-2 text-xs text-primary font-bold tracking-widest uppercase">
+                <ShieldCheck size={18} className="text-primary" />
                 {t("deliveredPage.qualityGuaranteed")}
               </div>
             </div>
 
+            {/* زرار "عرض الكل" واخد الذهبي الملكي الفخم */}
             <Link
               href="/delivered"
-              className="inline-flex items-center gap-2 text-amber-600 hover:text-amber-700 font-bold transition-colors group"
+              className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-bold transition-colors group text-sm"
             >
               <span>{t("deliveredPage.viewAllDeliveries")}</span>
               <ArrowRight
-                size={18}
+                size={16}
                 className={`transition-transform group-hover:translate-x-1 ${isRtl ? "rotate-180 group-hover:-translate-x-1" : ""}`}
               />
             </Link>
           </div>
-          {/* <p
-            className={`text-lg text-zinc-500 dark:text-zinc-400 max-w-xl leading-relaxed ${locale === "ar" ? "text-right" : "text-left"}`}
-          >
-            {locale === "ar"
-              ? "انظر كيف تحولت منازل عملائنا بقطعنا الفنية. تسليم آمن وتركيب محترف في جميع أنحاء مصر."
-              : "See how our artisanal pieces elevate real homes. Expert delivery and installation nationwide."}
-          </p> */}
         </div>
 
         <Swiper
@@ -114,27 +110,27 @@ export default function LastDelivered() {
         >
           {items.map((item) => (
             <SwiperSlide key={item._id}>
-              <div className="group h-full bg-card rounded-3xl overflow-hidden border border-border shadow-lg flex flex-col">
+              {/* 🎯 كارد المنتج المسلم: تحول لرمادي داكن فاخر (bg-zinc-900) عشان يفصل بشياكة والحدود ناعمة جداً */}
+              <div className="group h-full bg-zinc-900 rounded-3xl overflow-hidden border border-white/[0.06] shadow-2xl flex flex-col">
                 {/* Image Container */}
-                <div className="relative h-72 w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
+                <div className="relative h-72 w-full overflow-hidden bg-black">
                   <Image
                     src={item.image}
                     alt={isRtl ? item.nameAr : item.nameEn}
                     fill
-                    className="object-cover"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                  {/* Overlay Gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/60 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent" />
 
-                  {/* Location Badge */}
+                  {/* شارة الموقع: اتعدلت لتصبح زجاجية داكنة شفافة تتماشى مع التصميم */}
                   <div
-                    className={`absolute bottom-4 ${isRtl ? "right-4" : "left-4"} flex items-center gap-2 bg-card/95 backdrop-blur-md px-4 py-2.5 rounded-full shadow-lg border border-border`}
+                    className={`absolute bottom-4 ${isRtl ? "right-4" : "left-4"} flex items-center gap-2 bg-zinc-950/80 backdrop-blur-md px-3 py-2 rounded-xl shadow-xl border border-white/[0.05]`}
                   >
                     <div className="bg-primary p-1.5 rounded-lg">
-                      <MapPin size={14} className="text-white" />
+                      <MapPin size={12} className="text-black stroke-[2.5]" />
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">
+                      <p className="text-xs font-bold text-white">
                         {isRtl ? item.locationAr : item.locationEn}
                       </p>
                     </div>
@@ -143,30 +139,30 @@ export default function LastDelivered() {
 
                 {/* Content Container */}
                 <div
-                  className={`flex-1 flex flex-col justify-between p-6 sm:p-7 ${isRtl ? "text-right" : "text-left"}`}
+                  className={`flex-1 flex flex-col justify-between p-6 ${isRtl ? "text-right" : "text-left"}`}
                 >
-                  {/* Product Info */}
                   <div className="flex items-baseline justify-between gap-4">
-                    <h3 className="text-xl font-bold text-foreground line-clamp-1 tracking-tight leading-tight">
+                    {/* اسم المنتج بالأبيض الفخم */}
+                    <h3 className="text-lg font-bold text-white line-clamp-1 tracking-tight">
                       {isRtl ? item.nameAr : item.nameEn}
                     </h3>
-                    <p className="text-sm text-muted-foreground font-medium shrink-0">
+                    {/* التاريخ بلون هادئ */}
+                    <p className="text-xs text-zinc-500 font-medium shrink-0">
                       {isRtl ? item.dateAr : item.dateEn}
                     </p>
                   </div>
 
-                  {/* Divider */}
-                  <div className="my-4 h-px bg-border" />
+                  <div className="my-4 h-px bg-white/[0.05]" />
 
-                  {/* Delivery Status */}
+                  {/* حالة التسليم: منورة بالذهبي بالكامل */}
                   <div className="flex items-center justify-between">
                     <div
                       className={`flex items-center gap-2 ${isRtl ? "flex-row-reverse" : ""}`}
                     >
-                      <div className="bg-primary/10 p-2 rounded-lg">
-                        <CheckCircle2 size={16} className="text-primary" />
+                      <div className="bg-primary/10 p-1.5 rounded-lg">
+                        <CheckCircle2 size={14} className="text-primary" />
                       </div>
-                      <span className="text-xs font-bold text-primary uppercase tracking-widest">
+                      <span className="text-[10px] font-black text-primary uppercase tracking-widest">
                         {t("deliveredPage.deliveredStatus")}
                       </span>
                     </div>
@@ -177,6 +173,7 @@ export default function LastDelivered() {
           ))}
         </Swiper>
 
+        {/* 🎨 تعديل ألوان نقاط السوايب للذهبي الفخم بدلاً من الأسود */}
         <style jsx global>{`
           .last-delivered-swiper {
             --swiper-pagination-bottom: 0;
@@ -185,12 +182,11 @@ export default function LastDelivered() {
           .last-delivered-swiper .swiper-pagination {
             bottom: 0 !important;
             padding-bottom: 10px;
-            color: black;
           }
 
           .last-delivered-swiper .swiper-pagination-bullet {
-            background: black !important;
-            opacity: 0.5;
+            background: var(--color-primary, #D4AF37) !important;
+            opacity: 0.2;
             width: 8px;
             height: 8px;
             border-radius: 50%;
@@ -199,22 +195,22 @@ export default function LastDelivered() {
           }
 
           .last-delivered-swiper .swiper-pagination-bullet-active {
-            background: black !important;
+            background: var(--color-primary, #D4AF37) !important;
             opacity: 1 !important;
             width: 28px;
             border-radius: 12px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
             animation: active-pill-glow 3s infinite ease-in-out;
           }
 
           @keyframes active-pill-glow {
             0%,
             100% {
-              box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+              box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
               transform: scale(1);
             }
             50% {
-              box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+              box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
               transform: scale(1.05);
             }
           }

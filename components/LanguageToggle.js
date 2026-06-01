@@ -9,7 +9,8 @@ export default function LanguageToggle() {
     <button
       type="button"
       onClick={() => setLocale(locale === "ar" ? "en" : "ar")}
-      className="rounded-full border border-zinc-200 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100"
+      // ✨ هنا التعديل: حولناه لستايل الكريستال الداكن الشفاف ببرواز خفيف جداً ونص ذهبي ملكي يطابق السلة بالملي
+      className="rounded-xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-md px-4 py-2 text-sm font-bold text-primary transition-all duration-300 hover:bg-primary hover:text-black hover:border-transparent shadow-lg"
     >
       {t("nav.switchLanguage")}
     </button>

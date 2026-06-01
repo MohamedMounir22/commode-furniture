@@ -1,7 +1,7 @@
 "use client";
 import { useCart } from "@/lib/context/CartContext";
 import { useLanguage } from "@/lib/context/LanguageProvider";
-import { Flame, MessageCircle, ShoppingCart, Trash2 } from "lucide-react"; // ضفنا أيقونة الرسالة
+import { Flame, MessageCircle, ShoppingCart, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -9,8 +9,8 @@ import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 
 export default function ProductCard({
-  viewMode = "grid", // القيمة الافتراضية لو ما تم تمريرها
-  _id: id, // Mapping MongoDB's _id to id
+  viewMode = "grid",
+  _id: id,
   nameAr,
   nameEn,
   price,
@@ -30,7 +30,6 @@ export default function ProductCard({
 
   const isInCart = cart.some((item) => item._id === id);
 
-  // حساب السعر بناءا علي نسبة الخصم لو في خصم اصلا
   const hasDiscount = discount > 0;
   const discountedPrice = hasDiscount
     ? price - (price * discount) / 100
@@ -55,17 +54,8 @@ export default function ProductCard({
       ? images[currentImageIndex]
       : "/double-sofa-01.png";
 
-  // دالة طلب الواتساب
-  //   const handleWhatsAppOrder = (e) => {
-  //     e.preventDefault(); // عشان ميعملش Navigate لو الزرار جوه Link
-  //     const phoneNumber = "2010XXXXXXXX"; // اكتب رقمك هنا بدون +
-  //     const message = `أهلاً "كومود"، محتاج أستفسر عن المنتج ده:\n- الاسم: ${name}\n- السعر: ${price} ج.م\n- الرابط: ${window.location.origin}/products/${id}\n\nحابب أعدل على المقاسات/الألوان، ممكن تفاصيل أكتر؟`;
-  //     const encodedMessage = encodeURIComponent(message);
-  //     window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
-  //   };
-
   const handleWhatsAppOrder = () => {
-    const phoneNumber = "201011761133"; // الرقم بالصيغة الدولية
+    const phoneNumber = "201011761133";
     const currency = t("cart.currency");
 
     const message =
@@ -74,8 +64,6 @@ export default function ProductCard({
         : `Hello Commode, I would like to request customizations for:\nProduct: ${name}\nPrice: ${price} ${currency}\nImage link: ${displayImage}`;
 
     const encodedMessage = encodeURIComponent(message);
-
-    // Use universal link for better cross-platform support (Desktop/Mobile)
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   };
@@ -88,7 +76,6 @@ export default function ProductCard({
     }
   };
 
-  // حماية الصور
   const handleContextMenu = (e) => e.preventDefault();
   const handleDragStart = (e) => e.preventDefault();
 
@@ -102,9 +89,9 @@ export default function ProductCard({
   }, [images]);
 
   if (viewMode === "grid") {
-    // وضع الشبكة: عرض جميل للصور مع تأثيرات بصرية للموبايل
     return (
-      <div className="group relative aspect-[4/4] w-full overflow-hidden rounded-2xl bg-linear-to-br from-zinc-50 to-zinc-100 shadow-lg active:shadow-xl active:scale-95 transition-all duration-200 border border-zinc-200/50 font-sans">
+      // 1. وضع الـ Grid: جعل الكارد يندمج مع الخلفية السوداء الصافية بحدود ناعمة جداً
+      <div className="group relative aspect-[4/4] w-full overflow-hidden rounded-2xl bg-black shadow-2xl active:scale-95 transition-all duration-200 border border-white/[0.05] font-sans">
         <Link href={`/products/${id}`} className="w-full h-full flex flex-col">
           <Image
             src={
@@ -116,8 +103,7 @@ export default function ProductCard({
             className="h-full w-full object-cover transition-all duration-300 active:scale-105 active:brightness-110"
           />
 
-          {/* Product name overlay - always visible on mobile */}
-          <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
+          <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black via-black/80 to-transparent">
             <div className="flex items-baseline justify-between gap-2">
               <h3 className="text-white font-bold text-sm truncate drop-shadow-lg flex-1">
                 {name}
@@ -125,15 +111,15 @@ export default function ProductCard({
 
               {hasDiscount ? (
                 <div className="flex items-center gap-1 whitespace-nowrap">
-                  <span className="text-amber-400 font-semibold text-xs">
+                  <span className="text-primary font-bold text-sm">
                     {discountedPrice}
                   </span>
-                  <span className="text-zinc-300 line-through text-[10px]">
+                  <span className="text-zinc-500 line-through text-[10px]">
                     {price}
                   </span>
                 </div>
               ) : (
-                <span className="text-white font-semibold text-xs whitespace-nowrap">
+                <span className="text-primary font-bold text-sm whitespace-nowrap">
                   {price} {currency}
                 </span>
               )}
@@ -141,30 +127,29 @@ export default function ProductCard({
           </div>
 
           {discount > 0 && (
-            <div className="absolute top-3 right-3 rounded-full bg-amber-500 px-2 py-1 text-xs text-white font-bold shadow-lg opacity-90">
+            <div className="absolute top-3 right-3 rounded-full bg-primary px-2 py-1 text-[10px] text-black font-black shadow-lg">
               -{discount}%
             </div>
           )}
 
-          {/* Best Seller badge */}
           {bestSeller && (
-            <div className="absolute top-3 left-3 rounded-full bg-red-950 px-2.5 py-1 text-[10px] text-white font-black shadow-xl ring-1 ring-white/20 uppercase tracking-widest">
+            <div className="absolute top-3 left-3 rounded-full bg-red-950 px-2.5 py-1 text-[10px] text-white font-black shadow-xl ring-1 ring-white/10 uppercase tracking-widest">
               🔥 {t("productCard.bestSeller")}
             </div>
           )}
 
-          <div className="absolute inset-0 bg-white/20 opacity-0 active:opacity-100 transition-opacity duration-200 rounded-2xl" />
+          <div className="absolute inset-0 bg-white/5 opacity-0 active:opacity-100 transition-opacity duration-200 rounded-2xl" />
         </Link>
       </div>
     );
   }
 
-  //   if not grid, then show the detailed card
+  // 2. الوضع التفصيلي (Detailed Card): تحويل الخلفية البيضاء الفاقعة لرمادي داكن فاخر مطفأ يفصل عن الأسود
   return (
-    <div className="relative flex flex-col text-slate-700 bg-white shadow-lg rounded-[1.75rem] w-full overflow-hidden border border-slate-200 font-sans">
-      {/* Product image */}
+    <div className="relative flex flex-col text-zinc-300 bg-zinc-900/90 shadow-2xl rounded-[1.75rem] w-full overflow-hidden border border-white/[0.06] font-sans backdrop-blur-sm">
+      {/* قسم صورة المنتج */}
       <div
-        className="relative h-64 w-full overflow-hidden cursor-pointer group"
+        className="relative h-64 w-full overflow-hidden cursor-pointer group bg-black/40"
         onClick={() => setOpen(true)}
         onContextMenu={handleContextMenu}
       >
@@ -179,29 +164,29 @@ export default function ProductCard({
           draggable={false}
         />
 
-        {/* Product image overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent pointer-events-none" />
-
-        <div className="absolute inset-0 bg-linear-to-t from-slate-950/70 via-transparent to-transparent pointer-events-none" />
+        {/* تدرج سينمائي أسود ناعم لحماية النصوص أسفل الصورة */}
+        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent pointer-events-none" />
 
         {discount > 0 && (
-          <div className="absolute top-4 right-4 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-white shadow-2xl shadow-amber-500/30 ring-1 ring-white/20">
-            <Flame className="h-3.5 w-3.5" />
+          <div className="absolute top-4 right-4 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-primary to-amber-600 px-3.5 py-1.5 text-[11px] font-black uppercase tracking-[0.15em] text-black shadow-2xl ring-1 ring-white/10">
+            <Flame className="h-3.5 w-3.5 fill-black" />
             {t("productCard.discountLabel")} {discount}%
           </div>
         )}
 
         {bestSeller && (
-          <div className="absolute top-4 left-4 rounded-full bg-red-950 px-4 py-1.5 text-[11px] text-white font-black shadow-2xl ring-1 ring-white/20 uppercase tracking-widest">
+          <div className="absolute top-4 left-4 rounded-full bg-red-950 px-4 py-1.5 text-[11px] text-white font-black shadow-2xl ring-1 ring-white/10 uppercase tracking-widest">
             🔥 {t("productCard.bestSeller")}
           </div>
         )}
       </div>
 
-      <div className="p-5 flex flex-col gap-4">
+      {/* تفاصيل الكارد والنصوص */}
+      <div className="p-5 flex flex-col gap-4 bg-zinc-900">
         <div className="flex items-center justify-between gap-3">
-          <div className="max-w-50 ">
-            <h3 className="text-lg sm:text-xl font-semibold text-slate-900 truncate">
+          <div className="max-w-50">
+            {/* اسم المنتج بالأبيض الناصع الفخم */}
+            <h3 className="text-lg sm:text-xl font-bold text-white truncate">
               {name}
             </h3>
           </div>
@@ -209,45 +194,50 @@ export default function ProductCard({
           <div className="text-right flex-shrink-0">
             {hasDiscount ? (
               <>
-                <div className="text-slate-500 line-through text-m">
+                <div className="text-zinc-500 line-through text-xs">
                   {price} {currency}
                 </div>
-                <p className="rounded-2xl bg-amber-50  py-2 text-amber-700 font-semibold text-lg">
+                {/* السعر بعد الخصم ينور بالذهبي الملكي */}
+                <p className="text-primary font-black text-xl">
                   {discountedPrice} {currency}
                 </p>
               </>
             ) : (
-              <div className="text-slate-900 font-bold text-xl sm:text-2xl">
+              // السعر الأساسي بالذهبي الملكي
+              <div className="text-primary font-black text-xl sm:text-2xl">
                 {price} {currency}
               </div>
             )}
           </div>
         </div>
 
+        {/* التاجات (Tags) بلون داكن متناسق ونصوص ذهبية خفيفة */}
         <div className="flex flex-wrap gap-2">
-          <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold text-slate-700">
+          <span className="rounded-full bg-zinc-800 px-3 py-1 text-[11px] font-medium text-primary/90 border border-primary/10">
             {t("productCard.tag1")}
           </span>
-          <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold text-slate-700">
+          <span className="rounded-full bg-zinc-800 px-3 py-1 text-[11px] font-medium text-primary/90 border border-primary/10">
             {t("productCard.tag2")}
           </span>
         </div>
 
+        {/* زرار طلب الواتساب: أسود مطفأ بحدود ذهبية خفيفة ويقلب ذهبي كامل عند الـ Hover */}
         <button
           onClick={handleWhatsAppOrder}
-          className="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-900 text-white font-bold py-3 transition duration-200 hover:bg-slate-800"
+          className="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-zinc-950 text-primary border border-primary/30 font-bold py-3 transition duration-300 hover:bg-primary hover:text-black hover:border-transparent shadow-lg"
         >
           <MessageCircle size={18} />
           {t("productCard.orderButton")}
         </button>
 
+        {/* أزرار السلة والتفاصيل بلون داكن فخم يتماشى مع فخامة التصميم */}
         <div className="flex gap-3">
           <button
             onClick={handleCartAction}
-            className={`flex-1 inline-flex items-center justify-center gap-2 rounded-2xl border py-3 text-sm font-semibold transition duration-200 ${
+            className={`flex-1 inline-flex items-center justify-center gap-2 rounded-2xl border py-3 text-sm font-bold transition duration-300 ${
               isInCart
-                ? "border-red-200 bg-red-50 text-red-600"
-                : "border-slate-200 bg-white text-slate-900 hover:bg-slate-50"
+                ? "border-red-900/50 bg-red-950/40 text-red-400"
+                : "border-zinc-800 bg-zinc-950 text-white hover:bg-zinc-800"
             }`}
           >
             {isInCart ? <Trash2 size={18} /> : <ShoppingCart size={18} />}
@@ -259,7 +249,7 @@ export default function ProductCard({
           <Link
             href={`/products/${id}`}
             prefetch={true}
-            className="flex-1 inline-flex items-center justify-center rounded-2xl bg-slate-100 text-slate-900 font-semibold py-3 text-sm transition duration-200 hover:bg-slate-200"
+            className="flex-1 inline-flex items-center justify-center rounded-2xl bg-zinc-800 text-white font-bold py-3 text-sm transition duration-300 hover:bg-zinc-700"
           >
             {t("productCard.details")}
           </Link>
@@ -278,15 +268,4 @@ export default function ProductCard({
       />
     </div>
   );
-}
-
-{
-  /* Hover Overlay */
-}
-{
-  /* <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-          <span className="text-white bg-white/20 backdrop-blur-md px-4 py-2 rounded-full text-sm font-medium border border-white/30">
-            تكبير الصورة
-          </span>
-        </div> */
 }
