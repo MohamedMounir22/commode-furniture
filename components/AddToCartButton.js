@@ -18,14 +18,19 @@ export default function AddToCartButton({ product }) {
   return (
     <button
       onClick={handleAdd}
-      className={`w-full border-2 py-5 rounded-2xl font-bold transition-all flex items-center justify-center gap-3 ${
+      // 🎯 التعديل هنا: تحويل الزرار لثيم زجاجي شفاف في العادي، وذهبي ناعم ولامع عند الإضافة الناجحة
+      className={`w-full border py-4 md:py-5 rounded-2xl font-black tracking-wide transition-all duration-300 flex items-center justify-center gap-3 active:scale-[0.98] ${
         added
-          ? "bg-amber-50 border-amber-500 text-amber-600"
-          : "border-slate-200 text-slate-900 hover:bg-slate-50"
+          ? "bg-primary/20 border-primary text-primary shadow-[0_0_20px_rgba(214,175,55,0.2)] animate-pulse"
+          : "bg-white/[0.03] border-white/[0.08] text-zinc-300 backdrop-blur-md hover:text-primary hover:border-primary/50 hover:bg-white/[0.06]"
       }`}
     >
-      <ShoppingCart size={22} />
-      {added ? t("addToCart.added") : t("addToCart.default")}
+      {/* الأيقونة بتتحرك برقة عند الإضافة */}
+      <ShoppingCart size={22} className={`transition-transform duration-300 ${added ? "scale-110 text-primary" : ""}`} />
+
+      <span>
+        {added ? t("addToCart.added") : t("addToCart.default")}
+      </span>
     </button>
   );
 }

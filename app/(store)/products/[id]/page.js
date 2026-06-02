@@ -46,8 +46,11 @@ export default async function ProductPage({ params }) {
   }
 
   return (
-    <Suspense fallback={<LoadingSkeleton />}>
-      <ProductDetailsClient product={product} />
-    </Suspense>
+    // 🎯 التعديل هنا: تغليف الصفحة بكونتينر شفاف وبادنج علوي (pt-28) عشان المكونات متنزلش تحت الـ Navbar العايم
+    <div className="w-full min-h-screen bg-transparent pt-28 pb-16 text-white font-sans flex flex-col items-center">
+      <Suspense fallback={<LoadingSkeleton />}>
+        <ProductDetailsClient product={product} />
+      </Suspense>
+    </div>
   );
 }

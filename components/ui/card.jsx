@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils"
 
 function Card({
@@ -11,7 +10,8 @@ function Card({
       data-slot="card"
       data-size={size}
       className={cn(
-        "group/card flex flex-col gap-4 overflow-hidden rounded-xl bg-card py-4 text-sm text-card-foreground ring-1 ring-foreground/10 has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:gap-3 data-[size=sm]:py-3 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
+        // 🎯 التعديل: تحويل الكارد الأساسي لزجاجي داكن وراقي مع بوردر مضيء برقة خفيفة جداً
+        "group/card flex flex-col gap-4 overflow-hidden rounded-2xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-md py-4 text-sm text-zinc-100 shadow-[0_15px_35px_rgba(0,0,0,0.5)] transition-all duration-300 has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:gap-3 data-[size=sm]:py-3 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-2xl *:[img:last-child]:rounded-b-2xl",
         className
       )}
       {...props}
@@ -24,7 +24,7 @@ function CardHeader({ className, ...props }) {
     <div
       data-slot="card-header"
       className={cn(
-        "group/card-header @container/card-header grid auto-rows-min items-start gap-1 rounded-t-xl px-4 group-data-[size=sm]/card:px-3 has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto] [.border-b]:pb-4 group-data-[size=sm]/card:[.border-b]:pb-3",
+        "group/card-header @container/card-header grid auto-rows-min items-start gap-1 rounded-t-xl px-4 group-data-[size=sm]/card:px-3 has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto] [.border-b]:border-white/[0.06] [.border-b]:pb-4 group-data-[size=sm]/card:[.border-b]:pb-3",
         className
       )}
       {...props}
@@ -37,7 +37,8 @@ function CardTitle({ className, ...props }) {
     <div
       data-slot="card-title"
       className={cn(
-        "font-heading text-base leading-snug font-medium group-data-[size=sm]/card:text-sm",
+        // 🎯 التعديل: جعل العنوان باللون الذهبي الملكي دايماً كحالة طبيعية ثابتة ومبهرة
+        "font-heading text-base leading-snug font-black text-primary tracking-wide group-data-[size=sm]/card:text-sm drop-shadow-[0_2px_8px_rgba(214,175,55,0.15)]",
         className
       )}
       {...props}
@@ -49,7 +50,11 @@ function CardDescription({ className, ...props }) {
   return (
     <div
       data-slot="card-description"
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn(
+        // 🎯 التعديل: جعل الوصف بلون رمادي فاتح ناعم ومقروء بوضوح فوق الزجاج والحرير
+        "text-sm text-zinc-400 font-medium",
+        className
+      )}
       {...props}
     />
   )
@@ -72,7 +77,7 @@ function CardContent({ className, ...props }) {
   return (
     <div
       data-slot="card-content"
-      className={cn("px-4 group-data-[size=sm]/card:px-3", className)}
+      className={cn("px-4 group-data-[size=sm]/card:px-3 text-zinc-300", className)}
       {...props}
     />
   )
@@ -83,7 +88,8 @@ function CardFooter({ className, ...props }) {
     <div
       data-slot="card-footer"
       className={cn(
-        "flex items-center rounded-b-xl border-t bg-muted/50 p-4 group-data-[size=sm]/card:p-3",
+        // 🎯 التعديل: الـ Footer بقا شفاف ومتناغم مع البوردرات الخفيفة جداً بدلاً من الخلفية الرمادية القديمة
+        "flex items-center rounded-b-2xl border-t border-white/[0.06] bg-black/20 p-4 group-data-[size=sm]/card:p-3",
         className
       )}
       {...props}
@@ -94,4 +100,3 @@ function CardFooter({ className, ...props }) {
 export {
     Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle
 }
-
