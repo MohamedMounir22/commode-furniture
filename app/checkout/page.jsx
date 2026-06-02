@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { useCart } from "@/lib/context/CartContext";
 // تأكد من صحة مسار الـ Card كامبوننت حسب مشروعك
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 
@@ -7,9 +8,9 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState("card"); // الفيزا هي الخيار الافتراضي
   const [loading, setLoading] = useState(false);
   const [receipt, setReceipt] = useState(null);
+  const { cartTotal, cartCount } = useCart();
 
-  // إجمالي السعر (تقدر بعدين تخليه ديناميكي يقرأ من السلة أو الـ Context)
-  const totalAmount = 1500;
+  const totalAmount = cartTotal;
 
   // 1. فانكشن الدفع بالفيزا عن طريق الـ API Route اللي عملناه لـ Paymob
   const handlePaymobPayment = async () => {
@@ -61,6 +62,7 @@ export default function CheckoutPage() {
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-bold font-heading text-foreground">إتمام عملية الشراء</h1>
         <p className="text-sm text-muted-foreground">اختر طريقة الدفع المناسبة لشحن طلبك فوراً</p>
+        <p className="text-xs text-muted-foreground">العناصر في السلة: {cartCount} · الإجمالي الحالي: {totalAmount} ج.م</p>
       </div>
 
       {/* 💳 خيار الدفع الإلكتروني: فيزا / ماستر كارد */}

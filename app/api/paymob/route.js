@@ -2,13 +2,13 @@ import { NextResponse } from "next/server";
 
 export async function POST(request) {
   try {
-    // 1. استقبال بيانات الطلب من الفرونت إند (السعر وبيانات العميل)
+    // 1. استقبال بيانات الطلب من الفرونت إند
     const { amount, billingData } = await request.json();
 
-    // تحويل المبلغ لقرش (لأن Paymob تتعامل بالـ Cents)
+    // تحويل المبلغ لقرش
     const amountCents = Math.round(parseFloat(amount) * 100);
 
-    // الخطوة الأولى لـ Paymob: طلب الـ Authentication Token
+    // الخطوة الأولى: طلب الـ Authentication Token
     const authResponse = await fetch("https://accept.paymob.com/api/auth/tokens", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -16,10 +16,12 @@ export async function POST(request) {
         api_key: process.env.PAYMOB_API_KEY,
       }),
     });
+
     const authData = await authResponse.json();
     const token = authData.token;
 
     if (!token) {
+      console.error("Paymob Auth Error: API Key might be invalid or missing.");
       return NextResponse.json({ error: "Failed to get auth token" }, { status: 500 });
     }
 
@@ -38,6 +40,21 @@ export async function POST(request) {
     const orderData = await orderResponse.json();
     const orderId = orderData.id;
 
+    if (!orderId) {
+      console.error("Paymob Order Error:", orderData);
+      return NextResponse.json({ error: "Failed to create order" }, { status: 500 });
+    }
+
+    // 🌟 جلب الـ Integration ID والتأكد من تحويله لرقم صح
+    const integrationId = process.env.PAYMOB_INTEGRATION_ID
+      ? parseInt(process.env.PAYMOB_INTEGRATION_ID)
+      : null;
+
+    if (!integrationId) {
+      console.error("Paymob Error: PAYMOB_INTEGRATION_ID is missing in .env.local");
+      return NextResponse.json({ error: "Integration ID missing" }, { status: 500 });
+    }
+
     // الخطوة الثالثة: طلب مفتاح الدفع النهائي (Payment Key)
     const paymentKeyResponse = await fetch("https://accept.paymob.com/api/acceptance/payment_keys", {
       method: "POST",
@@ -45,11 +62,11 @@ export async function POST(request) {
       body: JSON.stringify({
         auth_token: token,
         amount_cents: amountCents,
-        expiration: 3600, // ساعة واحدة صلاحية الرابط
+        expiration: 3600,
         order_id: orderId,
         billing_data: {
           apartment: billingData?.apartment || "NA",
-          email: billingData?.email || "clinet@commode.com",
+          email: billingData?.email || "client@commode.com",
           floor: billingData?.floor || "NA",
           first_name: billingData?.firstName || "Customer",
           street: billingData?.street || "NA",
@@ -57,13 +74,13 @@ export async function POST(request) {
           phone_number: billingData?.phone || "01000000000",
           shipping_method: "PKG",
           postal_code: "NA",
-          city: "Damietta",
+          city: "Cairo",
           country: "EG",
           last_name: billingData?.lastName || "Furniture",
-          state: "Damietta",
+          state: "Cairo",
         },
         currency: "EGP",
-        integration_id: parseInt(process.env.NEXT_PUBLIC_PAYMOB_INTEGRATION_ID),
+        integration_id: integrationId, // 🌟 تم التعديل هنا
         lock_order_when_paid: "true",
       }),
     });
@@ -71,14 +88,19 @@ export async function POST(request) {
     const paymentKeyData = await paymentKeyResponse.json();
     const paymentToken = paymentKeyData.token;
 
-    // 2. إرجاع رابط الـ Iframe النهائي للفرونت إند للتحويل المباشر
-    const iframeId = process.env.NEXT_PUBLIC_PAYMOB_IFRAME_ID;
+    if (!paymentToken) {
+      console.error("Paymob Payment Key Error:", paymentKeyData);
+      return NextResponse.json({ error: "Failed to get payment token" }, { status: 500 });
+    }
+
+    // 2. إرجاع رابط الـ Iframe النهائي للفرونت إند
+    const iframeId = process.env.PAYMOB_IFRAME_ID || "742382"; // 🌟 تم التعديل هنا
     const redirectUrl = `https://accept.paymob.com/api/acceptance/iframes/${iframeId}?payment_token=${paymentToken}`;
 
     return NextResponse.json({ url: redirectUrl });
 
   } catch (error) {
-    console.error("Paymob Error:", error);
+    console.error("Paymob API Route Caught Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
