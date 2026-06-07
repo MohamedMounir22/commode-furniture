@@ -30,9 +30,7 @@ export default function HeaderNav() {
           <Link href="/products" className="text-sm font-bold text-zinc-300 hover:text-primary transition-colors duration-300 tracking-wide">
             {t("nav.shop") || "Products"}
           </Link>
-          <Link href="/about" className="text-sm font-bold text-zinc-300 hover:text-primary transition-colors duration-300 tracking-wide">
-            {t("nav.about") || "Our Story"}
-          </Link>
+        
         </div>
 
         {/* الزراير الطرفية (تغيير اللغة + زر السلة المطور) */}
