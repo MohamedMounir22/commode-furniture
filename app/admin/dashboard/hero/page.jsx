@@ -194,12 +194,11 @@ export default function HeroManagementPage() {
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <Label htmlFor="title">Title *</Label>
+                                        <Label htmlFor="title">Title</Label>
                                         <Input
                                             id="title"
                                             value={formData.title}
                                             onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                                            required
                                         />
                                     </div>
                                     <div className="space-y-2">
@@ -213,12 +212,11 @@ export default function HeroManagementPage() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="description">Description *</Label>
+                                    <Label htmlFor="description">Description</Label>
                                     <Textarea
                                         id="description"
                                         value={formData.description}
                                         onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                                        required
                                     />
                                 </div>
 
