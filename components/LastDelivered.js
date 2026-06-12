@@ -1,6 +1,6 @@
 "use client";
 import { useLanguage } from "@/lib/context/LanguageProvider";
-import { ArrowRight, CheckCircle2, MapPin, ShieldCheck } from "lucide-react";
+  import { ArrowRight, CheckCircle2, MapPin, ShieldCheck, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -16,6 +16,7 @@ export default function LastDelivered() {
   const isRtl = locale === "ar";
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [previewImage, setPreviewImage] = useState(null);
 
   useEffect(() => {
     fetchItems();
@@ -114,11 +115,17 @@ export default function LastDelivered() {
               <div className="group h-full bg-zinc-900 rounded-3xl overflow-hidden border border-white/[0.06] shadow-2xl flex flex-col">
                 {/* Image Container */}
                 <div className="relative h-72 w-full overflow-hidden bg-black">
+                  <button
+                    type="button"
+                    onClick={() => setPreviewImage(item.image)}
+                    className="absolute inset-0 z-20 w-full h-full bg-transparent cursor-zoom-in border-none"
+                    aria-label="Open image preview"
+                  />
                   <Image
                     src={item.image}
                     alt={isRtl ? item.nameAr : item.nameEn}
                     fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="object-cover transition-transform duration-500 "
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent" />
 
@@ -172,6 +179,44 @@ export default function LastDelivered() {
             </SwiperSlide>
           ))}
         </Swiper>
+
+        {/* Fullscreen Image Preview */}
+        {previewImage && (
+          <div
+            className="fixed inset-0 z-[999] flex items-center justify-center bg-black/95 p-4 backdrop-blur-sm transition-all duration-300"
+            role="dialog"
+            aria-modal="true"
+            onClick={() => setPreviewImage(null)}
+          >
+            {/* Close Button */}
+            <button
+              type="button"
+              className="absolute top-6 right-6 z-50 rounded-full bg-white/10 p-3 text-white transition-all duration-200 cursor-pointer hover:bg-white/20"
+              onClick={(event) => {
+                event.stopPropagation();
+                setPreviewImage(null);
+              }}
+              aria-label="Close image preview"
+            >
+              <X size={24} />
+            </button>
+
+            {/* Image Container */}
+            <div
+              className="relative w-full h-full max-w-5xl max-h-[85vh] flex items-center justify-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Image
+                src={previewImage}
+                alt="Fullscreen Preview"
+                fill
+                className="object-contain select-none pointer-events-none"
+                sizes="(max-width: 1280px) 100vw, 1280px"
+                priority
+              />
+            </div>
+          </div>
+        )}
 
         {/* 🎨 تعديل ألوان نقاط السوايب للذهبي الفخم بدلاً من الأسود */}
         <style jsx global>{`

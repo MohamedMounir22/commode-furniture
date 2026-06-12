@@ -1,7 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/lib/context/LanguageProvider";
-import { ArrowLeft, CheckCircle2, MapPin } from "lucide-react";
+import { ArrowLeft, CheckCircle2, MapPin, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -10,6 +10,7 @@ export default function DeliveredPage() {
   const { t, locale } = useLanguage();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [previewImage, setPreviewImage] = useState(null);
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -47,7 +48,7 @@ export default function DeliveredPage() {
         <div className="mb-12">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors mb-6 group"
+            className="inline-flex items-center gap-2 text-zinc-500 transition-colors mb-6"
           >
             <ArrowLeft
               size={20}
@@ -73,19 +74,25 @@ export default function DeliveredPage() {
           {items.map((item, index) => (
             <div
               key={item._id}
-              className="group bg-white dark:bg-zinc-900 overflow-hidden border border-zinc-100 dark:border-zinc-800 shadow-sm transition-all duration-500 animate-in fade-in slide-in-from-bottom-4 rounded-[2rem] hover:shadow-xl flex flex-col md:flex-row"
+              className="bg-white dark:bg-zinc-900 overflow-hidden border border-zinc-100 dark:border-zinc-800 shadow-sm transition-all duration-500 animate-in fade-in slide-in-from-bottom-4 rounded-[2rem] flex flex-col md:flex-row"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               {/* Image */}
               <div className="relative overflow-hidden h-80 w-full md:w-2/5 md:h-auto">
+                <button
+                  type="button"
+                  onClick={() => setPreviewImage(item.image)}
+                  className="absolute inset-0 z-20 w-full h-full bg-transparent border-none"
+                  aria-label="Open image preview"
+                />
                 <Image
                   src={item.image}
                   alt={locale === "ar" ? item.nameAr : item.nameEn}
                   fill
                   sizes="(max-width: 1024px) 100vw, 1280px"
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="object-cover transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-40" />
+                <div className="absolute inset-0 pointer-events-none bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-40" />
 
                 {/* Location Badge */}
                 <div
@@ -142,6 +149,44 @@ export default function DeliveredPage() {
           </div>
         )}
       </div>
+
+      {/* Fullscreen Image Preview */}
+      {previewImage && (
+        <div
+          className="fixed inset-0 z-[999] flex items-center justify-center bg-black/95 p-4 backdrop-blur-sm transition-all duration-300"
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setPreviewImage(null)}
+        >
+          {/* زر الإغلاق */}
+          <button
+            type="button"
+            className="absolute top-6 right-6 z-50 rounded-full bg-white/10 p-3 text-white transition-all duration-200  cursor-pointer"
+            onClick={(event) => {
+              event.stopPropagation();
+              setPreviewImage(null);
+            }}
+            aria-label="Close image preview"
+          >
+            <X size={24} />
+          </button>
+
+          {/* حاوية الصورة - تأكيد الأبعاد للعرض والارتفاع الكامل */}
+          <div
+            className="relative w-full h-full max-w-5xl max-h-[85vh] flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Image
+              src={previewImage}
+              alt="Fullscreen Preview"
+              fill
+              className="object-contain select-none pointer-events-none"
+              sizes="(max-width: 1280px) 100vw, 1280px"
+              priority
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

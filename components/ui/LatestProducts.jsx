@@ -1,6 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/lib/context/LanguageProvider";
+import { LayoutGrid } from "lucide-react";
 import { useState } from "react";
 import ProductCard from "./ProductCard";
 
@@ -23,13 +24,14 @@ export default function LatestProducts({ products }) {
                         type="button"
                         onClick={() => setViewMode("grid")}
                         // 🎯 التعديل هنا: توحيد الحواف والألوان بالثيم الذهبي والزجاجي الشفاف
-                        className={`rounded-xl border px-4 py-2 text-sm font-bold tracking-wide transition-all duration-300 ${viewMode === "grid"
+                        className={`rounded-xl border p-3 text-sm font-bold tracking-wide transition-all duration-300 ${viewMode === "grid"
                             ? "bg-primary text-black border-transparent shadow-[0_4px_15px_rgba(214,175,55,0.25)] scale-105"
-                            : "bg-white/[0.03] text-zinc-300 border-white/[0.08] backdrop-blur-md hover:text-primary hover:border-primary/50"
+                            : "bg-white/3 text-zinc-300 border-white/8 backdrop-blur-md hover:text-primary hover:border-primary/50"
                             }`}
                         aria-pressed={viewMode === "grid"}
+                        aria-label={t("latestProducts.gridView")}
                     >
-                        {t("latestProducts.gridView")}
+                        <LayoutGrid className="h-5 w-5" />
                     </button>
 
                     {/* زر عرض القائمة (List) */}
@@ -37,13 +39,18 @@ export default function LatestProducts({ products }) {
                         type="button"
                         onClick={() => setViewMode("list")}
                         // 🎯 التعديل هنا: توحيد الحواف والألوان بالثيم الذهبي والزجاجي الشفاف
-                        className={`rounded-xl border px-4 py-2 text-sm font-bold tracking-wide transition-all duration-300 ${viewMode === "list"
+                        className={`rounded-xl border p-3 text-sm font-bold tracking-wide transition-all duration-300 ${viewMode === "list"
                             ? "bg-primary text-black border-transparent shadow-[0_4px_15px_rgba(214,175,55,0.25)] scale-105"
-                            : "bg-white/[0.03] text-zinc-300 border-white/[0.08] backdrop-blur-md hover:text-primary hover:border-primary/50"
+                            : "bg-white/3 text-zinc-300 border-white/8 backdrop-blur-md hover:text-primary hover:border-primary/50"
                             }`}
                         aria-pressed={viewMode === "list"}
+                        aria-label={t("latestProducts.listView")}
                     >
-                        {t("latestProducts.listView")}
+                        <div className="grid grid-cols-1 gap-1 w-5 h-5 mx-auto">
+                            <span className="block h-1.5 w-1.5 bg-current mx-auto" />
+                            <span className="block h-1.5 w-1.5 bg-current mx-auto" />
+                           
+                        </div>
                     </button>
                 </div>
             </div>

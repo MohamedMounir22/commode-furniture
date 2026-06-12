@@ -3,9 +3,15 @@ import CartCounter from "@/components/CartCounter";
 import LanguageToggle from "@/components/LanguageToggle";
 import Link from "next/link";
 import { useLanguage } from "@/lib/context/LanguageProvider";
+import { usePathname } from "next/navigation";
 
 export default function HeaderNav() {
   const { t } = useLanguage();
+  const pathname = usePathname();
+
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   return (
     // 1. الكونتينر الخارجي العايم والمثبت في منتصف الشاشة بدقة

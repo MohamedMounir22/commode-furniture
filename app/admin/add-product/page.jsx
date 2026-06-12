@@ -240,7 +240,7 @@ export default function AddProductPage() {
     }
 
     return (
-        <div className="relative max-w-2xl mx-auto p-10 bg-white shadow-lg rounded-xl mt-10">
+        <div className="relative max-w-2xl mx-auto p-10 bg-white shadow-lg rounded-xl mt-10 text-black">
             {toast.visible && (
                 <div
                     className={`fixed top-6 right-6 z-50 max-w-sm rounded-2xl px-4 py-3 text-white shadow-xl transition-opacity duration-300 ${toast.type === "success" ? "bg-amber-600" : "bg-rose-600"
@@ -255,10 +255,10 @@ export default function AddProductPage() {
             <div className={`flex items-center justify-between mb-6 ${locale === "ar" ? "text-right" : "text-left"}`}>
                 <div>
                     <h1 className="text-2xl font-bold">{t("admin.form.addProductTitle")}</h1>
-                    <p className="text-sm text-gray-500 mt-2">{t("admin.form.addProductSubtitle")}</p>
+                    <p className="text-sm mt-2">{t("admin.form.addProductSubtitle")}</p>
                 </div>
-                <Button variant="outline" size="sm" onClick={() => router.back()}>
-                    <ArrowLeft className="w-4 h-4 ml-2" />
+                <Button className="text-amber-600" variant="outline" size="sm" onClick={() => router.back()}>
+                    <ArrowLeft className="w-4 h-4 ml-2 text-amber-600 " />
                     {t("admin.form.back")}
                 </Button>
             </div>
@@ -306,7 +306,7 @@ export default function AddProductPage() {
                     />
 
                     {/* المخزون */}
-                    <FormField
+                    {/* <FormField
                         control={form.control}
                         name="stock"
                         render={({ field }) => (
@@ -316,7 +316,7 @@ export default function AddProductPage() {
                                 <FormMessage />
                             </FormItem>
                         )}
-                    />
+                    /> */}
 
                     {/* الخصم */}
                     <FormField
@@ -339,7 +339,7 @@ export default function AddProductPage() {
                             <FormItem>
                                 <FormLabel>{t("admin.form.category")}</FormLabel>
                                 <FormControl>
-                                    <select {...field} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500">
+                                    <select {...field} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-black focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500">
                                         {categoryOptions.map((option) => (
                                             <option key={option.value} value={option.value}>
                                                 {t(`categories.${option.value}`)}
@@ -370,7 +370,7 @@ export default function AddProductPage() {
                                 </FormControl>
                                 <div className="space-y-1 leading-none">
                                     <FormLabel>{t("admin.form.bestSeller")}</FormLabel>
-                                    <p className="text-sm text-gray-500">{t("admin.form.bestSellerDescription")}</p>
+                                    <p className="text-sm text-black/70">{t("admin.form.bestSellerDescription")}</p>
                                 </div>
                             </FormItem>
                         )}
