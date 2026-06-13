@@ -6,7 +6,11 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     await dbConnect();
-    const slides = await Hero.find({}).sort({ order: 1 });
+    const slides = await Hero.find({
+      isActive: true,
+      image: { $exists: true, $ne: "" },
+      buttonLink: { $exists: true, $ne: "" },
+    }).sort({ order: 1 });
     return NextResponse.json({ success: true, data: slides }, { status: 200 });
   } catch (error) {
     console.error("Error fetching hero slides:", error);

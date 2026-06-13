@@ -84,6 +84,16 @@ export default function HeroManagementPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (!formData.image) {
+            alert("Please upload an image for the slide.");
+            return;
+        }
+
+        if (!formData.buttonLink?.trim()) {
+            alert("Please add a button link so the slide can be clicked.");
+            return;
+        }
+
         try {
             const url = editingSlide ? `/api/hero/${editingSlide._id}` : "/api/hero";
             const method = editingSlide ? "PUT" : "POST";
@@ -255,12 +265,13 @@ export default function HeroManagementPage() {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label htmlFor="buttonLink">Button Link</Label>
+                                        <Label htmlFor="buttonLink">Button Link *</Label>
                                         <Input
                                             id="buttonLink"
                                             value={formData.buttonLink}
                                             onChange={(e) => setFormData(prev => ({ ...prev, buttonLink: e.target.value }))}
                                         />
+                                        <p className="text-sm text-gray-500">Required for hero image click behavior.</p>
                                     </div>
                                 </div>
 

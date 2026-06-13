@@ -57,7 +57,10 @@ const Hero = () => {
         const response = await fetch("/api/hero");
         const data = await response.json();
         if (data.success && data.data.length > 0) {
-          setSlides(data.data);
+          const validHeroSlides = data.data.filter(
+            (slide) => slide.image && slide.buttonLink,
+          );
+          setSlides(validHeroSlides.length > 0 ? validHeroSlides : defaultSlides);
         } else {
           setSlides(defaultSlides);
         }
@@ -89,44 +92,17 @@ const Hero = () => {
             key={slide._id || slide.id}
             className="relative w-full h-full"
           >
-            {/* 1. حلفية الصورة مع عمل تدرج غامق سينمائي يحمي النصوص ويبرز تفاصيل المنتج */}
-            <div className="absolute inset-0 z-0">
+            <Link href={slide.buttonLink} className="absolute inset-0 z-0 block">
               <Image
                 src={slide.image}
-                alt={slide.title}
+                alt={slide.title || t("hero.button")}
                 fill
                 className="object-cover object-center scale-105 animate-luxury-fade"
                 priority
                 sizes="100vw"
               />
-              {/* التدرج السينمائي الأسود الفخم الداكن من الأسفل ومن الخلف */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/30" />
-            </div>
-
-            {/* 2. حاوي المحتوى والنصوص والزرار الذهبي */}
-            <div className="relative z-10 flex h-full items-center justify-center text-center text-white px-4">
-              <div className="max-w-4xl space-y-6">
-                {/* العنوان بالذهبي الملكي الفخم وتأثير الظل الناعم */}
-                <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight text-primary drop-shadow-[0_5px_15px_rgba(0,0,0,0.8)]">
-                  {slide.title}
-                </h1>
-
-                {/* الوصف بالرمادي الفاتح الفاخر المريح للعين */}
-                <p className="text-base md:text-xl text-zinc-300 max-w-2xl mx-auto leading-relaxed font-normal drop-shadow-[0_3px_5px_rgba(0,0,0,0.6)]">
-                  {slide.description}
-                </p>
-
-                {/* 3. الزرار الرئيسي: أسود مطفأ بحدود ذهبية خفيفة ويقلب ذهبي كامل عند الـ Hover */}
-                <div className="pt-4">
-                  <Link
-                    href={slide.buttonLink || "/products"}
-                    className="inline-block bg-zinc-900 text-primary border border-primary/40 hover:bg-primary hover:text-black hover:border-transparent px-10 py-4 rounded-xl text-base font-bold transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
-                  >
-                    {slide.buttonText || t("hero.button")}
-                  </Link>
-                </div>
-              </div>
-            </div>
+              <div className="absolute inset-0 bg-linear-to-t from-black/20 via-black/10 to-transparent" />
+            </Link>
           </SwiperSlide>
         ))}
       </Swiper>

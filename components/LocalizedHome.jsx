@@ -18,7 +18,7 @@ export default function LocalizedHome({ products }) {
                 <Hero />
 
                 {/* قسم آخر المنتجات المسلمة */}
-                <LastDel ivered />
+                <LastDelivered />
 
                 {/* قسم المعرض والمنتجات الأحدث */}
                 <section className="w-full max-w-7xl py-16 px-4 sm:px-6 bg-transparent">
