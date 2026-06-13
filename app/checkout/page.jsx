@@ -206,20 +206,24 @@ export default function CheckoutPage() {
 
               <label className="block text-xs font-medium text-foreground">ارفع سكرين شوت الإيصال بعد التحويل:</label>
 
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleReceiptChange}
-                className="hidden"
-                id="receiptInput"
-              />
-
-              <label
-                htmlFor="receiptInput"
-                className="cursor-pointer inline-flex items-center gap-2 font-bold py-3 px-6 rounded-xl shadow-lg transition-all active:scale-95 bg-green-600 hover:bg-green-700 text-white"
-              >
-                <span>{receipt ? `تم اختيار الصورة: ${receipt.name}` : "رفع صورة الإيصال 📸"}</span>
-              </label>
+              <div className="relative">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleReceiptChange}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                  id="receiptInput"
+                  disabled={isUploading}
+                />
+                <label
+                  htmlFor="receiptInput"
+                  className={`relative cursor-pointer inline-flex items-center gap-2 font-bold py-3 px-6 rounded-xl shadow-lg transition-all active:scale-95 ${
+                    isUploading ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"
+                  } text-white z-0`}
+                >
+                  <span>{receipt ? `تم اختيار الصورة: ${receipt.name}` : "رفع صورة الإيصال 📸"}</span>
+                </label>
+              </div>
 
               {isUploading && (
                 <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
