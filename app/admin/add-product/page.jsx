@@ -3,31 +3,18 @@
 export const dynamic = 'force-dynamic'
 
 import { useLanguage } from "@/lib/context/LanguageProvider"
-
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
-
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-
 import { Input } from "@/components/ui/input"
-
 import { Textarea } from "@/components/ui/textarea"
 import { zodResolver } from "@hookform/resolvers/zod"
 import imageCompression from 'browser-image-compression'
-
 import { ArrowLeft, Loader2, Trash2 } from "lucide-react"
-
 import { useRouter } from "next/navigation"
-
 import { useState } from "react"
-
 import { useForm } from "react-hook-form"
-
 import * as z from "zod"
-
-
-
-
 
 const categoryOptions = [
     { value: "dining" },
@@ -35,8 +22,6 @@ const categoryOptions = [
     { value: "tables" },
     { value: "console" },
 ]
-
-
 
 const getFormSchema = (t) =>
     z.object({
@@ -55,72 +40,15 @@ const getFormSchema = (t) =>
         bestSeller: z.boolean().default(false),
     })
 
-
-
-
 export default function AddProductPage() {
     const router = useRouter()
     const { t, locale } = useLanguage();
-    const [images, setImages] = useState([]); // مصفوفة الروابط اللي هتيجي من Cloudinary
+    const [images, setImages] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [toast, setToast] = useState({ visible: false, type: "success", message: "" });
 
-
-    const [uploadProgress, setUploadProgress] = useState(0); // نسبة التحميل من 0 لـ 100
-    const [isUploading, setIsUploading] = useState(false); // هل فيه رفع شغال دلوقتي؟
-
-
-    // const [previewImage, setPreviewImage] = useState(null); // حالة لصورة المعاينة
-
-    // const [filetoUpload, setFileToUpload] = useState(null); //الملف اللي عيروح لـ Cloudinary
-
-
-
-
-    //     const handleImageUpload = async (event) => {
-    //     // 1. تحويل الـ FileList لمصفوفة عادية
-    //     const files = Array.from(event.target.files);
-    //     if (files.length === 0) return;
-
-    //     // حالة تحميل (Loading) عشان نعرف إننا شغالين
-
-    //     const options = {
-    //         maxSizeMB: 1,
-    //         maxWidthOrHeight: 1920,
-    //         useWebWorker: true,
-    //     };
-
-    //     // نستخدم Loop عشان نعالج الصور بالترتيب
-    //     for (const file of files) {
-    //         try {
-    //             // 2. ضغط الصورة الحالية
-    //             const compressedFile = await imageCompression(file, options);
-
-    //             // 3. تجهيز الـ FormData للرفع
-    //             const formData = new FormData();
-    //             formData.append("file", compressedFile);
-    //             formData.append("upload_preset", "commode_present");
-
-    //             // 4. الرفع لـ Cloudinary
-    //             const response = await fetch(
-    //                 `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
-    //                 { method: "POST", body: formData }
-    //             );
-
-    //             const data = await response.json();
-
-    //             if (data.secure_url) {
-    //                 // 5. إضافة رابط الصورة الجديد للمصفوفة الأصلية
-    //                 setImages((prev) => [...prev, data.secure_url]);
-
-    //                 // لو حابب تسجل الحجم عشان تراقبه
-    //             }
-    //         } catch (error) {
-    //             console.error(`فشل في معالجة الصورة ${file.name}:`, error);
-    //         }
-    //     }
-    // };
-
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [isUploading, setIsUploading] = useState(false);
 
     const handleImageUpload = async (event) => {
         const files = Array.from(event.target.files);
@@ -129,7 +57,6 @@ export default function AddProductPage() {
         setIsUploading(true);
         setUploadProgress(0);
 
-        // دالة داخلية لتحريك الشريط ببطء وهمي
         const simulateProgress = (start, end, duration) => {
             let current = start;
             const interval = setInterval(() => {
@@ -143,11 +70,11 @@ export default function AddProductPage() {
             return interval;
         };
 
-        // 🛠️ التعديل هنا: قفلنا useWebWorker لتجنب تعليق متصفحات الموبايل
+        // 🛠️ تعديل خيارات الضغط لضمان التوافق الكامل مع متصفحات الموبايل دون تعليق
         const options = {
             maxSizeMB: 1,
             maxWidthOrHeight: 1920,
-            useWebWorker: false // 🎯 تم التغيير لـ false لضمان التوافق مع الموبايل
+            useWebWorker: false
         };
 
         for (let i = 0; i < files.length; i++) {
@@ -159,16 +86,14 @@ export default function AddProductPage() {
 
             try {
                 const file = files[i];
-
-                // ضغط الصورة
                 const compressedFile = await imageCompression(file, options);
 
-                // 🛠️ تأمين اسم الملف وامتداده (مهم جداً لرفع الـ HEIC وصور الآيفون الافتراضية)
+                // تأمين اسم ونوع الملف لصور الموبايل والـ HEIC
                 const fileName = file.name || `image-${Date.now()}.jpg`;
                 const safeFile = new File([compressedFile], fileName, { type: compressedFile.type || "image/jpeg" });
 
                 const formData = new FormData();
-                formData.append("file", safeFile); // رفع الملف الآمن
+                formData.append("file", safeFile);
                 formData.append("upload_preset", "commode_present");
 
                 const response = await fetch(
@@ -182,18 +107,15 @@ export default function AddProductPage() {
                 if (data.secure_url) {
                     setImages((prev) => [...prev, data.secure_url]);
                     setUploadProgress(Math.round(((i + 1) / files.length) * 100));
-                } else {
-                    console.error("Cloudinary error response:", data);
                 }
             } catch (error) {
                 clearInterval(interval);
-                console.error(`فشل الرفع للملف رقم ${i}:`, error);
+                console.error(`فشل الرفع:`, error);
             }
         }
 
         setTimeout(() => { setIsUploading(false); }, 1000);
     };
-
 
     const formSchema = getFormSchema(t);
 
@@ -209,7 +131,6 @@ export default function AddProductPage() {
         }, 3000);
     }
 
-    // دالة لحذف صورة بعد رفعها
     const removeImage = (urlToRemove) => {
         setImages(images.filter((url) => url !== urlToRemove));
     };
@@ -235,7 +156,7 @@ export default function AddProductPage() {
             if (response.ok) {
                 showToast("success", t("admin.form.addSuccess"));
                 form.reset();
-                setImages([]); // نصفر الصور بعد النجاح
+                setImages([]);
                 setTimeout(() => {
                     router.push("/admin/dashboard/products");
                 }, 1500);
@@ -318,19 +239,6 @@ export default function AddProductPage() {
                         )}
                     />
 
-                    {/* المخزون */}
-                    {/* <FormField
-                        control={form.control}
-                        name="stock"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>{t("admin.form.stock")}</FormLabel>
-                                <FormControl><Input type="number" {...field} /></FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    /> */}
-
                     {/* الخصم */}
                     <FormField
                         control={form.control}
@@ -393,7 +301,6 @@ export default function AddProductPage() {
                     <div className="space-y-3">
                         <FormLabel>{t("admin.form.uploadImages")}</FormLabel>
 
-                        {/* عرض الصور اللي اترفعت (Preview) - خليه زي ما هو */}
                         <div className="grid grid-cols-3 gap-4 mb-4">
                             {images.map((url, index) => (
                                 <div key={index} className="relative aspect-square border rounded-lg overflow-hidden group">
@@ -409,8 +316,7 @@ export default function AddProductPage() {
                             ))}
                         </div>
 
-                        {/* Input الرفع المخفي والزرار الشيك */}
-                        {/* Progress Bar Component */}
+                        {/* Progress Bar */}
                         {isUploading && (
                             <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4 overflow-hidden">
                                 <div
@@ -423,22 +329,27 @@ export default function AddProductPage() {
                             </div>
                         )}
 
-                        {/* زرار الرفع اللي كان عندك */}
-                        <label
-                            className={`relative inline-flex items-center gap-2 font-bold py-3 px-6 rounded-xl shadow-lg transition-all active:scale-95 ${isUploading ? "bg-gray-400 cursor-not-allowed" : "bg-amber-600 hover:bg-amber-700 text-white"
-                                }`}
-                        >
+                        {/* 🎯 التعديل المحوري هنا لفتح الاستوديو فوراً من الموبايل */}
+                        <div className="relative">
                             <input
                                 type="file"
                                 multiple
                                 accept="image/*"
                                 onChange={handleImageUpload}
-                                className="sr-only"
-                                id="imageInput"
-                                disabled={isUploading} // تعطيل الزرار أثناء الرفع
+                                className="hidden"
+                                id="mobileImageInput"
+                                disabled={isUploading}
                             />
-                            <span>{isUploading ? "جاري المعالجة..." : `${t("admin.form.uploadNewImage")} 📸`}</span>
-                        </label>
+
+                            <label
+                                htmlFor="mobileImageInput"
+                                className={`inline-flex items-center gap-2 font-bold py-3 px-6 rounded-xl shadow-lg transition-all active:scale-95 cursor-pointer ${
+                                    isUploading ? "bg-gray-400 cursor-not-allowed" : "bg-amber-600 hover:bg-amber-700 text-white"
+                                }`}
+                            >
+                                <span>{isUploading ? "جاري المعالجة..." : `${t("admin.form.uploadNewImage")} 📸`}</span>
+                            </label>
+                        </div>
                     </div>
 
                     {/* الوصف - عربي */}
