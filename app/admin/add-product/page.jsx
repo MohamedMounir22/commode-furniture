@@ -143,21 +143,32 @@ export default function AddProductPage() {
             return interval;
         };
 
-        const options = { maxSizeMB: 1, maxWidthOrHeight: 1920, useWebWorker: true };
+        // 🛠️ التعديل هنا: قفلنا useWebWorker لتجنب تعليق متصفحات الموبايل
+        const options = {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1920,
+            useWebWorker: false // 🎯 تم التغيير لـ false لضمان التوافق مع الموبايل
+        };
 
         for (let i = 0; i < files.length; i++) {
-            // حرك الشريط وهمياً من بداية الصورة لحد 90% من وقت رفعها المتوقع
             const interval = simulateProgress(
                 Math.round((i / files.length) * 100),
                 Math.round(((i + 0.9) / files.length) * 100),
-                2000 // افترض أن الصورة تأخذ ثانيتين
+                2000
             );
 
             try {
                 const file = files[i];
+
+                // ضغط الصورة
                 const compressedFile = await imageCompression(file, options);
+
+                // 🛠️ تأمين اسم الملف وامتداده (مهم جداً لرفع الـ HEIC وصور الآيفون الافتراضية)
+                const fileName = file.name || `image-${Date.now()}.jpg`;
+                const safeFile = new File([compressedFile], fileName, { type: compressedFile.type || "image/jpeg" });
+
                 const formData = new FormData();
-                formData.append("file", compressedFile);
+                formData.append("file", safeFile); // رفع الملف الآمن
                 formData.append("upload_preset", "commode_present");
 
                 const response = await fetch(
@@ -166,15 +177,17 @@ export default function AddProductPage() {
                 );
 
                 const data = await response.json();
-                clearInterval(interval); // وقف الوهمي أول ما الرد ييجي
+                clearInterval(interval);
 
                 if (data.secure_url) {
                     setImages((prev) => [...prev, data.secure_url]);
-                    setUploadProgress(Math.round(((i + 1) / files.length) * 100)); // قفزة للنسبة الحقيقية
+                    setUploadProgress(Math.round(((i + 1) / files.length) * 100));
+                } else {
+                    console.error("Cloudinary error response:", data);
                 }
             } catch (error) {
                 clearInterval(interval);
-                console.error(`فشل الرفع:`, error);
+                console.error(`فشل الرفع للملف رقم ${i}:`, error);
             }
         }
 
