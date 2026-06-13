@@ -411,20 +411,19 @@ export default function AddProductPage() {
                         )}
 
                         {/* زرار الرفع اللي كان عندك */}
-                        <input
-                            type="file"
-                            multiple
-                            accept="image/*"
-                            onChange={handleImageUpload}
-                            className="hidden"
-                            id="imageInput"
-                            disabled={isUploading} // تعطيل الزرار أثناء الرفع
-                        />
                         <label
-                            htmlFor="imageInput"
-                            className={`cursor-pointer inline-flex items-center gap-2 font-bold py-3 px-6 rounded-xl shadow-lg transition-all active:scale-95 ${isUploading ? "bg-gray-400 cursor-not-allowed" : "bg-amber-600 hover:bg-amber-700 text-white"
+                            className={`relative inline-flex items-center gap-2 font-bold py-3 px-6 rounded-xl shadow-lg transition-all active:scale-95 ${isUploading ? "bg-gray-400 cursor-not-allowed" : "bg-amber-600 hover:bg-amber-700 text-white"
                                 }`}
                         >
+                            <input
+                                type="file"
+                                multiple
+                                accept="image/*"
+                                onChange={handleImageUpload}
+                                className="sr-only"
+                                id="imageInput"
+                                disabled={isUploading} // تعطيل الزرار أثناء الرفع
+                            />
                             <span>{isUploading ? "جاري المعالجة..." : `${t("admin.form.uploadNewImage")} 📸`}</span>
                         </label>
                     </div>
