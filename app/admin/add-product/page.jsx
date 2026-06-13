@@ -327,26 +327,26 @@ export default function AddProductPage() {
                             </div>
                         )}
 
-                        {/* 🎯 التعديل المحوري لفتح المعرض من الموبايل */}
-                        <div className="relative">
+                        {/* الاصلاح الجذري والأضمن للاستجابة على الموبايل */}
+                        <div className="block">
+                            <input
+                                type="file"
+                                multiple
+                                accept="image/*"
+                                onChange={handleImageUpload}
+                                id="finalMobileInput"
+                                className="hidden"
+                                disabled={isUploading}
+                            />
+
                             <label
-                                htmlFor="imageInputTrigger"
+                                htmlFor="finalMobileInput"
                                 className={`inline-flex items-center justify-center gap-2 font-bold py-3 px-6 rounded-xl shadow-lg transition-all active:scale-95 cursor-pointer select-none touch-manipulation ${
                                     isUploading ? "bg-gray-400 cursor-not-allowed" : "bg-amber-600 hover:bg-amber-700 text-white"
                                 }`}
                             >
                                 <span>{isUploading ? "جاري المعالجة..." : `${t("admin.form.uploadNewImage")} 📸`}</span>
                             </label>
-
-                            <input
-                                type="file"
-                                multiple
-                                accept="image/*"
-                                onChange={handleImageUpload}
-                                id="imageInputTrigger"
-                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                disabled={isUploading}
-                            />
                         </div>
                     </div>
 
