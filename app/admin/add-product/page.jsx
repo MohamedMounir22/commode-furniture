@@ -2,15 +2,15 @@
 
 export const dynamic = 'force-dynamic'
 
+import { useLanguage } from "@/lib/context/LanguageProvider"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { useLanguage } from "@/lib/context/LanguageProvider"
 import { zodResolver } from "@hookform/resolvers/zod"
 import imageCompression from 'browser-image-compression'
 import { ArrowLeft, Loader2, Trash2 } from "lucide-react"
-import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
@@ -70,7 +70,6 @@ export default function AddProductPage() {
             return interval;
         };
 
-        // 🛠️ تعديل خيارات الضغط لضمان التوافق الكامل مع متصفحات الموبايل دون تعليق
         const options = {
             maxSizeMB: 1,
             maxWidthOrHeight: 1920,
@@ -88,7 +87,6 @@ export default function AddProductPage() {
                 const file = files[i];
                 const compressedFile = await imageCompression(file, options);
 
-                // تأمين اسم ونوع الملف لصور الموبايل والـ HEIC
                 const fileName = file.name || `image-${Date.now()}.jpg`;
                 const safeFile = new File([compressedFile], fileName, { type: compressedFile.type || "image/jpeg" });
 
@@ -329,22 +327,27 @@ export default function AddProductPage() {
                             </div>
                         )}
 
-                        {/* 🎯 التعديل المحوري هنا لفتح الاستوديو فوراً من الموبايل */}
-                        <label
-                            className={`relative inline-flex items-center justify-center gap-2 font-bold py-3 px-6 rounded-xl shadow-lg transition-all active:scale-95 overflow-hidden ${
-                                isUploading ? "bg-gray-400 cursor-not-allowed" : "bg-amber-600 hover:bg-amber-700 text-white"
-                            }`}
-                        >
+                        {/* 🎯 التعديل المحوري لفتح المعرض من الموبايل */}
+                        <div className="relative">
+                            <label
+                                htmlFor="imageInputTrigger"
+                                className={`inline-flex items-center justify-center gap-2 font-bold py-3 px-6 rounded-xl shadow-lg transition-all active:scale-95 cursor-pointer select-none touch-manipulation ${
+                                    isUploading ? "bg-gray-400 cursor-not-allowed" : "bg-amber-600 hover:bg-amber-700 text-white"
+                                }`}
+                            >
+                                <span>{isUploading ? "جاري المعالجة..." : `${t("admin.form.uploadNewImage")} 📸`}</span>
+                            </label>
+
                             <input
                                 type="file"
                                 multiple
                                 accept="image/*"
                                 onChange={handleImageUpload}
+                                id="imageInputTrigger"
                                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                 disabled={isUploading}
                             />
-                            <span className="relative z-10">{isUploading ? "جاري المعالجة..." : `${t("admin.form.uploadNewImage")} 📸`}</span>
-                        </label>
+                        </div>
                     </div>
 
                     {/* الوصف - عربي */}
