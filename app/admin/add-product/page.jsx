@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import imageCompression from 'browser-image-compression'
 import { ArrowLeft, Loader2, Trash2 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useState, useRef } from "react" // 🎯 أضفنا useRef هنا
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 
@@ -49,6 +49,9 @@ export default function AddProductPage() {
 
     const [uploadProgress, setUploadProgress] = useState(0);
     const [isUploading, setIsUploading] = useState(false);
+
+    // 🎯 عملنا Ref مخصوص للـ input عشان نتحكم فيه برمجياً بعيداً عن مشاكل الموبايل
+    const fileInputRef = useRef(null);
 
     const handleImageUpload = async (event) => {
         const files = Array.from(event.target.files);
@@ -170,6 +173,14 @@ export default function AddProductPage() {
             setIsSubmitting(false);
         }
     }
+
+    // 🎯 دالة مخصصة تفتح المعرض عند الضغط وتمنع أي تداخل مع الـ Form
+    const triggerFileInput = (e) => {
+        e.preventDefault(); // منع السلوك الافتراضي تماماً لتجنب أي تعليق
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
 
     return (
         <div className="relative max-w-2xl mx-auto p-10 bg-white shadow-lg rounded-xl mt-10 text-black">
@@ -327,26 +338,28 @@ export default function AddProductPage() {
                             </div>
                         )}
 
-                        {/* الاصلاح الجذري والأضمن للاستجابة على الموبايل */}
+                        {/* 🎯 الحل الجذري: تحويل الزر لـ Button عادي ونقر الـ input برمجياً لتخطي قيود الـ Form والموبايل */}
                         <div className="block">
                             <input
                                 type="file"
                                 multiple
                                 accept="image/*"
                                 onChange={handleImageUpload}
-                                id="finalMobileInput"
+                                ref={fileInputRef} // ربط الـ Ref بالـ input
                                 className="hidden"
                                 disabled={isUploading}
                             />
 
-                            <label
-                                htmlFor="finalMobileInput"
+                            <button
+                                type="button" // 💡 نوع button عشان نمنع الـ Submit تلقائياً
+                                onClick={triggerFileInput} // تشغيل دالة الفتح اليدوي الآمنة
                                 className={`inline-flex items-center justify-center gap-2 font-bold py-3 px-6 rounded-xl shadow-lg transition-all active:scale-95 cursor-pointer select-none touch-manipulation ${
                                     isUploading ? "bg-gray-400 cursor-not-allowed" : "bg-amber-600 hover:bg-amber-700 text-white"
                                 }`}
+                                disabled={isUploading}
                             >
                                 <span>{isUploading ? "جاري المعالجة..." : `${t("admin.form.uploadNewImage")} 📸`}</span>
-                            </label>
+                            </button>
                         </div>
                     </div>
 
