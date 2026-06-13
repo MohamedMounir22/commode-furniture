@@ -2,15 +2,15 @@
 
 export const dynamic = 'force-dynamic'
 
-import { useLanguage } from "@/lib/context/LanguageProvider"
 import { Button } from "@/components/ui/button"
-import Image from "next/image"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { useLanguage } from "@/lib/context/LanguageProvider"
 import { zodResolver } from "@hookform/resolvers/zod"
 import imageCompression from 'browser-image-compression'
 import { ArrowLeft, Loader2, Trash2 } from "lucide-react"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
@@ -330,26 +330,21 @@ export default function AddProductPage() {
                         )}
 
                         {/* 🎯 التعديل المحوري هنا لفتح الاستوديو فوراً من الموبايل */}
-                        <div className="relative">
+                        <label
+                            className={`relative inline-flex items-center justify-center gap-2 font-bold py-3 px-6 rounded-xl shadow-lg transition-all active:scale-95 overflow-hidden ${
+                                isUploading ? "bg-gray-400 cursor-not-allowed" : "bg-amber-600 hover:bg-amber-700 text-white"
+                            }`}
+                        >
                             <input
                                 type="file"
                                 multiple
                                 accept="image/*"
                                 onChange={handleImageUpload}
-                                className="hidden"
-                                id="mobileImageInput"
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                 disabled={isUploading}
                             />
-
-                            <label
-                                htmlFor="mobileImageInput"
-                                className={`inline-flex items-center gap-2 font-bold py-3 px-6 rounded-xl shadow-lg transition-all active:scale-95 cursor-pointer ${
-                                    isUploading ? "bg-gray-400 cursor-not-allowed" : "bg-amber-600 hover:bg-amber-700 text-white"
-                                }`}
-                            >
-                                <span>{isUploading ? "جاري المعالجة..." : `${t("admin.form.uploadNewImage")} 📸`}</span>
-                            </label>
-                        </div>
+                            <span className="relative z-10">{isUploading ? "جاري المعالجة..." : `${t("admin.form.uploadNewImage")} 📸`}</span>
+                        </label>
                     </div>
 
                     {/* الوصف - عربي */}
