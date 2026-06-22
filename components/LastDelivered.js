@@ -1,6 +1,6 @@
 "use client";
 import { useLanguage } from "@/lib/context/LanguageProvider";
-  import { ArrowRight, CheckCircle2, MapPin, ShieldCheck, X } from "lucide-react";
+import { ArrowRight, CheckCircle2, MapPin, ShieldCheck, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -148,32 +148,33 @@ export default function LastDelivered() {
                 <div
                   className={`flex-1 flex flex-col justify-between p-6 ${isRtl ? "text-right" : "text-left"}`}
                 >
-                  <div className="flex items-baseline justify-between gap-4">
+                  <div className="flex items-center justify-between gap-4">
                     {/* اسم المنتج بالأبيض الفخم */}
-                    <h3 className="text-lg font-bold text-white line-clamp-1 tracking-tight">
+                    <h3 className="text-lg font-bold text-white line-clamp-1 tracking-tight leading-none">
                       {isRtl ? item.nameAr : item.nameEn}
                     </h3>
                     {/* التاريخ بلون هادئ */}
-                    <p className="text-xs text-zinc-500 font-medium shrink-0">
+                    {/* <p className="text-xs text-zinc-500 font-medium shrink-0">
                       {isRtl ? item.dateAr : item.dateEn}
-                    </p>
+                    </p> */}
+
+                    <div className="flex items-center justify-between">
+                      <div
+                        className={`flex items-center gap-2 ${isRtl ? "flex-row-reverse" : ""}`}
+                      >
+                        <div className="bg-primary/10 p-1.5 rounded-lg">
+                          <CheckCircle2 size={14} className="text-primary" />
+                        </div>
+                        <span className="text-[10px] font-black text-primary uppercase tracking-widest leading-none">
+                          {t("deliveredPage.deliveredStatus")}
+                        </span>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="my-4 h-px bg-white/[0.05]" />
 
                   {/* حالة التسليم: منورة بالذهبي بالكامل */}
-                  <div className="flex items-center justify-between">
-                    <div
-                      className={`flex items-center gap-2 ${isRtl ? "flex-row-reverse" : ""}`}
-                    >
-                      <div className="bg-primary/10 p-1.5 rounded-lg">
-                        <CheckCircle2 size={14} className="text-primary" />
-                      </div>
-                      <span className="text-[10px] font-black text-primary uppercase tracking-widest">
-                        {t("deliveredPage.deliveredStatus")}
-                      </span>
-                    </div>
-                  </div>
                 </div>
               </div>
             </SwiperSlide>
@@ -230,7 +231,7 @@ export default function LastDelivered() {
           }
 
           .last-delivered-swiper .swiper-pagination-bullet {
-            background: var(--color-primary, #D4AF37) !important;
+            background: var(--color-primary, #d4af37) !important;
             opacity: 0.2;
             width: 8px;
             height: 8px;
@@ -240,7 +241,7 @@ export default function LastDelivered() {
           }
 
           .last-delivered-swiper .swiper-pagination-bullet-active {
-            background: var(--color-primary, #D4AF37) !important;
+            background: var(--color-primary, #d4af37) !important;
             opacity: 1 !important;
             width: 28px;
             border-radius: 12px;

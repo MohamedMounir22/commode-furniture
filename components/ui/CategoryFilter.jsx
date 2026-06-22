@@ -7,8 +7,10 @@ const categories = [
     { key: "categories.all", slug: "all" },
     { key: "categories.dining", slug: "dining" },
     { key: "categories.sofas", slug: "sofas" },
+     { key: "categories.lShapedSofa", slug: "L-Shaped Sofa" },
     { key: "categories.tables", slug: "tables" },
     { key: "categories.console", slug: "console" },
+
 ];
 
 export default function CategoryFilter() {

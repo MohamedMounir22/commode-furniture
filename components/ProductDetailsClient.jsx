@@ -20,8 +20,12 @@ export default function ProductDetailsClient({ product }) {
     const [previewImage, setPreviewImage] = useState(null);
 
     const images = product.images?.length ? product.images : ["/double-sofa-01.png"];
-    const productName = (locale === "ar" ? product.nameAr || product.name : product.nameEn || product.name) || "Product";
-    const productDescription = locale === "ar" ? product.descriptionAr || product.description : product.descriptionEn || product.description;
+    const productName = (locale === "ar"
+        ? product.nameAr || product.name || product.nameEn
+        : product.nameEn || product.name || product.nameAr) || "Product";
+    const productDescription = locale === "ar"
+        ? product.descriptionAr || product.descriptionEn || product.description
+        : product.descriptionEn || product.descriptionAr || product.description;
     const discount = Number(product.discount) || 0;
     const hasDiscount = discount > 0;
     const discountedPrice = hasDiscount
@@ -190,7 +194,7 @@ ${t("productDetail.customizationRequest")}`;
             {/* Fullscreen Image Preview */}
             {previewImage && (
                 <div
-                    className="fixed inset-0 z-[999] flex items-center justify-center bg-black/95 p-4 backdrop-blur-sm transition-all duration-300"
+                    className="fixed inset-0 z-999 flex items-center justify-center bg-black/95 p-4 backdrop-blur-sm transition-all duration-300"
                     role="dialog"
                     aria-modal="true"
                     onClick={() => setPreviewImage(null)}

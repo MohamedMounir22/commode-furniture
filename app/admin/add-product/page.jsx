@@ -21,6 +21,7 @@ const categoryOptions = [
     { value: "sofas" },
     { value: "tables" },
     { value: "console" },
+    { value: "L-Shaped Sofa" },
 ]
 
 const getFormSchema = (t) =>
@@ -33,7 +34,7 @@ const getFormSchema = (t) =>
         discount: z.coerce.number()
             .min(0, { message: t("admin.form.errors.discountMin") })
             .max(100, { message: t("admin.form.errors.discountMax") }),
-        category: z.enum(["dining", "sofas", "tables", "console"], {
+        category: z.enum(["dining", "sofas", "tables", "console", "L-Shaped Sofa" ], {
             errorMap: () => ({ message: t("admin.form.errors.categoryRequired") }),
         }),
         stock: z.coerce.number().min(0, { message: t("admin.form.errors.stockMin") }),
