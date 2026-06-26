@@ -6,11 +6,12 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useLanguage } from "@/lib/context/LanguageProvider"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ArrowLeft, ImagePlus, Loader2, Trash2 } from "lucide-react"
-import { CldImage, CldUploadWidget } from 'next-cloudinary'
+import imageCompression from "browser-image-compression"
+import { ArrowLeft, Loader2, Trash2 } from "lucide-react"
+import Image from "next/image"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Suspense, useEffect, useState } from "react"
+import { Suspense, useEffect, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 
@@ -43,7 +44,10 @@ function EditProductContent() {
   const [images, setImages] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [isUploading, setIsUploading] = useState(false)
   const router = useRouter()
+  const fileInputRef = useRef(null)
   const searchParams = useSearchParams()
   const productId = searchParams.get("id")
   const { t, locale } = useLanguage()
@@ -99,6 +103,81 @@ function EditProductContent() {
     setImages(images.filter((url) => url !== urlToRemove))
   }
 
+  const handleImageUpload = async (event) => {
+    const files = Array.from(event.target.files || [])
+    if (files.length === 0) return
+
+    setIsUploading(true)
+    setUploadProgress(0)
+
+    const simulateProgress = (start, end, duration) => {
+      let current = start
+      const interval = setInterval(() => {
+        current += 1
+        if (current >= end) {
+          clearInterval(interval)
+        } else {
+          setUploadProgress(current)
+        }
+      }, duration / (end - start))
+      return interval
+    }
+
+    const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1920,
+      useWebWorker: false,
+    }
+
+    for (let i = 0; i < files.length; i += 1) {
+      const interval = simulateProgress(
+        Math.round((i / files.length) * 100),
+        Math.round(((i + 0.9) / files.length) * 100),
+        2000
+      )
+
+      try {
+        const file = files[i]
+        const compressedFile = await imageCompression(file, options)
+        const fileName = file.name || `image-${Date.now()}.jpg`
+        const safeFile = new File([compressedFile], fileName, {
+          type: compressedFile.type || "image/jpeg",
+        })
+
+        const formData = new FormData()
+        formData.append("file", safeFile)
+        formData.append("upload_preset", "commode_present")
+
+        const response = await fetch(
+          `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+          { method: "POST", body: formData }
+        )
+
+        const data = await response.json()
+        clearInterval(interval)
+
+        if (data.secure_url) {
+          setImages((prev) => [...prev, data.secure_url])
+          setUploadProgress(Math.round(((i + 1) / files.length) * 100))
+        }
+      } catch (error) {
+        clearInterval(interval)
+        console.error("Image upload failed:", error)
+      }
+    }
+
+    setTimeout(() => {
+      setIsUploading(false)
+    }, 1000)
+  }
+
+  const triggerFileInput = (event) => {
+    event.preventDefault()
+    if (fileInputRef.current) {
+      fileInputRef.current.click()
+    }
+  }
+
   async function onSubmit(values) {
     if (images.length === 0) {
       alert(t("admin.form.requireImage"))
@@ -136,24 +215,26 @@ function EditProductContent() {
 
   if (isLoading) {
     return (
-      <div className="max-w-2xl mx-auto p-10">
-        <div className="flex justify-center items-center h-64">
-          <Loader2 className="w-8 h-8 animate-spin" />
+      <div className="flex min-h-[60vh] items-center justify-center bg-black px-4 py-10">
+        <div className="flex h-64 items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-[#d4af37]" />
         </div>
       </div>
     )
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-10 bg-white shadow-lg rounded-xl mt-10">
-      <div className={`flex items-center gap-4 mb-6 ${locale === "ar" ? "text-right" : "text-left"}`}>
-        <Link href="/admin/dashboard/products">
-          <Button variant="outline" size="sm">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            {t("admin.form.backToProducts")}
-          </Button>
-        </Link>
-        <h1 className="text-2xl font-bold">{t("admin.form.editProductTitle")}</h1>
+    <div className="mx-auto mt-8 max-w-4xl rounded-[2rem] border border-white/10 bg-zinc-900 p-6 shadow-2xl sm:p-8 lg:p-10">
+      <div className={`mb-8 flex flex-wrap items-center justify-between gap-4 ${locale === "ar" ? "text-right" : "text-left"}`}>
+        <div className="flex items-center gap-4">
+          <Link href="/admin/dashboard/products">
+            <Button variant="outline" size="sm" className="border-white/10 bg-white/5 text-white hover:bg-white/10 hover:text-white">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              {t("admin.form.backToProducts")}
+            </Button>
+          </Link>
+          <h1 className="text-2xl font-bold text-white">{t("admin.form.editProductTitle")}</h1>
+        </div>
       </div>
 
       <Form {...form}>
@@ -165,8 +246,8 @@ function EditProductContent() {
             name="nameAr"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("admin.form.productNameAr")}</FormLabel>
-                <FormControl><Input placeholder="أدخل اسم المنتج بالعربية" {...field} /></FormControl>
+                <FormLabel className="text-sm font-semibold text-white/80">{t("admin.form.productNameAr")}</FormLabel>
+                <FormControl><Input className="border-white/10 bg-zinc-950/70 text-white placeholder:text-white/40 focus:border-[#d4af37] focus:ring-[#d4af37]/40" placeholder="أدخل اسم المنتج بالعربية" {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -178,8 +259,8 @@ function EditProductContent() {
             name="nameEn"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("admin.form.productNameEn")}</FormLabel>
-                <FormControl><Input placeholder="Enter product name in English" {...field} /></FormControl>
+                <FormLabel className="text-sm font-semibold text-white/80">{t("admin.form.productNameEn")}</FormLabel>
+                <FormControl><Input className="border-white/10 bg-zinc-950/70 text-white placeholder:text-white/40 focus:border-[#d4af37] focus:ring-[#d4af37]/40" placeholder="Enter product name in English" {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -191,8 +272,8 @@ function EditProductContent() {
             name="price"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("admin.form.price")}</FormLabel>
-                <FormControl><Input type="number" {...field} /></FormControl>
+                <FormLabel className="text-sm font-semibold text-white/80">{t("admin.form.price")}</FormLabel>
+                <FormControl><Input className="border-white/10 bg-zinc-950/70 text-white placeholder:text-white/40 focus:border-[#d4af37] focus:ring-[#d4af37]/40" type="number" {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -204,9 +285,9 @@ function EditProductContent() {
             name="category"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("admin.form.category")}</FormLabel>
+                <FormLabel className="text-sm font-semibold text-white/80">{t("admin.form.category")}</FormLabel>
                 <FormControl>
-                  <select {...field} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500">
+                  <select {...field} className="w-full rounded-lg border border-white/10 bg-zinc-950/70 px-3 py-2 text-sm text-white focus:border-[#d4af37] focus:outline-none focus:ring-1 focus:ring-[#d4af37]/40">
                     {categoryOptions.map((option) => (
                       <option key={option.value} value={option.value}>
                         {t(`categories.${option.value}`)}
@@ -225,8 +306,8 @@ function EditProductContent() {
             name="stock"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("admin.form.stock")}</FormLabel>
-                <FormControl><Input type="number" {...field} /></FormControl>
+                <FormLabel className="text-sm font-semibold text-white/80">{t("admin.form.stock")}</FormLabel>
+                <FormControl><Input className="border-white/10 bg-zinc-950/70 text-white placeholder:text-white/40 focus:border-[#d4af37] focus:ring-[#d4af37]/40" type="number" {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -238,8 +319,8 @@ function EditProductContent() {
             name="discount"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("admin.form.discount")}</FormLabel>
-                <FormControl><Input type="number" placeholder="0" {...field} /></FormControl>
+                <FormLabel className="text-sm font-semibold text-white/80">{t("admin.form.discount")}</FormLabel>
+                <FormControl><Input className="border-white/10 bg-zinc-950/70 text-white placeholder:text-white/40 focus:border-[#d4af37] focus:ring-[#d4af37]/40" type="number" placeholder="0" {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -250,7 +331,7 @@ function EditProductContent() {
             control={form.control}
             name="bestSeller"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4">
+              <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-xl border border-white/10 bg-white/5 p-4">
                 <FormControl>
                   <input
                     type="checkbox"
@@ -258,12 +339,12 @@ function EditProductContent() {
                     onChange={(e) => field.onChange(e.target.checked)}
                     onBlur={field.onBlur}
                     ref={field.ref}
-                    className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
+                    className="h-4 w-4 rounded border-white/20 bg-zinc-950 text-[#d4af37] focus:ring-[#d4af37]"
                   />
                 </FormControl>
                 <div className="space-y-1 leading-none">
-                  <FormLabel>{t("admin.form.bestSeller")}</FormLabel>
-                  <p className="text-sm text-gray-500">{t("admin.form.bestSellerDescription")}</p>
+                  <FormLabel className="text-sm font-semibold text-white/80">{t("admin.form.bestSeller")}</FormLabel>
+                  <p className="text-sm text-white/60">{t("admin.form.bestSellerDescription")}</p>
                 </div>
               </FormItem>
             )}
@@ -275,8 +356,8 @@ function EditProductContent() {
             name="descriptionAr"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("admin.form.descriptionAr")}</FormLabel>
-                <FormControl><Textarea placeholder="أدخل وصف المنتج بالعربية" {...field} /></FormControl>
+                <FormLabel className="text-sm font-semibold text-white/80">{t("admin.form.descriptionAr")}</FormLabel>
+                <FormControl><Textarea className="min-h-32 border-white/10 bg-zinc-950/70 text-white placeholder:text-white/40 focus:border-[#d4af37] focus:ring-[#d4af37]/40" placeholder="أدخل وصف المنتج بالعربية" {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -288,65 +369,70 @@ function EditProductContent() {
             name="descriptionEn"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("admin.form.descriptionEn")}</FormLabel>
-                <FormControl><Textarea placeholder="Enter product description in English" {...field} /></FormControl>
+                <FormLabel className="text-sm font-semibold text-white/80">{t("admin.form.descriptionEn")}</FormLabel>
+                <FormControl><Textarea className="min-h-32 border-white/10 bg-zinc-950/70 text-white placeholder:text-white/40 focus:border-[#d4af37] focus:ring-[#d4af37]/40" placeholder="Enter product description in English" {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
           {/* رفع الصور */}
-          <div>
-            <FormLabel>{`${t("admin.form.uploadImages")} (${images.length})`}</FormLabel>
-            <div className="mt-2">
-              <CldUploadWidget
-                uploadPreset="ml_default"
-                config={{ cloud: { cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME } }}
-                onError={(error) => {
-                  console.error("Cloudinary upload failed:", error);
-                }}
-                onSuccess={(result) => {
-                  if (result.info && result.info.secure_url) {
-                    setImages((prev) => [...prev, result.info.secure_url]);
-                  }
-                }}
-              >
-                {({ open }) => (
-                  <Button type="button" variant="outline" onClick={open}>
-                    <ImagePlus className="w-4 h-4 mr-2" />
-                    {t("admin.form.uploadNewImage")}
-                  </Button>
-                )}
-              </CldUploadWidget>
+          <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4">
+            <FormLabel className="text-sm font-semibold text-white/80">{`${t("admin.form.uploadImages")} (${images.length})`}</FormLabel>
+
+            <div className="mb-4 grid grid-cols-3 gap-4">
+              {images.map((url, index) => (
+                <div key={index} className="group relative aspect-square overflow-hidden rounded-lg border border-white/10">
+                  <Image fill src={url} alt="product" className="object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => removeImage(url)}
+                    className="absolute right-1 top-1 rounded-full bg-red-500 p-1 text-white opacity-0 transition group-hover:opacity-100"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              ))}
             </div>
 
-            {/* عرض الصور المرفوعة */}
-            {images.length > 0 && (
-              <div className="mt-4 grid grid-cols-3 gap-4">
-                {images.map((url, index) => (
-                  <div key={index} className="relative">
-                    <CldImage
-                      width="300"
-                      height="300"
-                      src={url}
-                      alt={`${t("admin.form.uploadImages")} ${index + 1}`}
-                      className="w-full h-24 object-cover rounded"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeImage(url)}
-                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                    </button>
-                  </div>
-                ))}
+            {isUploading && (
+              <div className="mb-4 h-2.5 w-full overflow-hidden rounded-full bg-white/10">
+                <div
+                  className="h-2.5 rounded-full bg-[#d4af37] transition-all duration-300 ease-in-out"
+                  style={{ width: `${uploadProgress}%` }}
+                />
+                <p className="mt-1 text-center text-xs font-medium text-[#d4af37]">
+                  {uploadProgress === 100 ? "تم الرفع بنجاح!" : `جاري رفع الصور... ${uploadProgress}%`}
+                </p>
               </div>
             )}
+
+            <div className="block">
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={handleImageUpload}
+                ref={fileInputRef}
+                className="hidden"
+                disabled={isUploading}
+              />
+
+              <button
+                type="button"
+                onClick={triggerFileInput}
+                className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl px-6 py-3 font-bold shadow-lg transition-all active:scale-95 select-none touch-manipulation ${
+                  isUploading ? "cursor-not-allowed bg-white/20 text-white/60" : "bg-[#d4af37] text-black hover:bg-[#f2d46d]"
+                }`}
+                disabled={isUploading}
+              >
+                <span>{isUploading ? "جاري المعالجة..." : `${t("admin.form.uploadNewImage")} 📸`}</span>
+              </button>
+            </div>
           </div>
 
           {/* زرار الحفظ */}
-          <Button type="submit" disabled={isSubmitting} className="w-full">
+          <Button type="submit" disabled={isSubmitting} className="w-full bg-[#d4af37] text-black hover:bg-[#f2d46d]">
             {isSubmitting ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
