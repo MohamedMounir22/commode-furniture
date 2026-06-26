@@ -384,10 +384,12 @@ function EditProductContent() {
               {images.map((url, index) => (
                 <div key={index} className="group relative aspect-square overflow-hidden rounded-lg border border-white/10">
                   <Image fill src={url} alt="product" className="object-cover" />
+                  <div className="absolute inset-0 bg-black/20 transition group-hover:bg-black/40" />
                   <button
                     type="button"
                     onClick={() => removeImage(url)}
-                    className="absolute right-1 top-1 rounded-full bg-red-500 p-1 text-white opacity-0 transition group-hover:opacity-100"
+                    className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-red-500 text-white shadow-lg transition hover:bg-red-600"
+                    aria-label="Remove image"
                   >
                     <Trash2 size={14} />
                   </button>
