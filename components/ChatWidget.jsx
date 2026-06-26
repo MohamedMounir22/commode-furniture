@@ -110,12 +110,12 @@ export default function LuxuryChat() {
                     {/* 🎯 الزرار العائم الرئيسي: بقا منور بالدهبي كحالة طبيعية جذابة */}
                     <button
                         onClick={() => setIsOpen(!isOpen)}
-                        className="bg-zinc-950 text-white p-4 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.6)] active:scale-95 transition-all duration-300 flex items-center justify-center border group"
+                        className="bg-zinc-950 text-white h-12 w-12 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.6)] active:scale-95 transition-all duration-300 flex items-center justify-center border group"
                     >
                         {isOpen ? (
-                            <ChevronDown size={26} className="text-primary" />
+                            <ChevronDown size={20} className="text-primary" />
                         ) : (
-                            <MessageCircle size={26} className="text-primary transition-colors duration-300" />
+                            <MessageCircle size={20} className="text-primary transition-colors duration-300" />
                         )}
                     </button>
                 </div>
