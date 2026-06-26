@@ -43,7 +43,8 @@ export default function LuxuryChat() {
                                 <div className="p-6 pb-10 bg-linear-to-br from-zinc-900/50 to-black/40 relative border-b border-white/4">
                                     <button
                                         onClick={() => setIsOpen(false)}
-                                        className="absolute top-4 right-4 text-zinc-400 hover:text-primary transition-colors"
+
+                                        className=" hidden text-zinc-400 hover:text-primary transition-colors" //absolute top-4 right-4
                                     >
                                         <X size={18} />
                                     </button>
