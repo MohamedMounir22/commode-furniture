@@ -116,7 +116,7 @@ export default function LuxuryChat() {
                         {isOpen ? (
                             <ChevronDown size={20} className="text-primary" />
                         ) : (
-                            <MessageCircle size={20} className="text-primary transition-colors duration-300" />
+                            <MessageCircle size={20} className="text-primary  " />
                         )}
                     </button>
                 </div>
