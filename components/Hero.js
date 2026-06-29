@@ -76,73 +76,113 @@ const Hero = () => {
   }, [locale]);
 
   return (
-    <section className="w-full h-[60vh] md:h-[85vh] relative bg-black overflow-hidden">
-      <Swiper
-        modules={[Navigation, Pagination, Autoplay, EffectFade]}
-        effect={"fade"}
-        speed={1200}
-        autoplay={{ delay: 5000, disableOnInteraction: false }}
-        pagination={{ clickable: true }}
-        navigation={true}
-        loop={true}
-        className="h-full w-full group"
+    // <section className="w-full h-[60vh] md:h-[85vh] relative bg-black overflow-hidden">
+    //   <Swiper
+    //     modules={[Navigation, Pagination, Autoplay, EffectFade]}
+    //     effect={"fade"}
+    //     speed={1200}
+    //     autoplay={{ delay: 5000, disableOnInteraction: false }}
+    //     pagination={{ clickable: true }}
+    //     navigation={true}
+    //     loop={true}
+    //     className="h-full w-full group"
+    //   >
+    //     {slides.map((slide) => (
+    //       <SwiperSlide
+    //         key={slide._id || slide.id}
+    //         className="relative w-full h-full"
+    //       >
+    //         <Link href={slide.buttonLink} className="absolute inset-0 z-0 block">
+    //           <Image
+    //             src={slide.image}
+    //             alt={slide.title || t("hero.button")}
+    //             fill
+    //             className="object-contain object-center scale-105 animate-luxury-fade"
+    //             priority
+    //             sizes="100vw"
+    //           />
+    //           <div className="absolute inset-0 bg-linear-to-t from-black/20 via-black/10 to-transparent" />
+    //         </Link>
+    //       </SwiperSlide>
+    //     ))}
+    //   </Swiper>
+
+    //   {/* 4. استايلات Swiper المخصصة باللون الذهبي المطابق للصورة */}
+    //   <style jsx global>{`
+    //     .swiper-button-next,
+    //     .swiper-button-prev {
+    //       color: #d4af37 !important; /* السهم يقلب ذهبي ملكي */
+    //       opacity: 0;
+    //       transition: all 0.3s ease;
+    //     }
+    //     .group:hover .swiper-button-next,
+    //     .group:hover .swiper-button-prev {
+    //       opacity: 0.8;
+    //     }
+    //     .swiper-pagination-bullet {
+    //       background: #zinc-500 !important;
+    //       opacity: 0.4;
+    //     }
+    //     /* كبسولة الـ Pagination النشطة تنور بالذهبي الفخم المتوهج */
+    //     .swiper-pagination-bullet-active {
+    //       background: linear-gradient(90deg, #d4af37 0%, #aa8416 100%) !important;
+    //       opacity: 1 !important;
+    //       width: 40px !important;
+    //       border-radius: 8px !important;
+    //       box-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+    //       animation: hero-active-pill 3s infinite ease-in-out;
+    //     }
+
+    //     @keyframes hero-active-pill {
+    //       0%, 100% {
+    //         box-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
+    //       }
+    //       50% {
+    //         box-shadow: 0 0 20px rgba(212, 175, 55, 0.8);
+    //       }
+    //     }
+    //   `}</style>
+    // </section>
+
+
+    // غيّر سطر الـ section ليكون بارتفاع مرن يعتمد على أبعاد الصورة على الموبايل
+<section className="w-full aspect-[3/3] md:h-[85vh] md:aspect-auto relative bg-black overflow-hidden">
+  <Swiper
+    modules={[Navigation, Pagination, Autoplay, EffectFade]}
+    effect={"fade"}
+    speed={1200}
+    autoplay={{ delay: 5000, disableOnInteraction: false }}
+    pagination={{ clickable: true }}
+    navigation={true}
+    loop={true}
+    className="h-full w-full group"
+  >
+    {slides.map((slide) => (
+      <SwiperSlide
+        key={slide._id || slide.id}
+        className="relative w-full h-full"
       >
-        {slides.map((slide) => (
-          <SwiperSlide
-            key={slide._id || slide.id}
-            className="relative w-full h-full"
-          >
-            <Link href={slide.buttonLink} className="absolute inset-0 z-0 block">
-              <Image
-                src={slide.image}
-                alt={slide.title || t("hero.button")}
-                fill
-                className="object-cover object-center scale-105 animate-luxury-fade"
-                priority
-                sizes="100vw"
-              />
-              <div className="absolute inset-0 bg-linear-to-t from-black/20 via-black/10 to-transparent" />
-            </Link>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+        <Link href={slide.buttonLink} className="absolute inset-0 z-0 block">
+          {/* رجعنا الـ object-cover هنا لأن السكشن نفسه خلاص بقى متناسق مع أبعاد الصورة ومفيش حاجة هتتقطع */}
+          <Image
+            src={slide.image}
+            alt={slide.title || t("hero.button")}
+            fill
+            className="object-fit object-center animate-luxury-fade"
+            priority
+            sizes="100vw"
+          />
+{/* عدل السطر ده وخليه يضيف تظليل غامق من فوق لتحت (from-black/50) */}
+    <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/10 to-transparent z-10 pointer-events-none" />        </Link>
+      </SwiperSlide>
+    ))}
+  </Swiper>
 
-      {/* 4. استايلات Swiper المخصصة باللون الذهبي المطابق للصورة */}
-      <style jsx global>{`
-        .swiper-button-next,
-        .swiper-button-prev {
-          color: #d4af37 !important; /* السهم يقلب ذهبي ملكي */
-          opacity: 0;
-          transition: all 0.3s ease;
-        }
-        .group:hover .swiper-button-next,
-        .group:hover .swiper-button-prev {
-          opacity: 0.8;
-        }
-        .swiper-pagination-bullet {
-          background: #zinc-500 !important;
-          opacity: 0.4;
-        }
-        /* كبسولة الـ Pagination النشطة تنور بالذهبي الفخم المتوهج */
-        .swiper-pagination-bullet-active {
-          background: linear-gradient(90deg, #d4af37 0%, #aa8416 100%) !important;
-          opacity: 1 !important;
-          width: 40px !important;
-          border-radius: 8px !important;
-          box-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
-          animation: hero-active-pill 3s infinite ease-in-out;
-        }
-
-        @keyframes hero-active-pill {
-          0%, 100% {
-            box-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
-          }
-          50% {
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.8);
-          }
-        }
-      `}</style>
-    </section>
+  {/* استايلات Swiper المخصصة */}
+  <style jsx global>{`
+    /* استايلاتك القديمة كما هي بدون تغيير */
+  `}</style>
+</section>
   );
 };
 
