@@ -60,7 +60,9 @@ const Hero = () => {
           const validHeroSlides = data.data.filter(
             (slide) => slide.image && slide.buttonLink,
           );
-          setSlides(validHeroSlides.length > 0 ? validHeroSlides : defaultSlides);
+          setSlides(
+            validHeroSlides.length > 0 ? validHeroSlides : defaultSlides,
+          );
         } else {
           setSlides(defaultSlides);
         }
@@ -144,45 +146,56 @@ const Hero = () => {
     //   `}</style>
     // </section>
 
-
     // غيّر سطر الـ section ليكون بارتفاع مرن يعتمد على أبعاد الصورة على الموبايل
-<section className="w-full aspect-[3/3] md:h-[85vh] md:aspect-auto relative bg-black overflow-hidden">
-  <Swiper
-    modules={[Navigation, Pagination, Autoplay, EffectFade]}
-    effect={"fade"}
-    speed={1200}
-    autoplay={{ delay: 5000, disableOnInteraction: false }}
-    pagination={{ clickable: true }}
-    navigation={true}
-    loop={true}
-    className="h-full w-full group"
-  >
-    {slides.map((slide) => (
-      <SwiperSlide
-        key={slide._id || slide.id}
-        className="relative w-full h-full"
+    <section className="w-full aspect-3/2 md:h-[85vh] md:aspect-auto relative bg-black overflow-hidden">
+      <Swiper
+        modules={[Navigation, Pagination, Autoplay, EffectFade]}
+        effect={"fade"}
+        speed={1200}
+        autoplay={{ delay: 2000, disableOnInteraction: false }}
+        pagination={{ clickable: true }}
+        navigation={false}
+        loop={true}
+        className="h-full w-full group"
       >
-        <Link href={slide.buttonLink} className="absolute inset-0 z-0 block">
-          {/* رجعنا الـ object-cover هنا لأن السكشن نفسه خلاص بقى متناسق مع أبعاد الصورة ومفيش حاجة هتتقطع */}
-          <Image
-            src={slide.image}
-            alt={slide.title || t("hero.button")}
-            fill
-            className="object-fit object-center animate-luxury-fade"
-            priority
-            sizes="100vw"
-          />
-{/* عدل السطر ده وخليه يضيف تظليل غامق من فوق لتحت (from-black/50) */}
-    <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/10 to-transparent z-10 pointer-events-none" />        </Link>
-      </SwiperSlide>
-    ))}
-  </Swiper>
+        {slides.map((slide) => (
+          <SwiperSlide
+            key={slide._id || slide.id}
+            className="relative w-full h-full"
+          >
+            <Link
+              href={slide.buttonLink}
+              className="absolute inset-0 z-0 block"
+            >
+              {/* رجعنا الـ object-cover هنا لأن السكشن نفسه خلاص بقى متناسق مع أبعاد الصورة ومفيش حاجة هتتقطع */}
+              <Image
+                src={slide.image}
+                alt={slide.title || t("hero.button")}
+                fill
+                className="object-fit object-center animate-luxury-fade"
+                priority
+                sizes="100vw"
+              />
+              {/* عدل السطر ده وخليه يضيف تظليل غامق من فوق لتحت (from-black/50) */}
+              <div className="absolute inset-0 bg-linear-to-b from-black/50 via-black/10 to-transparent z-10 pointer-events-none" />{" "}
+            </Link>
+          </SwiperSlide>
+        ))}
+      </Swiper>
 
-  {/* استايلات Swiper المخصصة */}
-  <style jsx global>{`
-    /* استايلاتك القديمة كما هي بدون تغيير */
-  `}</style>
-</section>
+      {/* استايلات Swiper المخصصة */}
+      <style jsx global>{`
+        .swiper-pagination-bullet {
+          background: rgba(255, 255, 255, 0.5);
+          opacity: 1;
+        }
+
+        .swiper-pagination-bullet-active {
+          background: var(--color-primary);
+          opacity: 1;
+        }
+      `}</style>
+    </section>
   );
 };
 

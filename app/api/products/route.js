@@ -12,7 +12,9 @@ export async function GET(request) {
     const category = searchParams.get("category");
 
     const query = category && category !== "all" ? { category } : {};
-    const products = await Product.find(query).sort({ createdAt: -1 }).lean();
+    const products = await Product.find(query)
+      .sort({ bestSeller: -1, createdAt: -1 })
+      .lean();
 
     // Convert _id to string for JSON serialization
     const serializedProducts = products.map((product) => ({

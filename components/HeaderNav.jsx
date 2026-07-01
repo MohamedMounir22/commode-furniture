@@ -1,48 +1,45 @@
 "use client";
 import CartCounter from "@/components/CartCounter";
 import LanguageToggle from "@/components/LanguageToggle";
-import Link from "next/link";
 import { useLanguage } from "@/lib/context/LanguageProvider";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react"; // استيراد الـ Hooks المطلوبة
+import { useEffect, useState } from "react";
 
 export default function HeaderNav() {
   const { t } = useLanguage();
   const pathname = usePathname();
-  const [isScrolled, setIsScrolled] = useState(false); // حالة مراقبة السكرول
+  const isHomePage = pathname === "/";
+  const [isVisible, setIsVisible] = useState(!isHomePage);
 
   useEffect(() => {
     const handleScroll = () => {
-      // لو المستخدم نزل أكتر من 40 بكسل، اقلب الحالة لـ true
-      if (window.scrollY > 40) {
-        setIsScrolled(true);
+      if (isHomePage) {
+        setIsVisible(window.scrollY > 0);
       } else {
-        setIsScrolled(false);
+        setIsVisible(true);
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    handleScroll();
+
+    if (isHomePage) {
+      window.addEventListener("scroll", handleScroll, { passive: true });
+      return () => window.removeEventListener("scroll", handleScroll);
+    }
+  }, [isHomePage]);
 
   if (pathname?.startsWith("/admin")) {
     return null;
   }
 
   return (
-    // 1. الكونتينر الخارجي العايم والمثبت في منتصف الشاشة بدقة
-    // أضفنا له transition وقمنا بتغيير الـ top-4 إلى top-0 لما يعمل سكرول لو حابب يلتصق بالسقف، أو سيبه top-4 زي ما تحب
-    <header className={`fixed left-0 right-0 z-50 w-full px-2 sm:px-2 md:px-2 flex justify-center pointer-events-none transition-all duration-300 ${
-      isScrolled ? "top-2" : "top-4"
-    }`}>
-
-      {/* 2. جسم الـ Navbar الديناميكي (Floating Glassmorphic) */}
-      {/* هنا غيّرنا الـ bg-zinc-950/60 والـ backdrop لتتغير الشفافية ديناميكياً بناءً على الـ Scroll */}
-      <nav className={`w-full max-w-5xl border flex items-center justify-between pointer-events-auto transition-all duration-500 rounded-2xl md:rounded-3xl px-6 py-3 md:py-4 ${
-        isScrolled
-          ? "bg-zinc-950/90 backdrop-blur-xl border-white/[0.08] shadow-[0_10px_40px_rgba(0,0,0,0.8)]" // الشكل الغامق الواضح عند السكرول لأسفل
-          : "bg-transparent backdrop-blur-xs border-transparent shadow-none" // شفاف تماماً وبدون حدود عند التوب فوق البانر
-      }`}>
+    <header
+      className={`fixed top-4 left-0 right-0 z-50 w-full px-2 sm:px-2 md:px-2 flex justify-center pointer-events-none transition-all duration-300 ${
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-full pointer-events-none"
+      }`}
+    >
+      <nav className="w-full max-w-5xl bg-zinc-950/60 backdrop-blur-xl border border-white/8 rounded-2xl md:rounded-3xl px-6 py-3 md:py-4 flex items-center justify-between shadow-[0_10px_40px_rgba(0,0,0,0.7)] pointer-events-auto transition-all duration-300">
 
         {/* 🪑 اللوجو: كلمة COMMODE وعلى يمينها أيقونة الكرسي الأصلية المطابقة للصورة بالملي */}
         <Link
@@ -51,6 +48,8 @@ export default function HeaderNav() {
         >
           {/* اسم الموقع */}
           <span>COMMODE</span>
+
+
         </Link>
 
         {/* لينكات المنيو اللي في النص - أبيض مطفأ ويقلب ذهبي عند المرور */}
@@ -58,6 +57,7 @@ export default function HeaderNav() {
           <Link href="/products" className="text-sm font-bold text-zinc-300 hover:text-primary transition-colors duration-300 tracking-wide">
             {t("nav.shop") || "Products"}
           </Link>
+
         </div>
 
         {/* الزراير الطرفية (تغيير اللغة + زر السلة المطور) */}

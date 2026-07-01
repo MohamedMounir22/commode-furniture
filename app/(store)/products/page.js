@@ -4,7 +4,9 @@ import Product from "@/lib/models/product";
 
 async function getProducts() {
   await connectDB();
-  const products = await Product.find({}).sort({ createdAt: -1 }).lean();
+  const products = await Product.find({})
+    .sort({ bestSeller: -1, createdAt: -1 })
+    .lean();
 
   return products.map((product) => ({
     ...product,
