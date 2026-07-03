@@ -100,7 +100,11 @@ export default function LastDelivered() {
           modules={[Pagination, Autoplay]}
           spaceBetween={24}
           slidesPerView={1}
-          pagination={{ clickable: true }}
+          pagination={{
+            clickable: true,
+            dynamicBullets: true,
+            dynamicMainBullets: 3,
+          }}
           autoplay={{ delay: 5000, disableOnInteraction: false }}
           breakpoints={{
             640: { slidesPerView: 2, spaceBetween: 20 },
