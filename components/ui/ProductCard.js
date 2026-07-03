@@ -91,7 +91,7 @@ export default function ProductCard({
   if (viewMode === "grid") {
     return (
       // 1. وضع الـ Grid: جعل الكارد يندمج مع الخلفية السوداء الصافية بحدود ناعمة جداً
-      <div className="group relative aspect-[4/4] w-full overflow-hidden rounded-2xl bg-black shadow-2xl active:scale-95 transition-all duration-200 border border-white/[0.05] font-sans">
+      <div className="group relative aspect-4/4 w-full overflow-hidden rounded-2xl bg-black shadow-2xl active:scale-95 transition-all duration-200 border border-white/5 font-sans">
         <Link href={`/products/${id}`} className="w-full h-full flex flex-col">
           <Image
             src={
@@ -103,7 +103,7 @@ export default function ProductCard({
             className="h-full w-full object-cover transition-all duration-300 active:scale-105 active:brightness-110"
           />
 
-          <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black via-black/80 to-transparent">
+          <div className="absolute bottom-0 left-0 right-0 p-3 bg-linear-to-t from-black via-black/80 to-transparent">
             <div className="flex items-baseline justify-between gap-2">
               <h3 className="text-white font-bold text-sm truncate drop-shadow-lg flex-1">
                 {name}
@@ -126,15 +126,20 @@ export default function ProductCard({
             </div>
           </div>
 
-          {discount > 0 && (
-            <div className="absolute top-3 right-3 rounded-full bg-primary px-2 py-1 text-[10px] text-black font-black shadow-lg">
-              -{discount}%
-            </div>
-          )}
+          {(discount > 0 || bestSeller) && (
+            <div className="absolute top-3 left-3 right-3 flex items-start justify-between gap-2 z-10">
+              {bestSeller && (
+                <div className="inline-flex items-center gap-1 rounded-full bg-red-950/95 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-[0_4px_12px_rgba(0,0,0,0.45)] ring-1 ring-white/10 backdrop-blur-sm">
+                  <span className="text-[11px]">🔥</span>
+                  <span>{t("productCard.bestSeller")}</span>
+                </div>
+              )}
 
-          {bestSeller && (
-            <div className="absolute top-3 left-3 rounded-full bg-red-950 px-2.5 py-1 text-[10px] text-white font-black shadow-xl ring-1 ring-white/10 uppercase tracking-widest">
-              🔥 {t("productCard.bestSeller")}
+              {discount > 0 && (
+                <div className="ml-auto inline-flex items-center rounded-full bg-primary/95 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-black shadow-[0_4px_12px_rgba(0,0,0,0.35)] backdrop-blur-sm">
+                  -{discount}%
+                </div>
+              )}
             </div>
           )}
 
@@ -146,7 +151,7 @@ export default function ProductCard({
 
   // 2. الوضع التفصيلي (Detailed Card): تحويل الخلفية البيضاء الفاقعة لرمادي داكن فاخر مطفأ يفصل عن الأسود
   return (
-    <div className="relative flex flex-col text-zinc-300 bg-zinc-900/90 shadow-2xl rounded-[1.75rem] w-full overflow-hidden border border-white/[0.06] font-sans backdrop-blur-sm">
+    <div className="relative flex flex-col text-zinc-300 bg-zinc-900/90 shadow-2xl rounded-[1.75rem] w-full overflow-hidden border border-white/6 font-sans backdrop-blur-sm">
       {/* قسم صورة المنتج */}
       <div
         className="relative h-64 w-full overflow-hidden cursor-pointer group bg-black/40"
@@ -165,10 +170,10 @@ export default function ProductCard({
         />
 
         {/* تدرج سينمائي أسود ناعم لحماية النصوص أسفل الصورة */}
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-t from-zinc-950 via-transparent to-transparent pointer-events-none" />
 
         {discount > 0 && (
-          <div className="absolute top-4 right-4 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-primary to-amber-600 px-3.5 py-1.5 text-[11px] font-black uppercase tracking-[0.15em] text-black shadow-2xl ring-1 ring-white/10">
+          <div className="absolute top-4 right-4 inline-flex items-center gap-1 rounded-full bg-linear-to-r from-primary to-amber-600 px-3.5 py-1.5 text-[11px] font-black uppercase tracking-[0.15em] text-black shadow-2xl ring-1 ring-white/10">
             <Flame className="h-3.5 w-3.5 fill-black" />
             {t("productCard.discountLabel")} {discount}%
           </div>
@@ -191,14 +196,14 @@ export default function ProductCard({
             </h3>
           </div>
 
-          <div className="text-right flex-shrink-0">
+          <div className="text-right shrink-0">
             {hasDiscount ? (
               <>
-                <div className="text-zinc-500 line-through text-xs">
+                <div className="text-zinc-500 line-through text-lg">
                   {price} {currency}
                 </div>
                 {/* السعر بعد الخصم ينور بالذهبي الملكي */}
-                <p className="text-primary font-black text-xl">
+                <p className="text-primary font-black text-2xl">
                   {discountedPrice} {currency}
                 </p>
               </>

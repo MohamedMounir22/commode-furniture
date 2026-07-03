@@ -7,11 +7,23 @@ import ProductCard from "./ProductCard";
 
 export default function LatestProducts({ products }) {
     const { t } = useLanguage();
-    const [viewMode, setViewMode] = useState("grid");
+    const [viewMode, setViewMode] = useState("list");
 
     if (!products || products.length === 0) {
-        // ✨ تعديل لون نص التحميل ليتماشى مع الفخامة
-        return <p className="text-center py-10 text-primary/80 font-medium tracking-wide animate-pulse">{t("latestProducts.loading")}</p>;
+        return (
+            <section className="w-full py-20 bg-black border-y border-white/5">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col items-center justify-center min-h-75">
+                    <div className="flex flex-col items-center gap-3 text-center">
+                        <h2 className="text-3xl font-extrabold text-primary tracking-[0.25em] uppercase animate-pulse">
+                            COMMODE
+                        </h2>
+                        <p className="text-xs font-light text-primary/70 tracking-[0.3em] uppercase">
+                            {t("latestProducts.loading")}
+                        </p>
+                    </div>
+                </div>
+            </section>
+        );
     }
 
     return (
@@ -49,7 +61,7 @@ export default function LatestProducts({ products }) {
                         <div className="grid grid-cols-1 gap-1 w-5 h-5 mx-auto">
                             <span className="block h-1.5 w-1.5 bg-current mx-auto" />
                             <span className="block h-1.5 w-1.5 bg-current mx-auto" />
-                           
+
                         </div>
                     </button>
                 </div>
